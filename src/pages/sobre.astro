@@ -1,0 +1,960 @@
+---
+const areas = [
+	{
+		numero: "01",
+		nome: "ELETRÔNICA",
+		cor: "eletronica",
+		texto:
+			"Desenvolvimento, diagnóstico, reparo e experimentação com circuitos eletrônicos, sistemas embarcados, interfaces e instrumentação.",
+	},
+	{
+		numero: "02",
+		nome: "PROGRAMAÇÃO",
+		cor: "programacao",
+		texto:
+			"Software como ferramenta para fazer hardware conversar, automatizar processos, coletar dados e transformar experimentos em sistemas utilizáveis.",
+	},
+	{
+		numero: "03",
+		nome: "AUTOMAÇÃO",
+		cor: "automacao",
+		texto:
+			"CLPs, comunicação industrial, Modbus, RS485, redes e integração entre equipamentos que nem sempre foram projetados para trabalhar juntos.",
+	},
+	{
+		numero: "04",
+		nome: "ÁUDIO",
+		cor: "audio",
+		texto:
+			"Pedais, amplificadores, pré-amplificadores e experiências em que o circuito deixa de ser apenas medido e também passa a ser ouvido.",
+	},
+	{
+		numero: "05",
+		nome: "LUTHIERIA",
+		cor: "luthieria",
+		texto:
+			"Instrumentos como projetos em evolução: elétrica, captadores, peças, restauração, modificações e experimentação.",
+	},
+	{
+		numero: "06",
+		nome: "EXPERIMENTAÇÃO",
+		cor: "experimentacao",
+		texto:
+			"Construir para entender. Medir, desmontar, testar hipóteses, errar, modificar e tentar novamente.",
+	},
+];
+
+const ferramentas = [
+	"ESP8266",
+	"ESP32",
+	"Arduino",
+	"C / C++",
+	"Python",
+	"Modbus RTU",
+	"Modbus TCP",
+	"RS485",
+	"CLP",
+	"Git",
+	"GitHub",
+	"Astro",
+	"Osciloscópio",
+	"Eletrônica analógica",
+	"Sistemas embarcados",
+];
+---
+
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<title>Sobre — Galeria -2048</title>
+
+	<meta
+		name="description"
+		content="Sobre AkioShaolin e a Galeria -2048: eletrônica, programação, automação, áudio, luthieria e experimentação."
+	/>
+
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+	<style>
+		:root {
+			--bg: #050708;
+			--surface: #090c0e;
+			--line: #293238;
+
+			--text: #f0f2f2;
+			--muted: #8c979d;
+
+			--eletronica: #cfff00;
+			--programacao: #00d9ff;
+			--automacao: #ff8a00;
+			--audio: #ff20c7;
+			--luthieria: #ffe000;
+			--experimentacao: #a95cff;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html {
+			background: var(--bg);
+			scroll-behavior: smooth;
+		}
+
+		body {
+			margin: 0;
+
+			color: var(--text);
+
+			background:
+				linear-gradient(
+					rgba(255,255,255,.018) 1px,
+					transparent 1px
+				),
+				linear-gradient(
+					90deg,
+					rgba(255,255,255,.018) 1px,
+					transparent 1px
+				),
+				var(--bg);
+
+			background-size: 40px 40px;
+
+			font-family:
+				Arial,
+				Helvetica,
+				sans-serif;
+		}
+
+		a {
+			color: inherit;
+			text-decoration: none;
+		}
+
+		.container {
+			width: min(1180px, calc(100% - 48px));
+			margin: auto;
+		}
+
+		/* HEADER */
+
+		header {
+			border-bottom: 1px solid var(--line);
+
+			background: rgba(5, 7, 8, .88);
+		}
+
+		nav {
+			height: 70px;
+
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			gap: 30px;
+		}
+
+		.brand {
+			font-weight: 800;
+			letter-spacing: -.045em;
+		}
+
+		.back {
+			color: var(--muted);
+
+			font-family: monospace;
+			font-size: .78rem;
+		}
+
+		.back:hover {
+			color: var(--programacao);
+		}
+
+		/* HERO */
+
+		.hero {
+			padding: 110px 0 100px;
+
+			border-bottom: 1px solid var(--line);
+		}
+
+		.path {
+			margin-bottom: 25px;
+
+			color: var(--programacao);
+
+			font-family: monospace;
+			font-size: .75rem;
+
+			letter-spacing: .08em;
+		}
+
+		h1 {
+			margin: 0;
+
+			font-size: clamp(5rem, 13vw, 11rem);
+
+			line-height: .8;
+
+			letter-spacing: -.08em;
+		}
+
+		.intro {
+			max-width: 850px;
+
+			margin-top: 50px;
+
+			font-size: clamp(1.35rem, 2.4vw, 2rem);
+
+			line-height: 1.45;
+
+			letter-spacing: -.025em;
+		}
+
+		.intro .muted {
+			color: var(--muted);
+		}
+
+		.cursor {
+			display: inline-block;
+
+			width: .55em;
+			height: .08em;
+
+			margin-left: 7px;
+
+			background: var(--programacao);
+
+			box-shadow:
+				0 0 8px var(--programacao);
+
+			animation:
+				cursorBlink 1.1s step-end infinite;
+		}
+
+		@keyframes cursorBlink {
+			50% {
+				opacity: 0;
+			}
+		}
+
+		/* SEÇÕES */
+
+		.content {
+			padding: 110px 0;
+
+			border-bottom: 1px solid var(--line);
+		}
+
+		.section-grid {
+			display: grid;
+
+			grid-template-columns: 280px 1fr;
+
+			gap: 80px;
+		}
+
+		.section-label {
+			color: var(--programacao);
+
+			font-family: monospace;
+			font-size: .72rem;
+
+			letter-spacing: .08em;
+		}
+
+		h2 {
+			margin: 0 0 35px;
+
+			font-size: clamp(2.3rem, 4.5vw, 4.5rem);
+
+			line-height: 1;
+
+			letter-spacing: -.055em;
+		}
+
+		.prose {
+			max-width: 790px;
+		}
+
+		.prose p {
+			margin: 0 0 25px;
+
+			color: var(--muted);
+
+			font-size: 1.08rem;
+			line-height: 1.85;
+		}
+
+		.prose strong {
+			color: var(--text);
+		}
+
+		/* QUEM */
+
+		.identity {
+			margin-top: 55px;
+
+			display: grid;
+
+			grid-template-columns: repeat(2, 1fr);
+
+			border: 1px solid var(--line);
+		}
+
+		.identity-item {
+			padding: 22px;
+
+			border-right: 1px solid var(--line);
+		}
+
+		.identity-item:last-child {
+			border-right: 0;
+		}
+
+		.identity-label {
+			margin-bottom: 8px;
+
+			color: var(--muted);
+
+			font-family: monospace;
+			font-size: .64rem;
+		}
+
+		.identity-value {
+			font-family: monospace;
+			font-size: .82rem;
+		}
+
+		.online {
+			color: var(--programacao);
+		}
+
+		.online::before {
+			content: "●";
+
+			margin-right: 8px;
+
+			text-shadow:
+				0 0 8px var(--programacao);
+		}
+
+		/* ÁREAS */
+
+		.areas {
+			border-top: 1px solid var(--line);
+		}
+
+		.area {
+			display: grid;
+
+			grid-template-columns: 70px 220px 1fr;
+
+			gap: 30px;
+
+			align-items: baseline;
+
+			padding: 28px 0;
+
+			border-bottom: 1px solid var(--line);
+		}
+
+		.area-number {
+			color: var(--muted);
+
+			font-family: monospace;
+			font-size: .7rem;
+		}
+
+		.area-name {
+			font-family: monospace;
+			font-size: .82rem;
+			font-weight: bold;
+		}
+
+		.area-text {
+			max-width: 650px;
+
+			color: var(--muted);
+
+			line-height: 1.6;
+		}
+
+		.eletronica { color: var(--eletronica); }
+		.programacao { color: var(--programacao); }
+		.automacao { color: var(--automacao); }
+		.audio { color: var(--audio); }
+		.luthieria { color: var(--luthieria); }
+		.experimentacao { color: var(--experimentacao); }
+
+		/* FERRAMENTAS */
+
+		.tools {
+			display: flex;
+			flex-wrap: wrap;
+
+			gap: 10px;
+
+			max-width: 800px;
+		}
+
+		.tool {
+			padding: 8px 11px;
+
+			border: 1px solid var(--line);
+
+			background: var(--surface);
+
+			color: var(--muted);
+
+			font-family: monospace;
+			font-size: .7rem;
+
+			transition:
+				border-color .2s ease,
+				color .2s ease;
+		}
+
+		.tool:hover {
+			border-color: var(--programacao);
+
+			color: var(--programacao);
+		}
+
+		/* MANIFESTO */
+
+		.manifesto {
+			padding: 130px 0;
+		}
+
+		.manifesto-label {
+			margin-bottom: 35px;
+
+			color: var(--experimentacao);
+
+			font-family: monospace;
+			font-size: .72rem;
+
+			letter-spacing: .08em;
+		}
+
+		.manifesto-text {
+			max-width: 1000px;
+
+			font-size: clamp(2.3rem, 5vw, 5rem);
+
+			line-height: 1.05;
+
+			letter-spacing: -.055em;
+		}
+
+		.manifesto-text span {
+			color: var(--muted);
+		}
+
+		.signature {
+			margin-top: 65px;
+
+			color: var(--programacao);
+
+			font-family: monospace;
+			font-size: .78rem;
+		}
+
+		/* LINKS */
+
+		.links {
+			display: grid;
+
+			grid-template-columns: repeat(2, 1fr);
+
+			border-top: 1px solid var(--line);
+		}
+
+		.link {
+			position: relative;
+
+			padding: 35px 0;
+
+			border-bottom: 1px solid var(--line);
+
+			font-family: monospace;
+
+			transition:
+				color .2s ease;
+		}
+
+		.link:nth-child(odd) {
+			padding-right: 35px;
+
+			border-right: 1px solid var(--line);
+		}
+
+		.link:nth-child(even) {
+			padding-left: 35px;
+		}
+
+		.link span {
+			float: right;
+
+			color: var(--muted);
+		}
+
+		.link:hover {
+			color: var(--programacao);
+		}
+
+		/* FOOTER */
+
+		footer {
+			padding: 30px 0;
+
+			border-top: 1px solid var(--line);
+
+			color: var(--muted);
+
+			font-family: monospace;
+			font-size: .68rem;
+		}
+
+		.footer {
+			display: flex;
+
+			justify-content: space-between;
+
+			gap: 30px;
+		}
+
+		@media (max-width: 800px) {
+
+			.section-grid {
+				grid-template-columns: 1fr;
+
+				gap: 35px;
+			}
+
+			.identity {
+				grid-template-columns: 1fr;
+			}
+
+			.identity-item {
+				border-right: 0;
+				border-bottom: 1px solid var(--line);
+			}
+
+			.identity-item:last-child {
+				border-bottom: 0;
+			}
+
+			.area {
+				grid-template-columns: 45px 1fr;
+
+				gap: 15px;
+			}
+
+			.area-text {
+				grid-column: 2;
+			}
+
+			.links {
+				grid-template-columns: 1fr;
+			}
+
+			.link:nth-child(odd),
+			.link:nth-child(even) {
+				padding:
+					30px 0;
+
+				border-right: 0;
+			}
+
+			.footer {
+				flex-direction: column;
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+
+			* {
+				animation: none !important;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<header>
+
+		<div class="container">
+
+			<nav>
+
+				<a
+					class="brand"
+					href="/"
+				>
+					GALERIA -2048
+				</a>
+
+				<a
+					class="back"
+					href="/"
+				>
+					← VOLTAR AO ACERVO
+				</a>
+
+			</nav>
+
+		</div>
+
+	</header>
+
+	<main>
+
+		<div class="container">
+
+			<section class="hero">
+
+				<div class="path">
+					~/GALERIA/SOBRE/
+				</div>
+
+				<h1>
+					SOBRE
+				</h1>
+
+				<div class="intro">
+
+					Eu sou
+					<strong>AkioShaolin</strong>.
+
+					<br /><br />
+
+					<span class="muted">
+						Gosto de entender como as coisas
+						funcionam — e, quando possível,
+						desmontá-las, modificá-las e construir
+						outra coisa a partir disso.
+					</span>
+
+					<span
+						class="cursor"
+						aria-hidden="true"
+					></span>
+
+				</div>
+
+				<div class="identity">
+
+					<div class="identity-item">
+
+						<div class="identity-label">
+							IDENTIDADE
+						</div>
+
+						<div class="identity-value">
+							AKIOSHAOLIN
+						</div>
+
+					</div>
+
+					<div class="identity-item">
+
+						<div class="identity-label">
+							STATUS
+						</div>
+
+						<div class="identity-value online">
+							EXPERIMENTANDO
+						</div>
+
+					</div>
+
+				</div>
+
+			</section>
+
+			<section class="content">
+
+				<div class="section-grid">
+
+					<div class="section-label">
+						[ 01 / QUEM ]
+					</div>
+
+					<div class="prose">
+
+						<h2>
+							Entre software e ferro de solda.
+						</h2>
+
+						<p>
+							Minha formação e meu trabalho me levaram
+							para a programação, eletrônica e automação.
+							Mas a curiosidade raramente respeita
+							a divisão entre essas áreas.
+						</p>
+
+						<p>
+							Um problema de comunicação pode virar
+							um <strong>sniffer de protocolo</strong>.
+							Um instrumento pode virar uma experiência
+							de <strong>luthieria e eletrônica</strong>.
+							Um circuito de áudio pode acabar conectado
+							a um osciloscópio só para descobrir o que
+							está acontecendo com o sinal.
+						</p>
+
+						<p>
+							É nesse espaço entre necessidade,
+							curiosidade e experimentação que boa
+							parte dos projetos daqui aparece.
+						</p>
+
+					</div>
+
+				</div>
+
+			</section>
+
+			<section class="content">
+
+				<div class="section-grid">
+
+					<div class="section-label">
+						[ 02 / A GALERIA ]
+					</div>
+
+					<div class="prose">
+
+						<h2>
+							Por que -2048?
+						</h2>
+
+						<p>
+							Por muito tempo, projetos, códigos,
+							fotografias, medições e experiências
+							terminavam simplesmente guardados em
+							pastas no computador.
+						</p>
+
+						<p>
+							A <strong>Galeria -2048</strong> nasceu
+							para mudar isso.
+						</p>
+
+						<p>
+							Este é um acervo público de projetos e
+							experiências envolvendo tecnologia,
+							eletrônica, programação, automação,
+							áudio, instrumentos e outras coisas
+							que fizerem sentido aparecer por aqui.
+						</p>
+
+						<p>
+							Não é apenas um portfólio de coisas
+							prontas. <strong>Versões, erros,
+							hipóteses, medições, reparos e caminhos
+							abandonados também fazem parte do
+							projeto.</strong>
+						</p>
+
+					</div>
+
+				</div>
+
+			</section>
+
+			<section class="content">
+
+				<div class="section-grid">
+
+					<div class="section-label">
+						[ 03 / ÁREAS ]
+					</div>
+
+					<div>
+
+						<h2>
+							O que aparece por aqui.
+						</h2>
+
+						<div class="areas">
+
+							{
+								areas.map((area) => (
+
+									<div class="area">
+
+										<div class="area-number">
+											{area.numero}
+										</div>
+
+										<div
+											class={`area-name ${area.cor}`}
+										>
+											{area.nome}
+										</div>
+
+										<div class="area-text">
+											{area.texto}
+										</div>
+
+									</div>
+
+								))
+							}
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</section>
+
+			<section class="content">
+
+				<div class="section-grid">
+
+					<div class="section-label">
+						[ 04 / BANCADA ]
+					</div>
+
+					<div>
+
+						<h2>
+							Ferramentas e tecnologias.
+						</h2>
+
+						<div class="tools">
+
+							{
+								ferramentas.map((ferramenta) => (
+
+									<span class="tool">
+										{ferramenta}
+									</span>
+
+								))
+							}
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</section>
+
+			<section class="manifesto">
+
+				<div class="manifesto-label">
+					[ IDEIAS EM SINAL ]
+				</div>
+
+				<div class="manifesto-text">
+
+					Construir para entender.
+
+					<br />
+
+					<span>
+						Documentar para não deixar
+						o que foi aprendido desaparecer
+						em alguma pasta.
+					</span>
+
+				</div>
+
+				<div class="signature">
+					— AKIOSHAOLIN / GALERIA -2048
+				</div>
+
+			</section>
+
+			<section class="content">
+
+				<div class="section-grid">
+
+					<div class="section-label">
+						[ 05 / ENCONTRE ]
+					</div>
+
+					<div>
+
+						<h2>
+							Continue explorando.
+						</h2>
+
+						<div class="links">
+
+							<a
+								class="link"
+								href="https://github.com/akioShaolin"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								GITHUB
+								<span>↗</span>
+							</a>
+
+							<a
+								class="link"
+								href="/playlist"
+							>
+								PLAYLIST
+								<span>→</span>
+							</a>
+
+							<a
+								class="link"
+								href="/projetos/gtr-01"
+							>
+								GTR-01
+								<span>→</span>
+							</a>
+
+							<a
+								class="link"
+								href="/"
+							>
+								ACERVO
+								<span>→</span>
+							</a>
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</section>
+
+		</div>
+
+	</main>
+
+	<footer>
+
+		<div class="container footer">
+
+			<span>
+				GALERIA -2048 // AKIOSHAOLIN
+			</span>
+
+			<span>
+				IDEIAS EM SINAL
+			</span>
+
+		</div>
+
+	</footer>
+
+</body>
+</html>

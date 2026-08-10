@@ -1,0 +1,584 @@
+---
+const etapas = [
+	{
+		ano: "—",
+		titulo: "Antes da Galeria",
+		texto: "A guitarra já carregava uma história de anos, passando por uso, modificações e períodos parada. Esta página começa como uma tentativa de reconstruir e documentar essa trajetória.",
+	},
+	{
+		ano: "2026",
+		titulo: "Retomando o projeto",
+		texto: "Desmontagem, limpeza e avaliação geral do instrumento. A partir daqui, as alterações deixam de existir apenas como lembranças e começam a ser registradas.",
+	},
+	{
+		ano: "2026",
+		titulo: "Nova configuração elétrica",
+		texto: "Revisão completa da elétrica, substituição de componentes, blindagem e experimentação com diferentes configurações de captadores e controles.",
+	},
+	{
+		ano: "2026",
+		titulo: "Peças e acabamento",
+		texto: "Desenvolvimento de novas molduras, tampa traseira, knobs e outros detalhes mecânicos e estéticos.",
+	},
+	{
+		ano: "AGORA",
+		titulo: "Eletrônica ativa",
+		texto: "Desenvolvimento e experimentação com pré-amplificadores JFET, buscando novas possibilidades sonoras sem abandonar a personalidade do instrumento.",
+	},
+];
+
+const especificacoes = [
+	["Captador do braço", "Mini humbucker / dual rail"],
+	["Captador da ponte", "Humbucker"],
+	["Potenciômetros", "500 kΩ"],
+	["Tone", "3,3 nF"],
+	["Controles", "Volumes independentes"],
+	["Pré-amplificador", "Em desenvolvimento"],
+];
+---
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<title>GTR-01 — Galeria -2048</title>
+
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+	<style>
+		:root {
+			--bg:#050708;
+			--surface:#0a0d0f;
+			--line:#293238;
+			--text:#f0f2f2;
+			--muted:#8c979d;
+
+			--luthieria:#ffe000;
+			--audio:#ff20c7;
+			--eletronica:#cfff00;
+		}
+
+		* {
+			box-sizing:border-box;
+		}
+
+		html {
+			background:var(--bg);
+			scroll-behavior:smooth;
+		}
+
+		body {
+			margin:0;
+			background:var(--bg);
+			color:var(--text);
+			font-family:Arial, Helvetica, sans-serif;
+		}
+
+		a {
+			color:inherit;
+			text-decoration:none;
+		}
+
+		.container {
+			width:min(1180px, calc(100% - 48px));
+			margin:auto;
+		}
+
+		header {
+			border-bottom:1px solid var(--line);
+		}
+
+		nav {
+			height:70px;
+			display:flex;
+			align-items:center;
+			justify-content:space-between;
+		}
+
+		.brand {
+			font-weight:800;
+			letter-spacing:-.04em;
+		}
+
+		.back {
+			font-family:monospace;
+			color:var(--muted);
+			font-size:.8rem;
+		}
+
+		.back:hover {
+			color:var(--luthieria);
+		}
+
+		.hero {
+			padding:100px 0 70px;
+		}
+
+		.code {
+			font-family:monospace;
+			color:var(--luthieria);
+			font-size:.8rem;
+			letter-spacing:.08em;
+			margin-bottom:25px;
+		}
+
+		h1 {
+			margin:0;
+			font-size:clamp(4rem, 11vw, 9rem);
+			line-height:.82;
+			letter-spacing:-.075em;
+		}
+
+		.subtitle {
+			margin-top:35px;
+			color:var(--muted);
+			font-size:clamp(1.2rem, 2vw, 1.6rem);
+			max-width:750px;
+			line-height:1.5;
+		}
+
+		.tags {
+			display:flex;
+			flex-wrap:wrap;
+			gap:10px;
+			margin-top:30px;
+		}
+
+		.tag {
+			font-family:monospace;
+			font-size:.7rem;
+			padding:7px 10px;
+			border:1px solid currentColor;
+		}
+
+		.luthieria { color:var(--luthieria); }
+		.audio { color:var(--audio); }
+		.eletronica { color:var(--eletronica); }
+
+		.status {
+			margin-top:55px;
+			display:grid;
+			grid-template-columns:repeat(3,1fr);
+			border:1px solid var(--line);
+		}
+
+		.status-item {
+			padding:20px;
+			border-right:1px solid var(--line);
+		}
+
+		.status-item:last-child {
+			border-right:0;
+		}
+
+		.status-label {
+			font-family:monospace;
+			font-size:.65rem;
+			color:var(--muted);
+			margin-bottom:8px;
+		}
+
+		.status-value {
+			font-family:monospace;
+			font-size:.85rem;
+		}
+
+		.hero-image {
+			height:clamp(350px, 55vw, 680px);
+			border:1px solid var(--line);
+			background:
+				linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),
+				linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px),
+				#090c0e;
+			background-size:40px 40px;
+
+			display:flex;
+			align-items:center;
+			justify-content:center;
+
+			color:var(--muted);
+			font-family:monospace;
+		}
+
+		section.content {
+			padding:100px 0;
+			border-bottom:1px solid var(--line);
+		}
+
+		.section-grid {
+			display:grid;
+			grid-template-columns:280px 1fr;
+			gap:80px;
+		}
+
+		.section-label {
+			font-family:monospace;
+			font-size:.72rem;
+			color:var(--luthieria);
+			letter-spacing:.08em;
+		}
+
+		h2 {
+			font-size:clamp(2rem,4vw,3.8rem);
+			letter-spacing:-.05em;
+			margin:0 0 35px;
+		}
+
+		.prose {
+			max-width:760px;
+		}
+
+		.prose p {
+			color:var(--muted);
+			font-size:1.05rem;
+			line-height:1.85;
+		}
+
+		.prose strong {
+			color:var(--text);
+		}
+
+		.timeline {
+			border-left:1px solid var(--line);
+		}
+
+		.event {
+			position:relative;
+			padding:0 0 65px 45px;
+		}
+
+		.event::before {
+			content:"";
+			position:absolute;
+			left:-5px;
+			top:5px;
+			width:9px;
+			height:9px;
+			border-radius:50%;
+			background:var(--luthieria);
+			box-shadow:0 0 12px var(--luthieria);
+		}
+
+		.event-year {
+			font-family:monospace;
+			color:var(--luthieria);
+			font-size:.72rem;
+			margin-bottom:10px;
+		}
+
+		.event h3 {
+			font-size:1.5rem;
+			margin:0 0 12px;
+		}
+
+		.event p {
+			color:var(--muted);
+			line-height:1.7;
+			max-width:700px;
+			margin:0;
+		}
+
+		.specs {
+			border-top:1px solid var(--line);
+		}
+
+		.spec {
+			display:grid;
+			grid-template-columns:1fr 1fr;
+			gap:30px;
+			padding:17px 0;
+			border-bottom:1px solid var(--line);
+			font-family:monospace;
+			font-size:.82rem;
+		}
+
+		.spec-name {
+			color:var(--muted);
+		}
+
+		.continues {
+			padding:120px 0;
+			text-align:center;
+		}
+
+		.continues div {
+			color:var(--luthieria);
+			font-family:monospace;
+			font-size:.75rem;
+			margin-bottom:20px;
+		}
+
+		.continues h2 {
+			max-width:800px;
+			margin:auto;
+		}
+
+		footer {
+			border-top:1px solid var(--line);
+			padding:30px 0;
+			color:var(--muted);
+			font-family:monospace;
+			font-size:.7rem;
+		}
+
+		.footer {
+			display:flex;
+			justify-content:space-between;
+		}
+
+		@media(max-width:800px) {
+			.section-grid {
+				grid-template-columns:1fr;
+				gap:30px;
+			}
+
+			.status {
+				grid-template-columns:1fr;
+			}
+
+			.status-item {
+				border-right:0;
+				border-bottom:1px solid var(--line);
+			}
+
+			.status-item:last-child {
+				border-bottom:0;
+			}
+
+			.spec {
+				grid-template-columns:1fr;
+				gap:7px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<header>
+		<div class="container">
+			<nav>
+				<a class="brand" href="/">
+					GALERIA -2048
+				</a>
+
+				<a class="back" href="/">
+					← VOLTAR AO ACERVO
+				</a>
+			</nav>
+		</div>
+	</header>
+
+	<main>
+
+		<div class="container">
+
+			<section class="hero">
+
+				<div class="code">
+					PROJETO / 001
+				</div>
+
+				<h1>
+					GTR-01
+				</h1>
+
+				<div class="subtitle">
+					Uma guitarra em constante reconstrução.
+					Um projeto que começou muito antes de existir
+					um lugar para documentá-lo.
+				</div>
+
+				<div class="tags">
+					<span class="tag luthieria">LUTHIERIA</span>
+					<span class="tag eletronica">ELETRÔNICA</span>
+					<span class="tag audio">ÁUDIO</span>
+				</div>
+
+				<div class="status">
+
+					<div class="status-item">
+						<div class="status-label">STATUS</div>
+						<div class="status-value luthieria">
+							● EM DESENVOLVIMENTO
+						</div>
+					</div>
+
+					<div class="status-item">
+						<div class="status-label">INÍCIO</div>
+						<div class="status-value">
+							ANOS ATRÁS
+						</div>
+					</div>
+
+					<div class="status-item">
+						<div class="status-label">ÚLTIMA ATUALIZAÇÃO</div>
+						<div class="status-value">
+							2026
+						</div>
+					</div>
+
+				</div>
+
+			</section>
+
+			<div class="hero-image">
+				[ FOTO ATUAL DA GUITARRA ]
+			</div>
+
+			<section class="content">
+
+				<div class="section-grid">
+
+					<div class="section-label">
+						[ 01 / A HISTÓRIA ]
+					</div>
+
+					<div class="prose">
+
+						<h2>
+							Um instrumento que nunca ficou realmente pronto.
+						</h2>
+
+						<p>
+							Esta guitarra faz parte da minha história há anos.
+							Antes de virar um projeto documentado, ela já havia
+							passado por uso, desmontagens, modificações e longos
+							períodos esperando a próxima ideia.
+						</p>
+
+						<p>
+							Em 2026 decidi retomar o instrumento com outra
+							abordagem: <strong>não apenas consertá-lo, mas experimentar
+							com ele</strong>.
+						</p>
+
+						<p>
+							Desde então, elétrica, captadores, ferragens,
+							acabamento e até a possibilidade de eletrônica ativa
+							passaram a fazer parte do projeto.
+						</p>
+
+						<p>
+							Esta página não representa uma guitarra terminada.
+							Ela é o registro do que aconteceu com ela — inclusive
+							das ideias que não deram certo.
+						</p>
+
+					</div>
+
+				</div>
+
+			</section>
+
+			<section class="content">
+
+				<div class="section-grid">
+
+					<div class="section-label">
+						[ 02 / LINHA DO TEMPO ]
+					</div>
+
+					<div>
+
+						<h2>
+							A transformação
+						</h2>
+
+						<div class="timeline">
+
+							{
+								etapas.map((etapa) => (
+									<article class="event">
+
+										<div class="event-year">
+											{etapa.ano}
+										</div>
+
+										<h3>
+											{etapa.titulo}
+										</h3>
+
+										<p>
+											{etapa.texto}
+										</p>
+
+									</article>
+								))
+							}
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</section>
+
+			<section class="content">
+
+				<div class="section-grid">
+
+					<div class="section-label">
+						[ 03 / ESTADO ATUAL ]
+					</div>
+
+					<div>
+
+						<h2>
+							Configuração atual
+						</h2>
+
+						<div class="specs">
+
+							{
+								especificacoes.map(([nome, valor]) => (
+									<div class="spec">
+
+										<div class="spec-name">
+											{nome}
+										</div>
+
+										<div>
+											{valor}
+										</div>
+
+									</div>
+								))
+							}
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</section>
+
+			<section class="continues">
+
+				<div>
+					[ PROJETO ABERTO ]
+				</div>
+
+				<h2>
+					Esta página continuará mudando junto com a guitarra.
+				</h2>
+
+			</section>
+
+		</div>
+
+	</main>
+
+	<footer>
+		<div class="container footer">
+			<span>GALERIA -2048 // AKIOSHAOLIN</span>
+			<span>PROJETO / 001</span>
+		</div>
+	</footer>
+
+</body>
+</html>

@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<title>404 — Galeria -2048</title>
+
+		<meta
+			name="description"
+			content="Sinal perdido — página não encontrada na Galeria -2048."
+		/>
+
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+		<style>
+			:root {
+				--bg: #050708;
+				--surface: #090c0e;
+				--line: #293238;
+
+				--text: #f0f2f2;
+				--muted: #8c979d;
+
+				--eletronica: #cfff00;
+				--programacao: #00d9ff;
+				--automacao: #ff8a00;
+				--audio: #ff20c7;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			html,
+			body {
+				margin: 0;
+				min-height: 100%;
+				background: var(--bg);
+			}
+
+			body {
+				color: var(--text);
+
+				font-family:
+					"Courier New",
+					Courier,
+					monospace;
+
+				background:
+					linear-gradient(
+						rgba(255, 255, 255, 0.018) 1px,
+						transparent 1px
+					),
+					linear-gradient(
+						90deg,
+						rgba(255, 255, 255, 0.018) 1px,
+						transparent 1px
+					),
+					var(--bg);
+
+				background-size: 38px 38px;
+			}
+
+			a {
+				color: inherit;
+				text-decoration: none;
+			}
+
+			.page {
+				min-height: 100vh;
+
+				display: flex;
+				flex-direction: column;
+			}
+
+			header {
+				border-bottom: 1px solid var(--line);
+			}
+
+			.container {
+				width: min(1180px, calc(100% - 48px));
+				margin: auto;
+			}
+
+			nav {
+				height: 70px;
+
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+
+				gap: 30px;
+			}
+
+			.brand {
+				font-family:
+					Arial,
+					Helvetica,
+					sans-serif;
+
+				font-weight: 800;
+				letter-spacing: -0.045em;
+			}
+
+			.status {
+				color: var(--programacao);
+				font-size: 0.72rem;
+			}
+
+			.status::before {
+				content: "●";
+
+				margin-right: 9px;
+
+				text-shadow:
+					0 0 8px var(--programacao);
+			}
+
+			main {
+				flex: 1;
+
+				display: flex;
+				align-items: center;
+			}
+
+			.error {
+				width: 100%;
+
+				display: grid;
+				grid-template-columns: 1.3fr 0.7fr;
+
+				align-items: center;
+
+				gap: 80px;
+
+				padding: 90px 0;
+			}
+
+			.path {
+				color: var(--programacao);
+
+				font-size: 0.8rem;
+
+				margin-bottom: 25px;
+			}
+
+			h1 {
+				margin: 0;
+
+				font-family:
+					Georgia,
+					"Times New Roman",
+					serif;
+
+				font-size: clamp(4rem, 8vw, 8rem);
+				line-height: 0.9;
+
+				letter-spacing: -0.04em;
+			}
+
+			.copy {
+				margin-top: 30px;
+
+				max-width: 620px;
+
+				color: var(--muted);
+
+				font-size: 1rem;
+				line-height: 1.75;
+			}
+
+			.signal {
+				margin: 35px 0;
+
+				height: 50px;
+
+				display: flex;
+				align-items: center;
+
+				overflow: hidden;
+			}
+
+			.signal svg {
+				width: 100%;
+				height: 50px;
+			}
+
+			.signal-line {
+				fill: none;
+
+				stroke: var(--programacao);
+				stroke-width: 2;
+
+				filter:
+					drop-shadow(
+						0 0 4px
+						var(--programacao)
+					);
+
+				stroke-dasharray: 900;
+				stroke-dashoffset: 900;
+
+				animation:
+					signalDraw 2s ease-out forwards;
+			}
+
+			@keyframes signalDraw {
+				to {
+					stroke-dashoffset: 0;
+				}
+			}
+
+			.button {
+				display: inline-flex;
+
+				align-items: center;
+
+				padding: 13px 18px;
+
+				border: 1px solid var(--eletronica);
+
+				color: var(--eletronica);
+
+				font-size: 0.75rem;
+				font-weight: bold;
+
+				transition:
+					background 0.2s ease,
+					color 0.2s ease,
+					box-shadow 0.2s ease;
+			}
+
+			.button:hover {
+				background: var(--eletronica);
+				color: #050708;
+
+				box-shadow:
+					0 0 18px
+					rgba(207, 255, 0, 0.35);
+			}
+
+			.error-code {
+				position: relative;
+
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				min-height: 380px;
+
+				border-left: 1px solid var(--line);
+			}
+
+			.code {
+				display: flex;
+
+				font-family:
+					Arial,
+					Helvetica,
+					sans-serif;
+
+				font-size: clamp(7rem, 15vw, 15rem);
+				line-height: 1;
+
+				letter-spacing: -0.08em;
+			}
+
+			.c4 {
+				color: transparent;
+
+				-webkit-text-stroke:
+					2px var(--automacao);
+
+				text-shadow:
+					0 0 5px var(--automacao),
+					0 0 18px rgba(255, 138, 0, 0.75),
+					0 0 42px rgba(255, 138, 0, 0.35);
+			}
+
+			.c0 {
+				color: transparent;
+
+				-webkit-text-stroke:
+					2px var(--programacao);
+
+				text-shadow:
+					0 0 5px var(--programacao),
+					0 0 18px rgba(0, 217, 255, 0.75),
+					0 0 42px rgba(0, 217, 255, 0.35);
+			}
+
+			.failing {
+				animation:
+					fail404 4s 1 forwards;
+			}
+
+			@keyframes fail404 {
+				0%,
+				5%,
+				10%,
+				18%,
+				23%,
+				31%,
+				100% {
+					opacity: 1;
+				}
+
+				3%,
+				8%,
+				20%,
+				28% {
+					opacity: 0.08;
+				}
+			}
+
+			.no-signal {
+				position: absolute;
+
+				bottom: 45px;
+
+				color: var(--muted);
+
+				font-size: 0.7rem;
+				letter-spacing: 0.12em;
+			}
+
+			footer {
+				border-top: 1px solid var(--line);
+
+				padding: 25px 0;
+
+				color: var(--muted);
+
+				font-size: 0.68rem;
+			}
+
+			.footer {
+				display: flex;
+				justify-content: space-between;
+
+				gap: 30px;
+			}
+
+			@media (max-width: 800px) {
+				.error {
+					grid-template-columns: 1fr;
+
+					gap: 50px;
+				}
+
+				.error-code {
+					border-left: 0;
+					border-top: 1px solid var(--line);
+
+					min-height: 280px;
+				}
+
+				.footer {
+					flex-direction: column;
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				* {
+					animation: none !important;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="page">
+
+			<header>
+				<div class="container">
+					<nav>
+						<a
+							class="brand"
+							href="/"
+						>
+							GALERIA -2048
+						</a>
+
+						<div class="status">
+							SINAL INTERROMPIDO
+						</div>
+					</nav>
+				</div>
+			</header>
+
+			<main>
+				<div class="container error">
+
+					<section>
+
+						<div class="path">
+							~/GALERIA/404/
+						</div>
+
+						<h1>
+							SINAL<br />
+							PERDIDO.
+						</h1>
+
+						<div class="signal">
+
+							<svg
+								viewBox="0 0 900 50"
+								preserveAspectRatio="none"
+								aria-hidden="true"
+							>
+								<path
+									class="signal-line"
+									d="
+										M0 25
+										H170
+										L180 25
+										L190 8
+										L205 42
+										L220 25
+										H360
+										L370 25
+										L378 15
+										L388 35
+										L398 25
+										H520
+										L528 25
+										L536 4
+										L548 46
+										L560 25
+										H900
+									"
+								/>
+							</svg>
+
+						</div>
+
+						<div class="copy">
+							Nenhum projeto foi encontrado neste
+							endereço.
+							<br /><br />
+
+							Talvez ele ainda não exista.
+							Talvez tenha mudado de frequência.
+							Ou talvez algum cabo esteja solto.
+						</div>
+
+						<br />
+
+						<a
+							class="button"
+							href="/"
+						>
+							← VOLTAR PARA A GALERIA
+						</a>
+
+					</section>
+
+					<aside class="error-code">
+
+						<div
+							class="code"
+							aria-label="Erro 404"
+						>
+							<span class="c4 failing">
+								4
+							</span>
+
+							<span class="c0">
+								0
+							</span>
+
+							<span class="c4">
+								4
+							</span>
+						</div>
+
+						<div class="no-signal">
+							[ NO SIGNAL ]
+						</div>
+
+					</aside>
+
+				</div>
+			</main>
+
+			<footer>
+				<div class="container footer">
+
+					<span>
+						GALERIA -2048 // AKIOSHAOLIN
+					</span>
+
+					<span>
+						ERROR / 404
+					</span>
+
+				</div>
+			</footer>
+
+		</div>
+	</body>
+</html>

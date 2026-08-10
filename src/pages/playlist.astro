@@ -1,0 +1,702 @@
+---
+const stats = [
+	["TIPO", "PLAYLIST"],
+	["PLATAFORMA", "SPOTIFY"],
+	["STATUS", "EM CONSTANTE MUDANÇA"],
+];
+---
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<title>Playlist — Galeria -2048</title>
+
+	<meta
+		name="description"
+		content="Playlist da Galeria -2048 — músicas que acompanham projetos, bancada, código e outras ideias."
+	/>
+
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+	<style>
+		:root {
+			--bg: #050708;
+			--surface: #090c0e;
+			--line: #293238;
+
+			--text: #f0f2f2;
+			--muted: #8c979d;
+
+			--eletronica: #cfff00;
+			--programacao: #00d9ff;
+			--automacao: #ff8a00;
+			--audio: #ff20c7;
+			--luthieria: #ffe000;
+			--experimentacao: #a95cff;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html {
+			background: var(--bg);
+		}
+
+		body {
+			margin: 0;
+
+			background:
+				radial-gradient(
+					circle at 75% 10%,
+					rgba(255, 32, 199, .06),
+					transparent 500px
+				),
+				var(--bg);
+
+			color: var(--text);
+
+			font-family:
+				Arial,
+				Helvetica,
+				sans-serif;
+		}
+
+		a {
+			color: inherit;
+			text-decoration: none;
+		}
+
+		.container {
+			width: min(1180px, calc(100% - 48px));
+			margin: auto;
+		}
+
+		/* HEADER */
+
+		header {
+			border-bottom: 1px solid var(--line);
+		}
+
+		nav {
+			height: 70px;
+
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			gap: 30px;
+		}
+
+		.brand {
+			font-weight: 800;
+			letter-spacing: -.045em;
+		}
+
+		.back {
+			font-family: monospace;
+
+			color: var(--muted);
+
+			font-size: .78rem;
+		}
+
+		.back:hover {
+			color: var(--audio);
+		}
+
+		/* HERO */
+
+		.hero {
+			padding: 100px 0 70px;
+
+			border-bottom: 1px solid var(--line);
+		}
+
+		.code {
+			font-family: monospace;
+
+			color: var(--audio);
+
+			font-size: .78rem;
+			letter-spacing: .08em;
+
+			margin-bottom: 25px;
+		}
+
+		h1 {
+			margin: 0;
+
+			font-size: clamp(4rem, 11vw, 9rem);
+
+			line-height: .82;
+
+			letter-spacing: -.075em;
+		}
+
+		.subtitle {
+			margin-top: 35px;
+
+			max-width: 760px;
+
+			color: var(--muted);
+
+			font-size: clamp(1.15rem, 2vw, 1.55rem);
+
+			line-height: 1.55;
+		}
+
+		.tag {
+			display: inline-block;
+
+			margin-top: 28px;
+
+			padding: 7px 11px;
+
+			border: 1px solid var(--audio);
+
+			color: var(--audio);
+
+			font-family: monospace;
+			font-size: .7rem;
+		}
+
+		/* INFO */
+
+		.info {
+			display: grid;
+
+			grid-template-columns: repeat(3, 1fr);
+
+			margin-top: 55px;
+
+			border: 1px solid var(--line);
+		}
+
+		.info-item {
+			padding: 20px;
+
+			border-right: 1px solid var(--line);
+		}
+
+		.info-item:last-child {
+			border-right: 0;
+		}
+
+		.info-label {
+			margin-bottom: 8px;
+
+			color: var(--muted);
+
+			font-family: monospace;
+			font-size: .65rem;
+		}
+
+		.info-value {
+			font-family: monospace;
+
+			font-size: .82rem;
+		}
+
+		.info-item:last-child .info-value {
+			color: var(--audio);
+		}
+
+		/* PLAYLIST */
+
+		.content {
+			padding: 100px 0;
+
+			border-bottom: 1px solid var(--line);
+		}
+
+		.content-grid {
+			display: grid;
+
+			grid-template-columns: 280px 1fr;
+
+			gap: 80px;
+		}
+
+		.section-label {
+			color: var(--audio);
+
+			font-family: monospace;
+			font-size: .72rem;
+			letter-spacing: .08em;
+		}
+
+		h2 {
+			margin: 0 0 30px;
+
+			font-size: clamp(2rem, 4vw, 3.8rem);
+
+			letter-spacing: -.05em;
+		}
+
+		.text {
+			max-width: 760px;
+
+			color: var(--muted);
+
+			font-size: 1.05rem;
+			line-height: 1.8;
+		}
+
+		.text strong {
+			color: var(--text);
+		}
+
+		/* SPOTIFY */
+
+		.player-section {
+			padding: 70px 0 110px;
+		}
+
+		.player-header {
+			display: flex;
+
+			align-items: center;
+			justify-content: space-between;
+
+			margin-bottom: 20px;
+		}
+
+		.player-label {
+			color: var(--audio);
+
+			font-family: monospace;
+			font-size: .72rem;
+
+			letter-spacing: .08em;
+		}
+
+		.signal {
+			display: flex;
+
+			align-items: center;
+
+			gap: 5px;
+
+			height: 25px;
+		}
+
+		.signal span {
+			display: block;
+
+			width: 3px;
+
+			background: var(--audio);
+
+			box-shadow:
+				0 0 7px var(--audio);
+
+			animation:
+				equalizer 1s ease-in-out infinite alternate;
+		}
+
+		.signal span:nth-child(1) {
+			height: 8px;
+		}
+
+		.signal span:nth-child(2) {
+			height: 18px;
+			animation-delay: -.4s;
+		}
+
+		.signal span:nth-child(3) {
+			height: 12px;
+			animation-delay: -.7s;
+		}
+
+		.signal span:nth-child(4) {
+			height: 23px;
+			animation-delay: -.2s;
+		}
+
+		.signal span:nth-child(5) {
+			height: 14px;
+			animation-delay: -.6s;
+		}
+
+		.signal span:nth-child(6) {
+			height: 7px;
+			animation-delay: -.3s;
+		}
+
+		@keyframes equalizer {
+			from {
+				transform: scaleY(.4);
+				opacity: .55;
+			}
+
+			to {
+				transform: scaleY(1);
+				opacity: 1;
+			}
+		}
+
+		.player-shell {
+			position: relative;
+
+			padding: 22px;
+
+			border: 1px solid var(--line);
+
+			background:
+				linear-gradient(
+					135deg,
+					rgba(255, 32, 199, .035),
+					transparent 35%
+				),
+				var(--surface);
+		}
+
+		.player-shell::before {
+			content: "";
+
+			position: absolute;
+
+			left: -1px;
+			top: -1px;
+
+			width: 90px;
+			height: 2px;
+
+			background: var(--audio);
+
+			box-shadow:
+				0 0 12px var(--audio);
+		}
+
+		.spotify-player {
+			display: block;
+
+			width: 100%;
+
+			border: 0;
+
+			border-radius: 12px;
+		}
+
+		.player-footer {
+			display: flex;
+
+			align-items: center;
+			justify-content: space-between;
+
+			gap: 30px;
+
+			margin-top: 15px;
+
+			color: var(--muted);
+
+			font-family: monospace;
+			font-size: .66rem;
+		}
+
+		.live {
+			color: var(--audio);
+		}
+
+		.live::before {
+			content: "●";
+
+			margin-right: 7px;
+
+			text-shadow:
+				0 0 8px var(--audio);
+		}
+
+		/* MANIFESTO */
+
+		.manifesto {
+			padding: 110px 0;
+		}
+
+		.manifesto-text {
+			max-width: 900px;
+
+			font-size: clamp(2rem, 4vw, 4rem);
+
+			line-height: 1.08;
+
+			letter-spacing: -.045em;
+		}
+
+		.manifesto-text span {
+			color: var(--muted);
+		}
+
+		/* FOOTER */
+
+		footer {
+			border-top: 1px solid var(--line);
+
+			padding: 30px 0;
+
+			color: var(--muted);
+
+			font-family: monospace;
+			font-size: .68rem;
+		}
+
+		.footer {
+			display: flex;
+
+			justify-content: space-between;
+
+			gap: 30px;
+		}
+
+		@media (max-width: 800px) {
+			.content-grid {
+				grid-template-columns: 1fr;
+
+				gap: 30px;
+			}
+
+			.info {
+				grid-template-columns: 1fr;
+			}
+
+			.info-item {
+				border-right: 0;
+				border-bottom: 1px solid var(--line);
+			}
+
+			.info-item:last-child {
+				border-bottom: 0;
+			}
+
+			.player-shell {
+				padding: 10px;
+			}
+
+			.player-footer {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.footer {
+				flex-direction: column;
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			* {
+				animation: none !important;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<header>
+		<div class="container">
+
+			<nav>
+
+				<a class="brand" href="/">
+					GALERIA -2048
+				</a>
+
+				<a class="back" href="/">
+					← VOLTAR AO ACERVO
+				</a>
+
+			</nav>
+
+		</div>
+	</header>
+
+	<main>
+
+		<div class="container">
+
+			<section class="hero">
+
+				<div class="code">
+					ACERVO / MÚSICA
+				</div>
+
+				<h1>
+					PLASTIC<br />
+					LOVE
+				</h1>
+
+				<div class="subtitle">
+					Uma coleção musical construída ao longo do tempo.
+					Músicas encontradas, lembradas e guardadas em um
+					mesmo lugar.
+				</div>
+
+				<div class="tag">
+					♫ PLAYLIST
+				</div>
+
+				<div class="info">
+
+					{
+						stats.map(([nome, valor]) => (
+
+							<div class="info-item">
+
+								<div class="info-label">
+									{nome}
+								</div>
+
+								<div class="info-value">
+									{valor}
+								</div>
+
+							</div>
+
+						))
+					}
+
+				</div>
+
+			</section>
+
+			<section class="content">
+
+				<div class="content-grid">
+
+					<div class="section-label">
+						[ 01 / A PLAYLIST ]
+					</div>
+
+					<div>
+
+						<h2>
+							Música também faz parte do acervo.
+						</h2>
+
+						<div class="text">
+
+							<p>
+								Nem tudo que entra na Galeria
+								precisa de ferro de solda, código
+								ou osciloscópio.
+							</p>
+
+							<p>
+								<strong>Plastic Love</strong> é uma
+								coleção de músicas reunidas ao longo
+								do tempo e que continua mudando
+								conforme novas coisas aparecem.
+							</p>
+
+							<p>
+								Aqui ela passa a fazer parte do mesmo
+								acervo que os projetos, experimentos
+								e instrumentos.
+							</p>
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</section>
+
+			<section class="player-section">
+
+				<div class="player-header">
+
+					<div class="player-label">
+						[ PLAYER / SPOTIFY ]
+					</div>
+
+					<div
+						class="signal"
+						aria-hidden="true"
+					>
+						<span></span>
+						<span></span>
+						<span></span>
+						<span></span>
+						<span></span>
+						<span></span>
+					</div>
+
+				</div>
+
+				<div class="player-shell">
+
+					<iframe
+						data-testid="embed-iframe"
+						class="spotify-player"
+						src="https://open.spotify.com/embed/playlist/0NWjkWXuAXsZiCUFy4jiw3?utm_source=generator&theme=0&si=e1dfd293ccdd4d72"
+						width="100%"
+						height="352"
+						frameborder="0"
+						allowfullscreen
+						allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+						loading="lazy"
+						title="Plastic Love — Spotify"
+					></iframe>
+
+				</div>
+
+				<div class="player-footer">
+
+					<span>
+						SOURCE / SPOTIFY EMBED
+					</span>
+
+					<span class="live">
+						PLAYLIST ONLINE
+					</span>
+
+				</div>
+
+			</section>
+
+			<section class="manifesto">
+
+				<div class="section-label">
+					[ EM SINAL ]
+				</div>
+
+				<br /><br />
+
+				<div class="manifesto-text">
+					Algumas ideias viram circuitos.
+					Algumas viram código.
+					<span>
+						Algumas simplesmente precisam
+						ser ouvidas.
+					</span>
+				</div>
+
+			</section>
+
+		</div>
+
+	</main>
+
+	<footer>
+
+		<div class="container footer">
+
+			<span>
+				GALERIA -2048 // AKIOSHAOLIN
+			</span>
+
+			<span>
+				ACERVO / MÚSICA
+			</span>
+
+		</div>
+
+	</footer>
+
+</body>
+</html>

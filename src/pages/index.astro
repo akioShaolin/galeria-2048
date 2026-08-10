@@ -3,13 +3,14 @@ const projetos = [
 	{
 		tipo: "PROJETO",
 		numero: "001",
-		titulo: "MODBUS SNIFFER",
-		descricao: "Monitoramento e diagnóstico de barramentos RS485.",
-		imagem: "/images/sniffer.svg",
+		titulo: "GUITARRA",
+		descricao: "Instrumentos, elétrica, modificações e restauração.",
+		imagem: "/images/gtr-01.jpeg",
+		link: "/projetos/gtr-01",
 		categorias: [
+			["LUTHIERIA", "luthieria"],
+			["ÁUDIO", "audio"],
 			["ELETRÔNICA", "eletronica"],
-			["PROGRAMAÇÃO", "programacao"],
-			["AUTOMAÇÃO", "automacao"],
 		],
 	},
 	{
@@ -24,14 +25,15 @@ const projetos = [
 		],
 	},
 	{
-		tipo: "REPARO",
+		tipo: "PROJETO",
 		numero: "003",
-		titulo: "LUTHIERIA ELÉTRICA",
-		descricao: "Instrumentos, elétrica, modificações e restauração.",
-		imagem: "/images/luthieria.svg",
+		titulo: "MODBUS SNIFFER",
+		descricao: "Monitoramento e diagnóstico de barramentos RS485.",
+		imagem: "/images/sniffer.svg",
 		categorias: [
-			["LUTHIERIA", "luthieria"],
-			["ÁUDIO", "audio"],
+			["ELETRÔNICA", "eletronica"],
+			["PROGRAMAÇÃO", "programacao"],
+			["AUTOMAÇÃO", "automacao"],
 		],
 	},
 ];
@@ -816,7 +818,7 @@ const areas = [
 						PROJETOS
 					</a>
 
-					<a href="#playlist">
+					<a href="/playlist">
 						PLAYLIST
 					</a>
 
@@ -828,7 +830,7 @@ const areas = [
 						CONTRIBUIÇÕES $
 					</a>
 
-					<a href="#sobre">
+					<a href="/sobre">
 						SOBRE
 					</a>
 				</div>
@@ -920,7 +922,7 @@ const areas = [
 						{
 							projetos.map((projeto) => (
 
-								<article class="card">
+								<a href={projeto.link} class="card">
 
 									<div class="card-image">
 										<img
@@ -973,7 +975,7 @@ const areas = [
 
 									</div>
 
-								</article>
+								</a>
 
 							))
 						}
@@ -986,8 +988,7 @@ const areas = [
 
 					<a
 						class="quick"
-						id="playlist"
-						href="#"
+						href="/playlist"
 					>
 						<div
 							class="quick-icon audio"
@@ -1078,7 +1079,7 @@ const areas = [
 					<a
 						class="quick"
 						id="sobre"
-						href="#"
+						href="/sobre"
 					>
 						<div
 							class="quick-icon eletronica"
