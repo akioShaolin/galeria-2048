@@ -1,0 +1,322 @@
+---
+const trabalhos = [
+	{
+		numero: "01",
+		titulo: "Modbus Sniffer",
+		tipo: "Eletrônica · Programação · Automação",
+		texto: "Uma ferramenta que evoluiu junto com os problemas encontrados em campo.",
+		cor: "#caff33",
+	},
+	{
+		numero: "02",
+		titulo: "Pedais & Circuitos",
+		tipo: "Áudio · Eletrônica · Música",
+		texto: "Do sinal elétrico ao som: construção, medição, escuta e experimentação.",
+		cor: "#ff4fce",
+	},
+	{
+		numero: "03",
+		titulo: "Luthieria elétrica",
+		tipo: "Instrumentos · Madeira · Elétrica",
+		texto: "Instrumentos como objetos técnicos: reparos, modificações e construção.",
+		cor: "#ffd43b",
+	},
+];
+---
+
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width" />
+	<title>Galeria -2048 / Editorial</title>
+
+	<style>
+		:root {
+			--bg:#090a0b;
+			--text:#f0f0ed;
+			--muted:#858585;
+			--line:#292929;
+		}
+
+		* { box-sizing:border-box; }
+
+		body {
+			margin:0;
+			background:var(--bg);
+			color:var(--text);
+			font-family:Arial, Helvetica, sans-serif;
+		}
+
+		.wrap {
+			width:min(1280px, calc(100% - 50px));
+			margin:auto;
+		}
+
+		header {
+			height:90px;
+			display:flex;
+			align-items:center;
+			border-bottom:1px solid var(--line);
+		}
+
+		nav {
+			width:100%;
+			display:flex;
+			justify-content:space-between;
+			align-items:center;
+		}
+
+		.brand {
+			font-weight:800;
+			font-size:1.2rem;
+		}
+
+		nav .right {
+			display:flex;
+			gap:30px;
+			color:var(--muted);
+			font-size:.8rem;
+		}
+
+		.hero {
+			padding:110px 0 100px;
+			border-bottom:1px solid var(--line);
+		}
+
+		.hero-index {
+			color:#caff33;
+			font-size:.75rem;
+			letter-spacing:.15em;
+			margin-bottom:25px;
+		}
+
+		h1 {
+			font-size:clamp(5rem, 15vw, 12rem);
+			line-height:.72;
+			letter-spacing:-.09em;
+			margin:0;
+		}
+
+		.intro {
+			margin-top:80px;
+			display:grid;
+			grid-template-columns:1fr 1fr;
+			gap:80px;
+		}
+
+		.intro-big {
+			font-size:clamp(1.8rem, 4vw, 3.4rem);
+			line-height:1.05;
+			letter-spacing:-.045em;
+		}
+
+		.intro-small {
+			color:var(--muted);
+			font-size:1.05rem;
+			line-height:1.8;
+			max-width:560px;
+		}
+
+		.collection {
+			padding:100px 0;
+		}
+
+		.collection-label {
+			font-size:.7rem;
+			letter-spacing:.15em;
+			color:var(--muted);
+			margin-bottom:40px;
+		}
+
+		.work {
+			position:relative;
+			display:grid;
+			grid-template-columns:80px 1fr 300px;
+			gap:40px;
+			padding:55px 0;
+			border-top:1px solid var(--line);
+			overflow:hidden;
+		}
+
+		.work:last-child {
+			border-bottom:1px solid var(--line);
+		}
+
+		.work::before {
+			content:"";
+			position:absolute;
+			left:0;
+			top:0;
+			height:2px;
+			width:0;
+			background:var(--work-color);
+			transition:width .35s ease;
+		}
+
+		.work:hover::before {
+			width:100%;
+		}
+
+		.number {
+			color:var(--work-color);
+			font-size:.75rem;
+		}
+
+		.work h2 {
+			margin:0;
+			font-size:clamp(2.2rem,5vw,5rem);
+			letter-spacing:-.06em;
+			line-height:.9;
+		}
+
+		.work-type {
+			margin-top:16px;
+			color:var(--work-color);
+			font-size:.7rem;
+			text-transform:uppercase;
+			letter-spacing:.08em;
+		}
+
+		.work-text {
+			color:var(--muted);
+			line-height:1.7;
+			align-self:end;
+		}
+
+		.manifesto {
+			padding:130px 0;
+			display:grid;
+			grid-template-columns:1fr 2fr;
+			gap:80px;
+		}
+
+		.manifesto-label {
+			color:var(--muted);
+			font-size:.7rem;
+			letter-spacing:.15em;
+		}
+
+		.manifesto-text {
+			font-size:clamp(2rem,4vw,4rem);
+			line-height:1.08;
+			letter-spacing:-.045em;
+		}
+
+		.manifesto-text span {
+			color:var(--muted);
+		}
+
+		footer {
+			border-top:1px solid var(--line);
+			padding:35px 0;
+			color:var(--muted);
+			font-size:.72rem;
+		}
+
+		.footer {
+			display:flex;
+			justify-content:space-between;
+		}
+
+		@media(max-width:800px) {
+			.intro,
+			.manifesto {
+				grid-template-columns:1fr;
+				gap:30px;
+			}
+
+			.work {
+				grid-template-columns:40px 1fr;
+			}
+
+			.work-text {
+				grid-column:2;
+			}
+
+			nav .right {
+				display:none;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<div class="wrap">
+			<nav>
+				<div class="brand">GALERIA -2048</div>
+
+				<div class="right">
+					<span>ACERVO</span>
+					<span>SOBRE</span>
+					<span>AKIOSHAOLIN ↗</span>
+				</div>
+			</nav>
+		</div>
+	</header>
+
+	<main class="wrap">
+		<section class="hero">
+			<div class="hero-index">ARQUIVO / 2048</div>
+
+			<h1>GALERIA<br />-2048</h1>
+
+			<div class="intro">
+				<div class="intro-big">
+					Engenharia, música e curiosidade no mesmo espaço.
+				</div>
+
+				<div class="intro-small">
+					Um acervo independente de projetos e processos.
+					Da comunicação entre máquinas ao circuito de um pedal.
+					Do código à madeira. Do problema ao experimento.
+				</div>
+			</div>
+		</section>
+
+		<section class="collection">
+			<div class="collection-label">TRABALHOS SELECIONADOS / 001—003</div>
+
+			{trabalhos.map((trabalho) => (
+				<article
+					class="work"
+					style={`--work-color:${trabalho.cor}`}
+				>
+					<div class="number">{trabalho.numero}</div>
+
+					<div>
+						<h2>{trabalho.titulo}</h2>
+						<div class="work-type">{trabalho.tipo}</div>
+					</div>
+
+					<div class="work-text">
+						{trabalho.texto}
+					</div>
+				</article>
+			))}
+		</section>
+
+		<section class="manifesto">
+			<div class="manifesto-label">
+				[ SOBRE A GALERIA ]
+			</div>
+
+			<div class="manifesto-text">
+				Não apenas o que funcionou.
+				<span>
+					Versões, erros, hipóteses, medições, reparos e caminhos abandonados
+					também fazem parte do projeto.
+				</span>
+			</div>
+		</section>
+	</main>
+
+	<footer>
+		<div class="wrap footer">
+			<span>GALERIA -2048</span>
+			<span>POR AKIOSHAOLIN</span>
+			<span>BRASIL · 2026</span>
+		</div>
+	</footer>
+</body>
+</html>

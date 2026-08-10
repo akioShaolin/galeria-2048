@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <rect width="1200" height="600" fill="#080b0d"/>
+
+  <g stroke="#263238" stroke-width="1" opacity=".65">
+    <path d="M0 100H1200M0 200H1200M0 300H1200M0 400H1200M0 500H1200"/>
+    <path d="M100 0V600M200 0V600M300 0V600M400 0V600M500 0V600M600 0V600M700 0V600M800 0V600M900 0V600M1000 0V600M1100 0V600"/>
+  </g>
+
+  <g transform="translate(100 130)">
+    <path
+      d="M110 160
+         C160 45 275 70 330 130
+         C400 210 495 155 560 105
+         C645 40 785 80 820 180
+         C850 270 775 345 675 335
+         C570 325 525 265 440 305
+         C350 350 240 365 155 315
+         C80 270 65 220 110 160Z"
+      fill="#17120b"
+      stroke="#ffe000"
+      stroke-width="4"/>
+
+    <rect x="810" y="185" width="280" height="55"
+          rx="8"
+          fill="#161412"
+          stroke="#ffe000"
+          stroke-width="3"/>
+
+    <g stroke="#ff20c7" stroke-width="3">
+      <rect x="330" y="175" width="100" height="32" fill="#09090a"/>
+      <rect x="465" y="175" width="100" height="32" fill="#09090a"/>
+    </g>
+
+    <circle cx="630" cy="235" r="17"
+            fill="#00d9ff"/>
+
+    <circle cx="680" cy="265" r="17"
+            fill="#ff8a00"/>
+
+    <g stroke="#7f8d93" stroke-width="2">
+      <path d="M830 194H1080"/>
+      <path d="M830 202H1080"/>
+      <path d="M830 210H1080"/>
+      <path d="M830 218H1080"/>
+      <path d="M830 226H1080"/>
+      <path d="M830 234H1080"/>
+    </g>
+
+    <text x="440" y="260"
+          fill="#e8eeee"
+          font-family="monospace"
+          font-size="28"
+          text-anchor="middle">
+      ELECTRIC
+    </text>
+  </g>
+</svg>

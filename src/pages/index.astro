@@ -1,0 +1,1121 @@
+---
+const projetos = [
+	{
+		tipo: "PROJETO",
+		numero: "001",
+		titulo: "MODBUS SNIFFER",
+		descricao: "Monitoramento e diagnóstico de barramentos RS485.",
+		imagem: "/images/sniffer.svg",
+		categorias: [
+			["ELETRÔNICA", "eletronica"],
+			["PROGRAMAÇÃO", "programacao"],
+			["AUTOMAÇÃO", "automacao"],
+		],
+	},
+	{
+		tipo: "EXPERIMENTO",
+		numero: "002",
+		titulo: "PEDAL DE ÁUDIO",
+		descricao: "Circuitos analógicos observados da entrada à saída.",
+		imagem: "/images/pedal.svg",
+		categorias: [
+			["ÁUDIO", "audio"],
+			["ELETRÔNICA", "eletronica"],
+		],
+	},
+	{
+		tipo: "REPARO",
+		numero: "003",
+		titulo: "LUTHIERIA ELÉTRICA",
+		descricao: "Instrumentos, elétrica, modificações e restauração.",
+		imagem: "/images/luthieria.svg",
+		categorias: [
+			["LUTHIERIA", "luthieria"],
+			["ÁUDIO", "audio"],
+		],
+	},
+];
+
+const areas = [
+	["ELETRÔNICA", "eletronica"],
+	["PROGRAMAÇÃO", "programacao"],
+	["AUTOMAÇÃO", "automacao"],
+	["ÁUDIO", "audio"],
+	["LUTHIERIA", "luthieria"],
+	["EXPERIMENTAÇÃO", "experimentacao"],
+];
+---
+
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1"
+		/>
+
+		<meta
+			name="description"
+			content="Galeria -2048 — projetos, experiências e processos envolvendo eletrônica, programação, automação, áudio, música e luthieria."
+		/>
+
+		<title>Galeria -2048</title>
+
+		<style>
+			:root {
+				--bg: #050708;
+				--surface: #090c0e;
+				--surface-hover: #0d1114;
+				--line: #293238;
+
+				--text: #f0f2f2;
+				--muted: #8c979d;
+
+				--eletronica: #cfff00;
+				--programacao: #00d9ff;
+				--automacao: #ff8a00;
+				--audio: #ff20c7;
+				--luthieria: #ffe000;
+				--experimentacao: #a95cff;
+
+				--white-neon: #ffffff;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			html {
+				background: var(--bg);
+				scroll-behavior: smooth;
+			}
+
+			body {
+				margin: 0;
+				background:
+					radial-gradient(
+						circle at 50% -300px,
+						rgba(255, 255, 255, 0.045),
+						transparent 650px
+					),
+					var(--bg);
+
+				color: var(--text);
+
+				font-family:
+					"Courier New",
+					Courier,
+					monospace;
+			}
+
+			a {
+				color: inherit;
+				text-decoration: none;
+			}
+
+			.container {
+				width: min(1380px, calc(100% - 80px));
+				margin: 0 auto;
+			}
+
+			/* =========================
+			   LETREIRO
+			========================= */
+
+			.sign-wrapper {
+				padding: 24px 18px 10px;
+				border-bottom: 1px solid var(--line);
+				background:
+					linear-gradient(
+						to bottom,
+						#020303,
+						#070909
+					);
+			}
+
+			.sign {
+				position: relative;
+				width: min(1500px, 100%);
+				margin: auto;
+
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: clamp(20px, 4vw, 70px);
+
+				min-height: 150px;
+
+				background:
+					linear-gradient(
+						rgba(255,255,255,.018) 1px,
+						transparent 1px
+					),
+					linear-gradient(
+						90deg,
+						rgba(255,255,255,.018) 1px,
+						transparent 1px
+					);
+
+				background-size: 38px 38px;
+			}
+
+			.sign::before,
+			.sign::after {
+				content: "";
+				position: absolute;
+				left: 1%;
+				right: 1%;
+				height: 3px;
+
+				background: #30383d;
+				box-shadow:
+					0 30px #20272b,
+					0 -30px #20272b;
+
+				opacity: .85;
+				z-index: 0;
+			}
+
+			.sign::before {
+				top: 47%;
+			}
+
+			.neon {
+				position: relative;
+				z-index: 1;
+
+				font-family:
+					Arial,
+					Helvetica,
+					sans-serif;
+
+				font-weight: 300;
+				line-height: .8;
+				letter-spacing: .02em;
+
+				font-size: clamp(4rem, 8.8vw, 9rem);
+
+				-webkit-text-stroke: 2px currentColor;
+				color: transparent;
+			}
+
+			.neon-word {
+				color: transparent;
+				-webkit-text-stroke: 2px white;
+
+				text-shadow:
+					0 0 4px #fff,
+					0 0 8px #fff,
+					0 0 18px rgba(255,255,255,.8),
+					0 0 38px rgba(255,255,255,.35);
+			}
+
+			.neon-code {
+				display: flex;
+				align-items: center;
+				letter-spacing: .03em;
+			}
+
+			.neon-char {
+				display: inline-block;
+			}
+
+			.minus {
+				color: transparent;
+				-webkit-text-stroke: 2px #fff;
+
+				text-shadow:
+					0 0 5px #fff,
+					0 0 15px rgba(255,255,255,.8);
+			}
+
+			.n2 {
+				color: transparent;
+				-webkit-text-stroke: 2px var(--eletronica);
+
+				text-shadow:
+					0 0 4px var(--eletronica),
+					0 0 14px var(--eletronica),
+					0 0 35px rgba(207,255,0,.5);
+
+				animation: blink2 10s 1 forwards;
+			}
+
+			.n0 {
+				color: transparent;
+				-webkit-text-stroke: 2px var(--programacao);
+
+				text-shadow:
+					0 0 4px var(--programacao),
+					0 0 14px var(--programacao),
+					0 0 35px rgba(0,217,255,.5);
+			}
+
+			.n4 {
+				color: transparent;
+				-webkit-text-stroke: 2px var(--automacao);
+
+				text-shadow:
+					0 0 4px var(--automacao),
+					0 0 14px var(--automacao),
+					0 0 35px rgba(255,138,0,.5);
+
+				animation: blink4 10s 1 forwards;
+			}
+
+			.n8 {
+				color: transparent;
+				-webkit-text-stroke: 2px var(--audio);
+
+				text-shadow:
+					0 0 4px var(--audio),
+					0 0 14px var(--audio),
+					0 0 35px rgba(255,32,199,.5);
+
+				animation: blink8 10s 1 forwards;
+			}
+
+			/* 2 piscadas */
+			@keyframes blink2 {
+				0%, 4%, 8%, 12%, 100% {
+					opacity: 1;
+				}
+
+				2%, 6% {
+					opacity: .12;
+				}
+			}
+
+			/* 4 piscadas */
+			@keyframes blink4 {
+				0%, 3%, 6%, 9%, 12%, 15%, 18%, 21%, 100% {
+					opacity: 1;
+				}
+
+				1.5%, 4.5%, 7.5%, 10.5% {
+					opacity: .12;
+				}
+			}
+
+			/* 8 piscadas */
+			@keyframes blink8 {
+				0%,
+				2%, 4%, 6%, 8%, 10%, 12%, 14%, 16%,
+				18%, 20%, 22%, 24%, 26%, 28%, 30%,
+				100% {
+					opacity: 1;
+				}
+
+				1%, 3%, 5%, 7%, 9%, 11%, 13%, 15% {
+					opacity: .08;
+				}
+			}
+
+			/* =========================
+			   MENU
+			========================= */
+
+			nav {
+				border-bottom: 1px solid var(--line);
+			}
+
+			.nav-inner {
+				height: 62px;
+
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				gap: clamp(30px, 6vw, 100px);
+			}
+
+			.nav-inner a {
+				position: relative;
+
+				font-size: .82rem;
+				letter-spacing: .03em;
+
+				color: #d5dadc;
+			}
+
+			.nav-inner a:hover {
+				color: white;
+			}
+
+			.nav-inner a.active {
+				color: var(--eletronica);
+			}
+
+			.nav-inner a.active::after {
+				content: "";
+
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: -22px;
+
+				height: 2px;
+
+				background: var(--eletronica);
+
+				box-shadow:
+					0 0 8px var(--eletronica);
+			}
+
+			/* =========================
+			   HERO
+			========================= */
+
+			.hero {
+				display: grid;
+				grid-template-columns: 1.7fr .9fr;
+				gap: 70px;
+
+				padding: 65px 0 55px;
+
+				border-bottom: 1px solid var(--line);
+			}
+
+			.path {
+				color: var(--programacao);
+				font-size: .82rem;
+
+				margin-bottom: 20px;
+			}
+
+			h1 {
+				font-size: clamp(3.5rem, 6vw, 6rem);
+				line-height: .92;
+
+				letter-spacing: .025em;
+
+				margin: 0 0 22px;
+
+				font-family:
+					Georgia,
+					"Times New Roman",
+					serif;
+
+				font-weight: 700;
+			}
+
+			.hero-text {
+				color: var(--muted);
+
+				font-size: .93rem;
+				line-height: 1.65;
+
+				max-width: 660px;
+			}
+
+			.tags {
+				display: flex;
+				flex-wrap: wrap;
+
+				gap: 14px;
+
+				margin-top: 24px;
+			}
+
+			.tag {
+				padding: 7px 14px;
+
+				border: 1px solid currentColor;
+
+				font-size: .7rem;
+				font-weight: bold;
+				letter-spacing: .03em;
+
+				box-shadow:
+					inset 0 0 8px rgba(255,255,255,.02);
+			}
+
+			.eletronica {
+				color: var(--eletronica);
+			}
+
+			.programacao {
+				color: var(--programacao);
+			}
+
+			.automacao {
+				color: var(--automacao);
+			}
+
+			.audio {
+				color: var(--audio);
+			}
+
+			.luthieria {
+				color: var(--luthieria);
+			}
+
+			.experimentacao {
+				color: var(--experimentacao);
+			}
+
+			.system {
+				border-left: 1px solid var(--line);
+
+				padding-left: 38px;
+			}
+
+			.system-title {
+				color: var(--muted);
+
+				font-size: .72rem;
+
+				letter-spacing: .08em;
+
+				margin-bottom: 20px;
+			}
+
+			.system-row {
+				display: grid;
+				grid-template-columns: 14px 1fr auto;
+				align-items: center;
+
+				gap: 12px;
+
+				padding: 14px 0;
+
+				border-bottom: 1px solid var(--line);
+
+				font-size: .78rem;
+			}
+
+			.dot {
+				width: 7px;
+				height: 7px;
+
+				border-radius: 50%;
+
+				background: currentColor;
+
+				box-shadow:
+					0 0 10px currentColor;
+			}
+
+			.active-label {
+				font-weight: bold;
+			}
+
+			/* =========================
+			   PROJETOS
+			========================= */
+
+			.projects {
+				padding: 25px 0 20px;
+			}
+
+			.projects-header {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+
+				margin-bottom: 20px;
+			}
+
+			.section-code {
+				color: var(--muted);
+
+				font-size: .78rem;
+			}
+
+			.see-all {
+				color: var(--eletronica);
+
+				font-size: .75rem;
+				font-weight: bold;
+			}
+
+			.cards {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+
+				gap: 15px;
+			}
+
+			.card {
+				border: 1px solid var(--line);
+
+				background:
+					linear-gradient(
+						to bottom,
+						#0a0d0f,
+						#080a0c
+					);
+
+				transition:
+					transform .2s ease,
+					border-color .2s ease;
+			}
+
+			.card:hover {
+				transform: translateY(-4px);
+				border-color: #475259;
+			}
+
+			.card-image {
+				height: 215px;
+
+				background:
+					linear-gradient(
+						135deg,
+						#11171b,
+						#070809
+					);
+
+				overflow: hidden;
+			}
+
+			.card-image img {
+				width: 100%;
+				height: 100%;
+
+				object-fit: cover;
+
+				filter:
+					saturate(.85)
+					contrast(1.08)
+					brightness(.78);
+
+				transition:
+					filter .3s ease,
+					transform .4s ease;
+			}
+
+			.card:hover img {
+				filter:
+					saturate(1)
+					contrast(1.05)
+					brightness(.92);
+
+				transform: scale(1.025);
+			}
+
+			.card-content {
+				padding: 18px;
+			}
+
+			.card-code {
+				font-size: .73rem;
+
+				margin-bottom: 10px;
+			}
+
+			.card h2 {
+				margin: 0 0 12px;
+
+				font-size: 1.35rem;
+				letter-spacing: .02em;
+			}
+
+			.card .tags {
+				margin: 0 0 14px;
+				gap: 9px;
+			}
+
+			.card .tag {
+				padding: 5px 10px;
+
+				font-size: .62rem;
+			}
+
+			.card-bottom {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+
+				gap: 20px;
+			}
+
+			.card-description {
+				color: var(--muted);
+
+				font-size: .7rem;
+				line-height: 1.5;
+			}
+
+			.arrow {
+				color: var(--eletronica);
+
+				font-size: 2rem;
+
+				line-height: 1;
+			}
+
+			/* =========================
+			   LINKS
+			========================= */
+
+			.quick-links {
+				display: grid;
+				grid-template-columns: repeat(5, 1fr);
+
+				border-top: 1px solid var(--line);
+				border-bottom: 1px solid var(--line);
+
+				margin-top: 18px;
+			}
+
+			.quick {
+				min-height: 120px;
+
+				display: flex;
+				align-items: center;
+
+				gap: 18px;
+
+				padding: 22px;
+
+				border-right: 1px solid var(--line);
+
+				transition:
+					background .2s ease;
+			}
+
+			.quick:last-child {
+				border-right: 0;
+			}
+
+			.quick:hover {
+				background: rgba(255,255,255,.025);
+			}
+
+			.quick-icon {
+				font-size: 2.2rem;
+
+				width: 48px;
+
+				text-align: center;
+			}
+
+			.quick-title {
+				font-size: .75rem;
+				font-weight: bold;
+
+				margin-bottom: 7px;
+			}
+
+			.quick-description {
+				color: var(--muted);
+
+				font-size: .63rem;
+				line-height: 1.4;
+			}
+
+			/* =========================
+			   FOOTER
+			========================= */
+
+			footer {
+				padding: 24px 0;
+
+				color: var(--muted);
+
+				font-size: .67rem;
+			}
+
+			.footer-inner {
+				display: flex;
+				justify-content: space-between;
+
+				gap: 30px;
+			}
+
+			/* =========================
+			   MOBILE
+			========================= */
+
+			@media (max-width: 950px) {
+				.container {
+					width: min(100% - 36px, 1380px);
+				}
+
+				.sign {
+					flex-direction: column;
+					gap: 20px;
+
+					padding: 35px 0;
+				}
+
+				.neon {
+					font-size: clamp(3rem, 15vw, 7rem);
+				}
+
+				.nav-inner {
+					overflow-x: auto;
+					justify-content: flex-start;
+
+					padding: 0 20px;
+				}
+
+				.hero {
+					grid-template-columns: 1fr;
+				}
+
+				.system {
+					border-left: 0;
+					border-top: 1px solid var(--line);
+
+					padding:
+						35px 0 0;
+				}
+
+				.cards {
+					grid-template-columns: 1fr;
+				}
+
+				.quick-links {
+					grid-template-columns: 1fr;
+				}
+
+				.quick {
+					border-right: 0;
+					border-bottom: 1px solid var(--line);
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				* {
+					animation: none !important;
+					transition: none !important;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<header>
+			<div class="sign-wrapper">
+				<div class="sign">
+
+					<div class="neon neon-word">
+						GALERIA
+					</div>
+
+					<div
+						class="neon neon-code"
+						aria-label="-2048"
+					>
+						<span class="neon-char minus">-</span>
+						<span class="neon-char n2">2</span>
+						<span class="neon-char n0">0</span>
+						<span class="neon-char n4">4</span>
+						<span class="neon-char n8">8</span>
+					</div>
+
+				</div>
+			</div>
+
+			<nav>
+				<div class="container nav-inner">
+					<a class="active" href="#projetos">
+						PROJETOS
+					</a>
+
+					<a href="#playlist">
+						PLAYLIST
+					</a>
+
+					<a href="#curriculo">
+						CURRÍCULO ONLINE
+					</a>
+
+					<a href="#contribuicoes">
+						CONTRIBUIÇÕES $
+					</a>
+
+					<a href="#sobre">
+						SOBRE
+					</a>
+				</div>
+			</nav>
+		</header>
+
+		<main>
+			<div class="container">
+
+				<section class="hero">
+
+					<div>
+						<div class="path">
+							~/GALERIA/ACERVO/
+						</div>
+
+						<h1>
+							IDEIAS<br />
+							EM SINAL.
+						</h1>
+
+						<div class="hero-text">
+							Um registro aberto de coisas construídas,
+							desmontadas, programadas, medidas,
+							modificadas e compreendidas.
+						</div>
+
+						<div class="tags">
+							{
+								areas.map(([nome, classe]) => (
+									<span class={`tag ${classe}`}>
+										{nome}
+									</span>
+								))
+							}
+						</div>
+					</div>
+
+					<aside class="system">
+
+						<div class="system-title">
+							[ SYSTEM / ÁREAS ]
+						</div>
+
+						{
+							areas.map(([nome, classe]) => (
+								<div class="system-row">
+									<span
+										class={`dot ${classe}`}
+									></span>
+
+									<span>
+										{nome}
+									</span>
+
+									<span
+										class={`active-label ${classe}`}
+									>
+										ACTIVE
+									</span>
+								</div>
+							))
+						}
+
+					</aside>
+
+				</section>
+
+				<section
+					class="projects"
+					id="projetos"
+				>
+
+					<div class="projects-header">
+						<div class="section-code">
+							[ ACERVO / PROJETOS RECENTES ]
+						</div>
+
+						<a
+							class="see-all"
+							href="#"
+						>
+							VER TODOS →
+						</a>
+					</div>
+
+					<div class="cards">
+
+						{
+							projetos.map((projeto) => (
+
+								<article class="card">
+
+									<div class="card-image">
+										<img
+											src={projeto.imagem}
+											alt={projeto.titulo}
+										/>
+									</div>
+
+									<div class="card-content">
+
+										<div
+											class={`card-code ${
+												projeto.categorias[0][1]
+											}`}
+										>
+											{projeto.tipo}
+											&nbsp;/&nbsp;
+											{projeto.numero}
+										</div>
+
+										<h2>
+											{projeto.titulo}
+										</h2>
+
+										<div class="tags">
+											{
+												projeto.categorias.map(
+													([nome, classe]) => (
+														<span
+															class={`tag ${classe}`}
+														>
+															{nome}
+														</span>
+													)
+												)
+											}
+										</div>
+
+										<div class="card-bottom">
+
+											<div class="card-description">
+												{projeto.descricao}
+											</div>
+
+											<div class="arrow">
+												→
+											</div>
+
+										</div>
+
+									</div>
+
+								</article>
+
+							))
+						}
+
+					</div>
+
+				</section>
+
+				<section class="quick-links">
+
+					<a
+						class="quick"
+						id="playlist"
+						href="#"
+					>
+						<div
+							class="quick-icon audio"
+						>
+							♫
+						</div>
+
+						<div>
+							<div class="quick-title">
+								PLAYLIST
+							</div>
+
+							<div class="quick-description">
+								Músicas que inspiram
+								e acompanham o laboratório.
+							</div>
+						</div>
+					</a>
+
+					<a
+						class="quick"
+						id="curriculo"
+						href="#"
+					>
+						<div
+							class="quick-icon programacao"
+						>
+							▤
+						</div>
+
+						<div>
+							<div class="quick-title">
+								CURRÍCULO ONLINE
+							</div>
+
+							<div class="quick-description">
+								Meu percurso, habilidades
+								e experiências.
+							</div>
+						</div>
+					</a>
+
+					<a
+						class="quick"
+						id="contribuicoes"
+						href="#"
+					>
+						<div
+							class="quick-icon automacao"
+						>
+							♡
+						</div>
+
+						<div>
+							<div class="quick-title">
+								CONTRIBUIÇÕES $
+							</div>
+
+							<div class="quick-description">
+								Apoie o projeto e mantenha
+								a galeria viva.
+							</div>
+						</div>
+					</a>
+
+					<a
+						class="quick"
+						href="#"
+					>
+						<div
+							class="quick-icon experimentacao"
+						>
+							⚗
+						</div>
+
+						<div>
+							<div class="quick-title">
+								EXPERIMENTAÇÃO
+							</div>
+
+							<div class="quick-description">
+								Testes, ideias e coisas
+								que ainda vão virar projeto.
+							</div>
+						</div>
+					</a>
+
+					<a
+						class="quick"
+						id="sobre"
+						href="#"
+					>
+						<div
+							class="quick-icon eletronica"
+						>
+							⌁
+						</div>
+
+						<div>
+							<div class="quick-title">
+								SOBRE
+							</div>
+
+							<div class="quick-description">
+								Sobre a galeria,
+								o propósito e o criador.
+							</div>
+						</div>
+					</a>
+
+				</section>
+
+			</div>
+		</main>
+
+		<footer>
+			<div class="container footer-inner">
+
+				<span>
+					GALERIA -2048 // AKIOSHAOLIN
+				</span>
+
+				<span>
+					ARQUIVO EM CONSTANTE CONSTRUÇÃO
+				</span>
+
+			</div>
+		</footer>
+
+	</body>
+</html>
