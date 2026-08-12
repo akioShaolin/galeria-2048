@@ -5,7 +5,6 @@ import NeonSign from "../components/NeonSign.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import Tag from "../components/Tag.astro";
 import { projects } from "../data/projects";
-import { withBase } from "../utils/urls";
 
 const areas = [
 	["ELETRÔNICA", "eletronica"],
@@ -740,7 +739,7 @@ const areas = [
 						PROJETOS
 					</a>
 
-					<a href={withBase("/playlist")}>
+					<a href="/playlist/">
 						PLAYLIST
 					</a>
 
@@ -752,7 +751,7 @@ const areas = [
 						CONTRIBUIÇÕES $
 					</a>
 
-					<a href={withBase("/sobre")}>
+					<a href="/sobre/">
 						SOBRE
 					</a>
 				</div>
@@ -844,7 +843,7 @@ const areas = [
 
 					<a
 						class="quick"
-						href={withBase("/playlist")}
+						href="/playlist/"
 					>
 						<div
 							class="quick-icon audio"
@@ -927,7 +926,7 @@ const areas = [
 					<a
 						class="quick"
 						id="sobre"
-						href={withBase("/sobre")}
+						href="/sobre/"
 					>
 						<div
 							class="quick-icon eletronica"

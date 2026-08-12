@@ -2,7 +2,6 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
-import { withBase } from "../utils/urls";
 
 const areas = [
 	{
@@ -840,7 +839,7 @@ const ferramentas = [
 
 							<a
 								class="link"
-								href={withBase("/playlist")}
+								href="/playlist/"
 							>
 								PLAYLIST
 								<span>→</span>
@@ -848,7 +847,7 @@ const ferramentas = [
 
 							<a
 								class="link"
-								href={withBase("/projetos/gtr-01")}
+								href="/projetos/gtr-01/"
 							>
 								GTR-01
 								<span>→</span>
@@ -856,7 +855,7 @@ const ferramentas = [
 
 							<a
 								class="link"
-								href={withBase("/")}
+								href="/"
 							>
 								ACERVO
 								<span>→</span>

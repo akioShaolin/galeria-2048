@@ -2,7 +2,6 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
-import { withBase } from "../utils/urls";
 ---
 
 <BaseLayout
@@ -397,7 +396,7 @@ import { withBase } from "../utils/urls";
 
 						<a
 							class="button"
-							href={withBase("/")}
+							href="/"
 						>
 							← VOLTAR PARA A GALERIA
 						</a>

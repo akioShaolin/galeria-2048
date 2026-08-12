@@ -46,7 +46,7 @@ export const projects: Project[] = [
 		title: "GUITARRA",
 		description: "Instrumentos, elétrica, modificações e restauração.",
 		image: "/images/gtr-01.jpeg",
-		path: "/projetos/gtr-01",
+		path: "/projetos/gtr-01/",
 		categories: [
 			{ label: "LUTHIERIA", tone: "luthieria" },
 			{ label: "ÁUDIO", tone: "audio" },

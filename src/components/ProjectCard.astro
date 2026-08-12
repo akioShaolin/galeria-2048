@@ -1,7 +1,6 @@
 ---
 import Tag from "./Tag.astro";
 import type { Project } from "../data/projects";
-import { withBase } from "../utils/urls";
 
 interface Props {
 	project: Project;
@@ -11,9 +10,9 @@ const { project } = Astro.props;
 const Wrapper = project.path ? "a" : "article";
 ---
 
-<Wrapper href={project.path ? withBase(project.path) : undefined} class:list={["card", { future: !project.path }]}>
+<Wrapper href={project.path} class:list={["card", { future: !project.path }]}>
 	<div class="card-image">
-		<img src={withBase(project.image)} alt={project.title} />
+		<img src={project.image} alt={project.title} />
 	</div>
 
 	<div class="card-content">

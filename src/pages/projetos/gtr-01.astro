@@ -5,7 +5,6 @@ import SiteFooter from "../../components/SiteFooter.astro";
 import StatusGrid from "../../components/StatusGrid.astro";
 import Tag from "../../components/Tag.astro";
 import { getProject } from "../../data/projects";
-import { withBase } from "../../utils/urls";
 
 const project = getProject("gtr-01");
 
@@ -302,7 +301,7 @@ const page = project.page;
 
 			<figure class="hero-image">
 				<img
-					src={withBase(project.image)}
+					src={project.image}
 					alt="Guitarra GTR-01 em seu estado atual"
 				/>
 			</figure>
