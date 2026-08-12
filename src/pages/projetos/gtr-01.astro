@@ -1,89 +1,27 @@
 ---
-const etapas = [
-	{
-		ano: "—",
-		titulo: "Antes da Galeria",
-		texto: "A guitarra já carregava uma história de anos, passando por uso, modificações e períodos parada. Esta página começa como uma tentativa de reconstruir e documentar essa trajetória.",
-	},
-	{
-		ano: "2026",
-		titulo: "Retomando o projeto",
-		texto: "Desmontagem, limpeza e avaliação geral do instrumento. A partir daqui, as alterações deixam de existir apenas como lembranças e começam a ser registradas.",
-	},
-	{
-		ano: "2026",
-		titulo: "Nova configuração elétrica",
-		texto: "Revisão completa da elétrica, substituição de componentes, blindagem e experimentação com diferentes configurações de captadores e controles.",
-	},
-	{
-		ano: "2026",
-		titulo: "Peças e acabamento",
-		texto: "Desenvolvimento de novas molduras, tampa traseira, knobs e outros detalhes mecânicos e estéticos.",
-	},
-	{
-		ano: "AGORA",
-		titulo: "Eletrônica ativa",
-		texto: "Desenvolvimento e experimentação com pré-amplificadores JFET, buscando novas possibilidades sonoras sem abandonar a personalidade do instrumento.",
-	},
-];
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import { getProject } from "../../data/projects";
 
-const especificacoes = [
-	["Captador do braço", "Mini humbucker / dual rail"],
-	["Captador da ponte", "Humbucker"],
-	["Potenciômetros", "500 kΩ"],
-	["Tone", "3,3 nF"],
-	["Controles", "Volumes independentes"],
-	["Pré-amplificador", "Em desenvolvimento"],
-];
+const project = getProject("gtr-01");
+
+if (!project?.page) {
+	throw new Error("Dados do projeto GTR-01 não encontrados.");
+}
+
+const page = project.page;
 ---
 
-<!doctype html>
-<html lang="pt-BR">
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-	<title>GTR-01 — Galeria -2048</title>
-
-	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-	<style>
-		:root {
-			--bg:#050708;
-			--surface:#0a0d0f;
-			--line:#293238;
-			--text:#f0f2f2;
-			--muted:#8c979d;
-
-			--luthieria:#ffe000;
-			--audio:#ff20c7;
-			--eletronica:#cfff00;
-		}
-
-		* {
-			box-sizing:border-box;
-		}
-
-		html {
-			background:var(--bg);
-			scroll-behavior:smooth;
-		}
-
+<BaseLayout
+	title={`${page.code} — Galeria -2048`}
+	description="GTR-01 — uma guitarra em constante reconstrução, documentada como projeto aberto de luthieria, eletrônica e áudio."
+>
+	<style is:global>
 		body {
-			margin:0;
-			background:var(--bg);
-			color:var(--text);
 			font-family:Arial, Helvetica, sans-serif;
-		}
-
-		a {
-			color:inherit;
-			text-decoration:none;
-		}
-
-		.container {
-			width:min(1180px, calc(100% - 48px));
-			margin:auto;
 		}
 
 		header {
@@ -105,7 +43,7 @@ const especificacoes = [
 		.back {
 			font-family:monospace;
 			color:var(--muted);
-			font-size:.8rem;
+			font-size:.875rem;
 		}
 
 		.back:hover {
@@ -119,7 +57,8 @@ const especificacoes = [
 		.code {
 			font-family:monospace;
 			color:var(--luthieria);
-			font-size:.8rem;
+			font-size:.875rem;
+			line-height:1.5;
 			letter-spacing:.08em;
 			margin-bottom:25px;
 		}
@@ -148,7 +87,8 @@ const especificacoes = [
 
 		.tag {
 			font-family:monospace;
-			font-size:.7rem;
+			font-size:.875rem;
+			line-height:1.4;
 			padding:7px 10px;
 			border:1px solid currentColor;
 		}
@@ -159,33 +99,10 @@ const especificacoes = [
 
 		.status {
 			margin-top:55px;
-			display:grid;
-			grid-template-columns:repeat(3,1fr);
-			border:1px solid var(--line);
-		}
-
-		.status-item {
-			padding:20px;
-			border-right:1px solid var(--line);
-		}
-
-		.status-item:last-child {
-			border-right:0;
-		}
-
-		.status-label {
-			font-family:monospace;
-			font-size:.65rem;
-			color:var(--muted);
-			margin-bottom:8px;
-		}
-
-		.status-value {
-			font-family:monospace;
-			font-size:.85rem;
 		}
 
 		.hero-image {
+			margin:0;
 			height:clamp(350px, 55vw, 680px);
 			border:1px solid var(--line);
 			background:
@@ -194,12 +111,15 @@ const especificacoes = [
 				#090c0e;
 			background-size:40px 40px;
 
-			display:flex;
-			align-items:center;
-			justify-content:center;
+			overflow:hidden;
+		}
 
-			color:var(--muted);
-			font-family:monospace;
+		.hero-image img {
+			display:block;
+			width:100%;
+			height:100%;
+			object-fit:contain;
+			object-position:center;
 		}
 
 		section.content {
@@ -215,7 +135,8 @@ const especificacoes = [
 
 		.section-label {
 			font-family:monospace;
-			font-size:.72rem;
+			font-size:.875rem;
+			line-height:1.5;
 			color:var(--luthieria);
 			letter-spacing:.08em;
 		}
@@ -232,8 +153,9 @@ const especificacoes = [
 
 		.prose p {
 			color:var(--muted);
-			font-size:1.05rem;
-			line-height:1.85;
+			font-family:Georgia, "Times New Roman", serif;
+			font-size:1.125rem;
+			line-height:1.8;
 		}
 
 		.prose strong {
@@ -264,7 +186,8 @@ const especificacoes = [
 		.event-year {
 			font-family:monospace;
 			color:var(--luthieria);
-			font-size:.72rem;
+			font-size:.875rem;
+			line-height:1.5;
 			margin-bottom:10px;
 		}
 
@@ -275,7 +198,9 @@ const especificacoes = [
 
 		.event p {
 			color:var(--muted);
-			line-height:1.7;
+			font-family:Georgia, "Times New Roman", serif;
+			font-size:1.0625rem;
+			line-height:1.75;
 			max-width:700px;
 			margin:0;
 		}
@@ -291,7 +216,8 @@ const especificacoes = [
 			padding:17px 0;
 			border-bottom:1px solid var(--line);
 			font-family:monospace;
-			font-size:.82rem;
+			font-size:.875rem;
+			line-height:1.5;
 		}
 
 		.spec-name {
@@ -306,7 +232,8 @@ const especificacoes = [
 		.continues div {
 			color:var(--luthieria);
 			font-family:monospace;
-			font-size:.75rem;
+			font-size:.875rem;
+			line-height:1.5;
 			margin-bottom:20px;
 		}
 
@@ -320,7 +247,8 @@ const especificacoes = [
 			padding:30px 0;
 			color:var(--muted);
 			font-family:monospace;
-			font-size:.7rem;
+			font-size:.875rem;
+			line-height:1.5;
 		}
 
 		.footer {
@@ -334,42 +262,14 @@ const especificacoes = [
 				gap:30px;
 			}
 
-			.status {
-				grid-template-columns:1fr;
-			}
-
-			.status-item {
-				border-right:0;
-				border-bottom:1px solid var(--line);
-			}
-
-			.status-item:last-child {
-				border-bottom:0;
-			}
-
 			.spec {
 				grid-template-columns:1fr;
 				gap:7px;
 			}
 		}
 	</style>
-</head>
 
-<body>
-
-	<header>
-		<div class="container">
-			<nav>
-				<a class="brand" href="/">
-					GALERIA -2048
-				</a>
-
-				<a class="back" href="/">
-					← VOLTAR AO ACERVO
-				</a>
-			</nav>
-		</div>
-	</header>
+	<SiteHeader accent="var(--luthieria)" />
 
 	<main>
 
@@ -378,55 +278,33 @@ const especificacoes = [
 			<section class="hero">
 
 				<div class="code">
-					PROJETO / 001
+					{project.type} / {project.number}
 				</div>
 
 				<h1>
-					GTR-01
+					{page.code}
 				</h1>
 
 				<div class="subtitle">
-					Uma guitarra em constante reconstrução.
-					Um projeto que começou muito antes de existir
-					um lugar para documentá-lo.
+					{page.subtitle}
 				</div>
 
 				<div class="tags">
-					<span class="tag luthieria">LUTHIERIA</span>
-					<span class="tag eletronica">ELETRÔNICA</span>
-					<span class="tag audio">ÁUDIO</span>
+					{project.categories.map(({ label, tone }) => (
+						<Tag label={label} tone={tone} />
+					))}
 				</div>
 
-				<div class="status">
-
-					<div class="status-item">
-						<div class="status-label">STATUS</div>
-						<div class="status-value luthieria">
-							● EM DESENVOLVIMENTO
-						</div>
-					</div>
-
-					<div class="status-item">
-						<div class="status-label">INÍCIO</div>
-						<div class="status-value">
-							ANOS ATRÁS
-						</div>
-					</div>
-
-					<div class="status-item">
-						<div class="status-label">ÚLTIMA ATUALIZAÇÃO</div>
-						<div class="status-value">
-							2026
-						</div>
-					</div>
-
-				</div>
+				<div class="status"><StatusGrid items={page.status} /></div>
 
 			</section>
 
-			<div class="hero-image">
-				[ FOTO ATUAL DA GUITARRA ]
-			</div>
+			<figure class="hero-image">
+				<img
+					src={project.image}
+					alt="Guitarra GTR-01 em seu estado atual"
+				/>
+			</figure>
 
 			<section class="content">
 
@@ -490,19 +368,19 @@ const especificacoes = [
 						<div class="timeline">
 
 							{
-								etapas.map((etapa) => (
+								page.timeline.map((entry) => (
 									<article class="event">
 
 										<div class="event-year">
-											{etapa.ano}
+											{entry.year}
 										</div>
 
 										<h3>
-											{etapa.titulo}
+											{entry.title}
 										</h3>
 
 										<p>
-											{etapa.texto}
+											{entry.text}
 										</p>
 
 									</article>
@@ -534,15 +412,15 @@ const especificacoes = [
 						<div class="specs">
 
 							{
-								especificacoes.map(([nome, valor]) => (
+								page.specifications.map(({ name, value }) => (
 									<div class="spec">
 
 										<div class="spec-name">
-											{nome}
+											{name}
 										</div>
 
 										<div>
-											{valor}
+											{value}
 										</div>
 
 									</div>
@@ -573,12 +451,6 @@ const especificacoes = [
 
 	</main>
 
-	<footer>
-		<div class="container footer">
-			<span>GALERIA -2048 // AKIOSHAOLIN</span>
-			<span>PROJETO / 001</span>
-		</div>
-	</footer>
+	<SiteFooter rightText={`${project.type} / ${project.number}`} />
 
-</body>
-</html>
+</BaseLayout>

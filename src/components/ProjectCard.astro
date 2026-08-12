@@ -1,0 +1,57 @@
+---
+import Tag from "./Tag.astro";
+import type { Project } from "../data/projects";
+
+interface Props {
+	project: Project;
+}
+
+const { project } = Astro.props;
+const Wrapper = project.path ? "a" : "article";
+---
+
+<Wrapper href={project.path} class:list={["card", { future: !project.path }]}>
+	<div class="card-image">
+		<img src={project.image} alt={project.title} />
+	</div>
+
+	<div class="card-content">
+		<div class={`card-code ${project.categories[0].tone}`}>
+			{project.type}&nbsp;/&nbsp;{project.number}
+		</div>
+
+		{!project.path && <div class="availability">[ EM DESENVOLVIMENTO ]</div>}
+
+		<h2>{project.title}</h2>
+
+		<div class="tags">
+			{project.categories.map(({ label, tone }) => <Tag label={label} tone={tone} compact />)}
+		</div>
+
+		<div class="card-bottom">
+			<div class="card-description">{project.description}</div>
+			{project.path && <div class="arrow" aria-hidden="true">→</div>}
+		</div>
+	</div>
+</Wrapper>
+
+<style>
+	.future {
+		cursor: default;
+	}
+
+	.future:hover {
+		transform: none;
+		border-color: var(--line);
+	}
+
+	.availability {
+		margin: -2px 0 12px;
+		color: var(--muted);
+		font-family: monospace;
+		font-size: .875rem;
+		font-weight: bold;
+		line-height: 1.45;
+		letter-spacing: .03em;
+	}
+</style>

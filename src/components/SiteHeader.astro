@@ -1,0 +1,69 @@
+---
+interface Props {
+	mode?: "inner" | "error";
+	accent?: string;
+	statusText?: string;
+}
+
+const {
+	mode = "inner",
+	accent = "var(--programacao)",
+	statusText = "SINAL INTERROMPIDO",
+} = Astro.props;
+---
+
+<header style={`--header-accent: ${accent}`}>
+	<div class="container">
+		<nav>
+			<a class="brand" href="/">GALERIA -2048</a>
+
+			{
+				mode === "error" ? (
+					<div class="status">{statusText}</div>
+				) : (
+					<a class="back" href="/">← VOLTAR AO ACERVO</a>
+				)
+			}
+		</nav>
+	</div>
+</header>
+
+<style>
+	header {
+		border-bottom: 1px solid var(--line);
+	}
+
+	nav {
+		height: 70px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+	}
+
+	.brand {
+		font-weight: 800;
+		letter-spacing: -.04em;
+	}
+
+	.back,
+	.status {
+		font-family: monospace;
+		font-size: .875rem;
+		line-height: 1.5;
+	}
+
+	.back {
+		color: var(--muted);
+	}
+
+	.back:hover,
+	.status {
+		color: var(--header-accent);
+	}
+
+	.status {
+		font-weight: bold;
+		letter-spacing: .08em;
+	}
+</style>

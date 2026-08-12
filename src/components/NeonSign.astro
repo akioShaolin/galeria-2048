@@ -1,0 +1,56 @@
+<button
+	type="button"
+	class="neon-sign is-animating"
+	data-neon-sign
+	aria-label="Galeria -2048 — repetir animação do letreiro"
+>
+	<span class="neon neon-word">GALERIA</span>
+	<span class="neon neon-code" aria-hidden="true">
+		<span class="neon-char minus">-</span>
+		<span class="neon-char n2">2</span>
+		<span class="neon-char n0">0</span>
+		<span class="neon-char n4">4</span>
+		<span class="neon-char n8">8</span>
+	</span>
+</button>
+
+<style>
+	.neon-sign {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: clamp(20px, 4vw, 70px);
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+		appearance: none;
+		-webkit-appearance: none;
+	}
+
+	.neon-sign:focus-visible {
+		outline: 1px solid var(--programacao);
+		outline-offset: 12px;
+	}
+
+	@media (max-width: 950px) {
+		.neon-sign {
+			flex-direction: column;
+			gap: 20px;
+		}
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>("[data-neon-sign]").forEach((sign) => {
+		sign.addEventListener("click", () => {
+			sign.classList.remove("is-animating");
+			void sign.offsetWidth;
+			sign.classList.add("is-animating");
+		});
+	});
+</script>

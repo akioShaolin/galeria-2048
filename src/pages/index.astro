@@ -1,42 +1,10 @@
 ---
-const projetos = [
-	{
-		tipo: "PROJETO",
-		numero: "001",
-		titulo: "GUITARRA",
-		descricao: "Instrumentos, elétrica, modificações e restauração.",
-		imagem: "/images/gtr-01.jpeg",
-		link: "/projetos/gtr-01",
-		categorias: [
-			["LUTHIERIA", "luthieria"],
-			["ÁUDIO", "audio"],
-			["ELETRÔNICA", "eletronica"],
-		],
-	},
-	{
-		tipo: "EXPERIMENTO",
-		numero: "002",
-		titulo: "PEDAL DE ÁUDIO",
-		descricao: "Circuitos analógicos observados da entrada à saída.",
-		imagem: "/images/pedal.svg",
-		categorias: [
-			["ÁUDIO", "audio"],
-			["ELETRÔNICA", "eletronica"],
-		],
-	},
-	{
-		tipo: "PROJETO",
-		numero: "003",
-		titulo: "MODBUS SNIFFER",
-		descricao: "Monitoramento e diagnóstico de barramentos RS485.",
-		imagem: "/images/sniffer.svg",
-		categorias: [
-			["ELETRÔNICA", "eletronica"],
-			["PROGRAMAÇÃO", "programacao"],
-			["AUTOMAÇÃO", "automacao"],
-		],
-	},
-];
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import NeonSign from "../components/NeonSign.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import Tag from "../components/Tag.astro";
+import { projects } from "../data/projects";
 
 const areas = [
 	["ELETRÔNICA", "eletronica"],
@@ -48,53 +16,12 @@ const areas = [
 ];
 ---
 
-<!doctype html>
-<html lang="pt-BR">
-	<head>
-		<meta charset="UTF-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1"
-		/>
-
-		<meta
-			name="description"
-			content="Galeria -2048 — projetos, experiências e processos envolvendo eletrônica, programação, automação, áudio, música e luthieria."
-		/>
-
-		<title>Galeria -2048</title>
-
-		<style>
-			:root {
-				--bg: #050708;
-				--surface: #090c0e;
-				--surface-hover: #0d1114;
-				--line: #293238;
-
-				--text: #f0f2f2;
-				--muted: #8c979d;
-
-				--eletronica: #cfff00;
-				--programacao: #00d9ff;
-				--automacao: #ff8a00;
-				--audio: #ff20c7;
-				--luthieria: #ffe000;
-				--experimentacao: #a95cff;
-
-				--white-neon: #ffffff;
-			}
-
-			* {
-				box-sizing: border-box;
-			}
-
-			html {
-				background: var(--bg);
-				scroll-behavior: smooth;
-			}
-
+<BaseLayout
+	title="Galeria -2048"
+	description="Galeria -2048 — projetos, experiências e processos envolvendo eletrônica, programação, automação, áudio, música e luthieria."
+>
+		<style is:global>
 			body {
-				margin: 0;
 				background:
 					radial-gradient(
 						circle at 50% -300px,
@@ -103,17 +30,10 @@ const areas = [
 					),
 					var(--bg);
 
-				color: var(--text);
-
 				font-family:
 					"Courier New",
 					Courier,
 					monospace;
-			}
-
-			a {
-				color: inherit;
-				text-decoration: none;
 			}
 
 			.container {
@@ -241,7 +161,6 @@ const areas = [
 					0 0 14px var(--eletronica),
 					0 0 35px rgba(207,255,0,.5);
 
-				animation: blink2 10s 1 forwards;
 			}
 
 			.n0 {
@@ -263,7 +182,6 @@ const areas = [
 					0 0 14px var(--automacao),
 					0 0 35px rgba(255,138,0,.5);
 
-				animation: blink4 10s 1 forwards;
 			}
 
 			.n8 {
@@ -275,6 +193,17 @@ const areas = [
 					0 0 14px var(--audio),
 					0 0 35px rgba(255,32,199,.5);
 
+			}
+
+			.is-animating .n2 {
+				animation: blink2 10s 1 forwards;
+			}
+
+			.is-animating .n4 {
+				animation: blink4 10s 1 forwards;
+			}
+
+			.is-animating .n8 {
 				animation: blink8 10s 1 forwards;
 			}
 
@@ -335,7 +264,8 @@ const areas = [
 			.nav-inner a {
 				position: relative;
 
-				font-size: .82rem;
+				font-size: .9375rem;
+				line-height: 1.4;
 				letter-spacing: .03em;
 
 				color: #d5dadc;
@@ -381,7 +311,8 @@ const areas = [
 
 			.path {
 				color: var(--programacao);
-				font-size: .82rem;
+				font-size: .875rem;
+				line-height: 1.5;
 
 				margin-bottom: 20px;
 			}
@@ -405,8 +336,8 @@ const areas = [
 			.hero-text {
 				color: var(--muted);
 
-				font-size: .93rem;
-				line-height: 1.65;
+				font-size: 1.0625rem;
+				line-height: 1.75;
 
 				max-width: 660px;
 			}
@@ -425,7 +356,8 @@ const areas = [
 
 				border: 1px solid currentColor;
 
-				font-size: .7rem;
+				font-size: .875rem;
+				line-height: 1.35;
 				font-weight: bold;
 				letter-spacing: .03em;
 
@@ -466,7 +398,8 @@ const areas = [
 			.system-title {
 				color: var(--muted);
 
-				font-size: .72rem;
+				font-size: .875rem;
+				line-height: 1.5;
 
 				letter-spacing: .08em;
 
@@ -484,7 +417,8 @@ const areas = [
 
 				border-bottom: 1px solid var(--line);
 
-				font-size: .78rem;
+				font-size: .875rem;
+				line-height: 1.5;
 			}
 
 			.dot {
@@ -522,14 +456,33 @@ const areas = [
 			.section-code {
 				color: var(--muted);
 
-				font-size: .78rem;
+				font-size: .875rem;
+				line-height: 1.5;
 			}
 
 			.see-all {
 				color: var(--eletronica);
 
-				font-size: .75rem;
+				font-size: .875rem;
+				line-height: 1.5;
 				font-weight: bold;
+			}
+
+			.quick.unavailable {
+				cursor: default;
+			}
+
+			.quick.unavailable:hover {
+				background: transparent;
+			}
+
+			.quick-status {
+				display: block;
+				margin-top: 8px;
+				color: var(--muted);
+				font-size: .875rem;
+				font-weight: bold;
+				line-height: 1.4;
 			}
 
 			.cards {
@@ -602,7 +555,8 @@ const areas = [
 			}
 
 			.card-code {
-				font-size: .73rem;
+				font-size: .875rem;
+				line-height: 1.45;
 
 				margin-bottom: 10px;
 			}
@@ -622,7 +576,7 @@ const areas = [
 			.card .tag {
 				padding: 5px 10px;
 
-				font-size: .62rem;
+				font-size: .875rem;
 			}
 
 			.card-bottom {
@@ -636,8 +590,8 @@ const areas = [
 			.card-description {
 				color: var(--muted);
 
-				font-size: .7rem;
-				line-height: 1.5;
+				font-size: .9375rem;
+				line-height: 1.6;
 			}
 
 			.arrow {
@@ -695,7 +649,8 @@ const areas = [
 			}
 
 			.quick-title {
-				font-size: .75rem;
+				font-size: .875rem;
+				line-height: 1.4;
 				font-weight: bold;
 
 				margin-bottom: 7px;
@@ -704,21 +659,13 @@ const areas = [
 			.quick-description {
 				color: var(--muted);
 
-				font-size: .63rem;
-				line-height: 1.4;
+				font-size: .875rem;
+				line-height: 1.55;
 			}
 
 			/* =========================
 			   FOOTER
 			========================= */
-
-			footer {
-				padding: 24px 0;
-
-				color: var(--muted);
-
-				font-size: .67rem;
-			}
 
 			.footer-inner {
 				display: flex;
@@ -780,36 +727,10 @@ const areas = [
 				}
 			}
 
-			@media (prefers-reduced-motion: reduce) {
-				* {
-					animation: none !important;
-					transition: none !important;
-				}
-			}
 		</style>
-	</head>
-
-	<body>
 		<header>
 			<div class="sign-wrapper">
-				<div class="sign">
-
-					<div class="neon neon-word">
-						GALERIA
-					</div>
-
-					<div
-						class="neon neon-code"
-						aria-label="-2048"
-					>
-						<span class="neon-char minus">-</span>
-						<span class="neon-char n2">2</span>
-						<span class="neon-char n0">0</span>
-						<span class="neon-char n4">4</span>
-						<span class="neon-char n8">8</span>
-					</div>
-
-				</div>
+				<div class="sign"><NeonSign /></div>
 			</div>
 
 			<nav>
@@ -861,9 +782,7 @@ const areas = [
 						<div class="tags">
 							{
 								areas.map(([nome, classe]) => (
-									<span class={`tag ${classe}`}>
-										{nome}
-									</span>
+									<Tag label={nome} tone={classe} />
 								))
 							}
 						</div>
@@ -909,76 +828,12 @@ const areas = [
 							[ ACERVO / PROJETOS RECENTES ]
 						</div>
 
-						<a
-							class="see-all"
-							href="#"
-						>
-							VER TODOS →
-						</a>
+						<span class="see-all">ACERVO ATUAL</span>
 					</div>
 
 					<div class="cards">
 
-						{
-							projetos.map((projeto) => (
-
-								<a href={projeto.link} class="card">
-
-									<div class="card-image">
-										<img
-											src={projeto.imagem}
-											alt={projeto.titulo}
-										/>
-									</div>
-
-									<div class="card-content">
-
-										<div
-											class={`card-code ${
-												projeto.categorias[0][1]
-											}`}
-										>
-											{projeto.tipo}
-											&nbsp;/&nbsp;
-											{projeto.numero}
-										</div>
-
-										<h2>
-											{projeto.titulo}
-										</h2>
-
-										<div class="tags">
-											{
-												projeto.categorias.map(
-													([nome, classe]) => (
-														<span
-															class={`tag ${classe}`}
-														>
-															{nome}
-														</span>
-													)
-												)
-											}
-										</div>
-
-										<div class="card-bottom">
-
-											<div class="card-description">
-												{projeto.descricao}
-											</div>
-
-											<div class="arrow">
-												→
-											</div>
-
-										</div>
-
-									</div>
-
-								</a>
-
-							))
-						}
+						{projects.map((project) => <ProjectCard project={project} />)}
 
 					</div>
 
@@ -1008,11 +863,7 @@ const areas = [
 						</div>
 					</a>
 
-					<a
-						class="quick"
-						id="curriculo"
-						href="#"
-					>
+					<article class="quick unavailable" id="curriculo">
 						<div
 							class="quick-icon programacao"
 						>
@@ -1028,14 +879,11 @@ const areas = [
 								Meu percurso, habilidades
 								e experiências.
 							</div>
+							<span class="quick-status">EM DESENVOLVIMENTO</span>
 						</div>
-					</a>
+					</article>
 
-					<a
-						class="quick"
-						id="contribuicoes"
-						href="#"
-					>
+					<article class="quick unavailable" id="contribuicoes">
 						<div
 							class="quick-icon automacao"
 						>
@@ -1051,13 +899,11 @@ const areas = [
 								Apoie o projeto e mantenha
 								a galeria viva.
 							</div>
+							<span class="quick-status">EM DESENVOLVIMENTO</span>
 						</div>
-					</a>
+					</article>
 
-					<a
-						class="quick"
-						href="#"
-					>
+					<article class="quick unavailable">
 						<div
 							class="quick-icon experimentacao"
 						>
@@ -1073,8 +919,9 @@ const areas = [
 								Testes, ideias e coisas
 								que ainda vão virar projeto.
 							</div>
+							<span class="quick-status">EM DESENVOLVIMENTO</span>
 						</div>
-					</a>
+					</article>
 
 					<a
 						class="quick"
@@ -1104,19 +951,9 @@ const areas = [
 			</div>
 		</main>
 
-		<footer>
-			<div class="container footer-inner">
-
-				<span>
-					GALERIA -2048 // AKIOSHAOLIN
-				</span>
-
-				<span>
-					ARQUIVO EM CONSTANTE CONSTRUÇÃO
-				</span>
-
-			</div>
-		</footer>
-
-	</body>
-</html>
+		<SiteFooter
+			rightText="ARQUIVO EM CONSTANTE CONSTRUÇÃO"
+			containerClass="container"
+			variant="home"
+		/>
+</BaseLayout>

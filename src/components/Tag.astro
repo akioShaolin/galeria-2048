@@ -1,0 +1,29 @@
+---
+interface Props {
+	label: string;
+	tone: string;
+	compact?: boolean;
+}
+
+const { label, tone, compact = false } = Astro.props;
+---
+
+<span class:list={["tag", tone, { compact }]}>{label}</span>
+
+<style>
+	.tag {
+		display: inline-block;
+		padding: 7px 14px;
+		border: 1px solid currentColor;
+		font-family: monospace;
+		font-size: .875rem;
+		font-weight: bold;
+		line-height: 1.35;
+		letter-spacing: .03em;
+		box-shadow: inset 0 0 8px rgba(255, 255, 255, .02);
+	}
+
+	.compact {
+		padding: 5px 10px;
+	}
+</style>

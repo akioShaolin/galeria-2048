@@ -1,0 +1,49 @@
+---
+interface Props {
+	rightText: string;
+	containerClass?: string;
+	variant?: "default" | "home";
+}
+
+const {
+	rightText,
+	containerClass = "container",
+	variant = "default",
+} = Astro.props;
+---
+
+<footer class:list={{ home: variant === "home" }}>
+	<div class:list={[containerClass, "site-footer"]}>
+		<span>GALERIA -2048 // AKIOSHAOLIN</span>
+		<span>{rightText}</span>
+	</div>
+</footer>
+
+<style>
+	footer {
+		border-top: 1px solid var(--line);
+		padding: 30px 0;
+		color: var(--muted);
+		font-family: monospace;
+		font-size: .875rem;
+		line-height: 1.5;
+	}
+
+	footer.home {
+		border-top: 0;
+		padding: 24px 0;
+	}
+
+	.site-footer {
+		display: flex;
+		justify-content: space-between;
+		gap: 30px;
+	}
+
+	@media (max-width: 600px) {
+		.site-footer {
+			flex-direction: column;
+			gap: 10px;
+		}
+	}
+</style>

@@ -1,4 +1,8 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+
 const areas = [
 	{
 		numero: "01",
@@ -63,53 +67,12 @@ const ferramentas = [
 ];
 ---
 
-<!doctype html>
-<html lang="pt-BR">
-
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-	<title>Sobre — Galeria -2048</title>
-
-	<meta
-		name="description"
-		content="Sobre AkioShaolin e a Galeria -2048: eletrônica, programação, automação, áudio, luthieria e experimentação."
-	/>
-
-	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-	<style>
-		:root {
-			--bg: #050708;
-			--surface: #090c0e;
-			--line: #293238;
-
-			--text: #f0f2f2;
-			--muted: #8c979d;
-
-			--eletronica: #cfff00;
-			--programacao: #00d9ff;
-			--automacao: #ff8a00;
-			--audio: #ff20c7;
-			--luthieria: #ffe000;
-			--experimentacao: #a95cff;
-		}
-
-		* {
-			box-sizing: border-box;
-		}
-
-		html {
-			background: var(--bg);
-			scroll-behavior: smooth;
-		}
-
+<BaseLayout
+	title="Sobre — Galeria -2048"
+	description="Sobre AkioShaolin e a Galeria -2048: eletrônica, programação, automação, áudio, luthieria e experimentação."
+>
+	<style is:global>
 		body {
-			margin: 0;
-
-			color: var(--text);
-
 			background:
 				linear-gradient(
 					rgba(255,255,255,.018) 1px,
@@ -128,16 +91,6 @@ const ferramentas = [
 				Arial,
 				Helvetica,
 				sans-serif;
-		}
-
-		a {
-			color: inherit;
-			text-decoration: none;
-		}
-
-		.container {
-			width: min(1180px, calc(100% - 48px));
-			margin: auto;
 		}
 
 		/* HEADER */
@@ -167,7 +120,7 @@ const ferramentas = [
 			color: var(--muted);
 
 			font-family: monospace;
-			font-size: .78rem;
+			font-size: .875rem;
 		}
 
 		.back:hover {
@@ -188,7 +141,8 @@ const ferramentas = [
 			color: var(--programacao);
 
 			font-family: monospace;
-			font-size: .75rem;
+			font-size: .875rem;
+			line-height: 1.5;
 
 			letter-spacing: .08em;
 		}
@@ -262,7 +216,8 @@ const ferramentas = [
 			color: var(--programacao);
 
 			font-family: monospace;
-			font-size: .72rem;
+			font-size: .875rem;
+			line-height: 1.5;
 
 			letter-spacing: .08em;
 		}
@@ -286,8 +241,9 @@ const ferramentas = [
 
 			color: var(--muted);
 
-			font-size: 1.08rem;
-			line-height: 1.85;
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 1.125rem;
+			line-height: 1.8;
 		}
 
 		.prose strong {
@@ -322,12 +278,14 @@ const ferramentas = [
 			color: var(--muted);
 
 			font-family: monospace;
-			font-size: .64rem;
+			font-size: .875rem;
+			line-height: 1.45;
 		}
 
 		.identity-value {
 			font-family: monospace;
-			font-size: .82rem;
+			font-size: .9375rem;
+			line-height: 1.45;
 		}
 
 		.online {
@@ -367,12 +325,14 @@ const ferramentas = [
 			color: var(--muted);
 
 			font-family: monospace;
-			font-size: .7rem;
+			font-size: .875rem;
+			line-height: 1.5;
 		}
 
 		.area-name {
 			font-family: monospace;
-			font-size: .82rem;
+			font-size: .9375rem;
+			line-height: 1.45;
 			font-weight: bold;
 		}
 
@@ -381,7 +341,9 @@ const ferramentas = [
 
 			color: var(--muted);
 
-			line-height: 1.6;
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 1.0625rem;
+			line-height: 1.7;
 		}
 
 		.eletronica { color: var(--eletronica); }
@@ -412,7 +374,8 @@ const ferramentas = [
 			color: var(--muted);
 
 			font-family: monospace;
-			font-size: .7rem;
+			font-size: .875rem;
+			line-height: 1.4;
 
 			transition:
 				border-color .2s ease,
@@ -437,7 +400,8 @@ const ferramentas = [
 			color: var(--experimentacao);
 
 			font-family: monospace;
-			font-size: .72rem;
+			font-size: .875rem;
+			line-height: 1.5;
 
 			letter-spacing: .08em;
 		}
@@ -462,7 +426,8 @@ const ferramentas = [
 			color: var(--programacao);
 
 			font-family: monospace;
-			font-size: .78rem;
+			font-size: .875rem;
+			line-height: 1.5;
 		}
 
 		/* LINKS */
@@ -518,7 +483,8 @@ const ferramentas = [
 			color: var(--muted);
 
 			font-family: monospace;
-			font-size: .68rem;
+			font-size: .875rem;
+			line-height: 1.5;
 		}
 
 		.footer {
@@ -577,42 +543,9 @@ const ferramentas = [
 			}
 		}
 
-		@media (prefers-reduced-motion: reduce) {
-
-			* {
-				animation: none !important;
-			}
-		}
 	</style>
-</head>
 
-<body>
-
-	<header>
-
-		<div class="container">
-
-			<nav>
-
-				<a
-					class="brand"
-					href="/"
-				>
-					GALERIA -2048
-				</a>
-
-				<a
-					class="back"
-					href="/"
-				>
-					← VOLTAR AO ACERVO
-				</a>
-
-			</nav>
-
-		</div>
-
-	</header>
+	<SiteHeader />
 
 	<main>
 
@@ -940,21 +873,6 @@ const ferramentas = [
 
 	</main>
 
-	<footer>
+	<SiteFooter rightText="IDEIAS EM SINAL" />
 
-		<div class="container footer">
-
-			<span>
-				GALERIA -2048 // AKIOSHAOLIN
-			</span>
-
-			<span>
-				IDEIAS EM SINAL
-			</span>
-
-		</div>
-
-	</footer>
-
-</body>
-</html>
+</BaseLayout>
