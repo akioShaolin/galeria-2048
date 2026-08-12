@@ -1,4 +1,6 @@
 ---
+import { withBase } from "../utils/urls";
+
 interface Props {
 	mode?: "inner" | "error";
 	accent?: string;
@@ -15,13 +17,13 @@ const {
 <header style={`--header-accent: ${accent}`}>
 	<div class="container">
 		<nav>
-			<a class="brand" href="/">GALERIA -2048</a>
+			<a class="brand" href={withBase("/")}>GALERIA -2048</a>
 
 			{
 				mode === "error" ? (
 					<div class="status">{statusText}</div>
 				) : (
-					<a class="back" href="/">← VOLTAR AO ACERVO</a>
+					<a class="back" href={withBase("/")}>← VOLTAR AO ACERVO</a>
 				)
 			}
 		</nav>
