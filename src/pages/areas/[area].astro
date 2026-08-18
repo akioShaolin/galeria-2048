@@ -1,0 +1,113 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import ArchiveCard from "../../components/ArchiveCard.astro";
+import { areas, type Area } from "../../data/areas";
+import { getArchiveByArea } from "../../data/archive";
+
+export function getStaticPaths() {
+	return areas.map((area) => ({ params: { area: area.slug }, props: { currentArea: area } }));
+}
+
+interface Props {
+	currentArea: Area;
+}
+
+const { currentArea } = Astro.props;
+const items = getArchiveByArea(currentArea.label);
+const displayName = currentArea.label.charAt(0) + currentArea.label.slice(1).toLocaleLowerCase("pt-BR");
+---
+
+<BaseLayout
+	title={`${displayName} — Galeria -2048`}
+	description={`Conteúdos da área ${displayName} no acervo da Galeria -2048.`}
+>
+	<style is:global>
+		body {
+			background:
+				linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px),
+				var(--bg);
+			background-size: 42px 42px;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		.area-hero {
+			padding: 90px 0 70px;
+			border-bottom: 1px solid var(--line);
+		}
+
+		.eyebrow,
+		.count {
+			color: var(--area-color);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+			letter-spacing: .08em;
+		}
+
+		h1 {
+			margin: 24px 0 0;
+			font-size: clamp(3.8rem, 10vw, 8rem);
+			line-height: .86;
+			letter-spacing: -.065em;
+		}
+
+		.area-content {
+			padding: 80px 0 110px;
+		}
+
+		.area-heading {
+			display: flex;
+			justify-content: space-between;
+			gap: 24px;
+			margin-bottom: 28px;
+		}
+
+		.area-heading h2 {
+			margin: 0;
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+			letter-spacing: .08em;
+		}
+
+		.area-list {
+			display: grid;
+			gap: 20px;
+		}
+
+		.empty {
+			padding: 45px;
+			border: 1px solid var(--line);
+			color: var(--muted);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 1.125rem;
+			line-height: 1.75;
+		}
+	</style>
+
+	<div style={`--area-color: var(--${currentArea.tone})`}>
+		<SiteHeader accent={`var(--${currentArea.tone})`} />
+		<main class="container">
+			<header class="area-hero">
+				<div class="eyebrow">[ SYSTEM / ÁREA ]</div>
+				<h1>{currentArea.label}</h1>
+			</header>
+
+			<section class="area-content">
+				<div class="area-heading">
+					<h2>ACERVO RELACIONADO</h2>
+					<div class="count">{items.length.toString().padStart(2, "0")} {items.length === 1 ? "ITEM" : "ITENS"}</div>
+				</div>
+				<div class="area-list">
+					{items.length > 0 ? items.map((item) => <ArchiveCard item={item} />) : (
+						<div class="empty">Nenhum registro publicado nesta Área.</div>
+					)}
+				</div>
+			</section>
+		</main>
+		<SiteFooter rightText={`ÁREA / ${currentArea.label}`} />
+	</div>
+</BaseLayout>

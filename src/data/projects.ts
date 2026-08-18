@@ -29,6 +29,7 @@ export type Project = {
 	image: string;
 	path?: string;
 	categories: ProjectCategory[];
+	keywords: string[];
 	page?: {
 		code: string;
 		subtitle: string;
@@ -52,12 +53,13 @@ export const projects: Project[] = [
 			{ label: "ÁUDIO", tone: "audio" },
 			{ label: "ELETRÔNICA", tone: "eletronica" },
 		],
+		keywords: ["guitarra", "captadores", "humbucker", "mini humbucker", "single coil", "bambu", "blindagem", "JFET", "ponte", "luthieria elétrica"],
 		page: {
 			code: "GTR-01",
 			subtitle: "Uma guitarra em constante reconstrução. Um projeto que começou muito antes de existir um lugar para documentá-lo.",
 			status: [
 				{ label: "STATUS", value: "● EM DESENVOLVIMENTO", tone: "luthieria" },
-				{ label: "INÍCIO", value: "ANOS ATRÁS" },
+				{ label: "INÍCIO", value: "DÉCADA DE 2010" },
 				{ label: "ÚLTIMA ATUALIZAÇÃO", value: "2026" },
 			],
 			timeline: [
@@ -108,6 +110,7 @@ export const projects: Project[] = [
 			{ label: "ÁUDIO", tone: "audio" },
 			{ label: "ELETRÔNICA", tone: "eletronica" },
 		],
+		keywords: ["pedal", "áudio analógico", "circuito", "sinal", "osciloscópio"],
 	},
 	{
 		id: "modbus-sniffer",
@@ -121,6 +124,7 @@ export const projects: Project[] = [
 			{ label: "PROGRAMAÇÃO", tone: "programacao" },
 			{ label: "AUTOMAÇÃO", tone: "automacao" },
 		],
+		keywords: ["Modbus", "RS485", "sniffer", "barramento", "diagnóstico", "comunicação industrial"],
 	},
 ];
 

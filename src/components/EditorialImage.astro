@@ -1,0 +1,113 @@
+---
+interface Props {
+	src: string;
+	alt: string;
+	caption?: string;
+	position?: string;
+	variant?: "wide" | "portrait" | "detail";
+	eager?: boolean;
+}
+
+const {
+	src,
+	alt,
+	caption,
+	position = "center",
+	variant = "wide",
+	eager = false,
+} = Astro.props;
+---
+
+<figure class={`editorial-image editorial-image--${variant}`}>
+	<button
+		type="button"
+		class="editorial-image__trigger"
+		data-lightbox-src={src}
+		data-lightbox-alt={alt}
+		data-lightbox-caption={caption}
+		aria-label={`Ampliar imagem: ${alt}`}
+	>
+		<img
+			src={src}
+			alt={alt}
+			loading={eager ? "eager" : "lazy"}
+			fetchpriority={eager ? "high" : "auto"}
+			decoding="async"
+			style={`object-position: ${position};`}
+		/>
+		<span class="editorial-image__hint" aria-hidden="true">AMPLIAR ↗</span>
+	</button>
+	{caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+	.editorial-image {
+		margin: 36px 0 40px;
+	}
+
+	.editorial-image__trigger {
+		position: relative;
+		display: block;
+		width: 100%;
+		padding: 0;
+		border: 1px solid var(--line);
+		background: var(--surface);
+		color: var(--text);
+		cursor: zoom-in;
+		overflow: hidden;
+	}
+
+	.editorial-image__trigger img {
+		display: block;
+		width: 100%;
+		height: clamp(300px, 43vw, 560px);
+		object-fit: cover;
+		transition: transform .25s ease;
+	}
+
+	.editorial-image--portrait {
+		max-width: 560px;
+	}
+
+	.editorial-image--portrait .editorial-image__trigger img {
+		height: clamp(440px, 66vw, 720px);
+	}
+
+	.editorial-image--detail .editorial-image__trigger img {
+		height: clamp(280px, 36vw, 460px);
+	}
+
+	.editorial-image__trigger:hover img {
+		transform: scale(1.012);
+	}
+
+	.editorial-image__trigger:focus-visible {
+		outline: 2px solid var(--luthieria);
+		outline-offset: 4px;
+	}
+
+	.editorial-image__hint {
+		position: absolute;
+		right: 12px;
+		bottom: 12px;
+		padding: 7px 9px;
+		background: rgba(5, 7, 8, .88);
+		font-family: monospace;
+		font-size: .875rem;
+		line-height: 1.4;
+	}
+
+	figcaption {
+		margin-top: 10px;
+		color: var(--muted);
+		font-family: monospace;
+		font-size: .875rem;
+		line-height: 1.5;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.editorial-image__trigger img {
+			transition: none;
+		}
+	}
+</style>

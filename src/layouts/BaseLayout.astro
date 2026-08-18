@@ -4,9 +4,23 @@ import "../styles/global.css";
 interface Props {
 	title: string;
 	description: string;
+	image?: string;
+	type?: "website" | "article";
+	keywords?: string[];
+	noindex?: boolean;
 }
 
-const { title, description } = Astro.props;
+const {
+	title,
+	description,
+	image,
+	type = "website",
+	keywords = [],
+	noindex = false,
+} = Astro.props;
+
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
+const socialImage = image && Astro.site ? new URL(image, Astro.site) : undefined;
 ---
 
 <!doctype html>
@@ -15,6 +29,15 @@ const { title, description } = Astro.props;
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content={description} />
+		{noindex && <meta name="robots" content="noindex, follow" />}
+		{keywords.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
+		<link rel="canonical" href={canonical} />
+
+		<meta property="og:type" content={type} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical} />
+		{socialImage && <meta property="og:image" content={socialImage} />}
 
 		<title>{title}</title>
 

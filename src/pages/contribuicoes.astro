@@ -1,0 +1,355 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+
+const pixKey = "bdd1edd8-8474-4615-a871-00854606c5b2";
+---
+
+<BaseLayout
+	title="Contribuições — Galeria -2048"
+	description="Formas de contribuir com a Galeria -2048 por meio de conhecimento, código, documentação e apoio material."
+>
+	<style is:global>
+		body {
+			background:
+				radial-gradient(circle at 75% 8%, rgba(169, 92, 255, .055), transparent 520px),
+				linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px),
+				var(--bg);
+			background-size: auto, 42px 42px, 42px 42px, auto;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		.contribution-hero {
+			padding: 100px 0 85px;
+			border-bottom: 1px solid var(--line);
+		}
+
+		.eyebrow,
+		.section-label,
+		.pix-label,
+		.note-label {
+			color: var(--experimentacao);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+			letter-spacing: .08em;
+		}
+
+		h1 {
+			max-width: 980px;
+			margin: 26px 0 40px;
+			font-size: clamp(4rem, 10vw, 8.5rem);
+			line-height: .82;
+			letter-spacing: -.07em;
+		}
+
+		.lead,
+		.prose {
+			max-width: 760px;
+		}
+
+		.lead p,
+		.prose p {
+			margin: 0 0 20px;
+			color: var(--muted);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 1.125rem;
+			line-height: 1.8;
+		}
+
+		.contribution-section {
+			display: grid;
+			grid-template-columns: 250px 1fr;
+			gap: 70px;
+			padding: 90px 0;
+			border-bottom: 1px solid var(--line);
+		}
+
+		h2 {
+			max-width: 820px;
+			margin: 0 0 32px;
+			font-size: clamp(2.3rem, 5vw, 4.6rem);
+			line-height: .95;
+			letter-spacing: -.05em;
+		}
+
+		.actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px;
+			margin-top: 32px;
+		}
+
+		.action {
+			display: inline-flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 20px;
+			min-width: 210px;
+			padding: 14px 16px;
+			border: 1px solid var(--line);
+			background: var(--surface);
+			color: var(--text);
+			font-family: monospace;
+			font-size: .875rem;
+			font-weight: bold;
+			line-height: 1.5;
+		}
+
+		.action:hover,
+		.action:focus-visible {
+			border-color: var(--programacao);
+			color: var(--programacao);
+			outline: 1px solid var(--programacao);
+			outline-offset: 3px;
+		}
+
+		.material-list {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 1px;
+			margin: 30px 0;
+			border: 1px solid var(--line);
+			background: var(--line);
+		}
+
+		.material-list span {
+			padding: 13px 15px;
+			background: var(--surface);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+		}
+
+		.notice {
+			margin: 30px 0 0;
+			padding: 20px 22px;
+			border-left: 2px solid var(--automacao);
+			background: rgba(255, 138, 0, .035);
+			color: var(--muted);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.65;
+		}
+
+		.pix-panel {
+			margin-top: 65px;
+			padding-top: 55px;
+			border-top: 1px solid var(--line);
+		}
+
+		.pix-panel h3 {
+			margin: 12px 0 18px;
+			font-size: clamp(2rem, 4vw, 3.3rem);
+			letter-spacing: -.04em;
+		}
+
+		.pix-key {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			max-width: 760px;
+			margin-top: 28px;
+			border: 1px solid var(--line);
+			background: var(--surface);
+		}
+
+		.pix-value {
+			min-width: 0;
+			padding: 17px 18px;
+			font-family: monospace;
+			font-size: .9375rem;
+			line-height: 1.5;
+			overflow-wrap: anywhere;
+		}
+
+		.copy-button {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			padding: 0 17px;
+			border: 0;
+			border-left: 1px solid var(--line);
+			background: transparent;
+			color: var(--programacao);
+			font-family: monospace;
+			font-size: .875rem;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		.copy-button:hover,
+		.copy-button:focus-visible {
+			background: rgba(0, 217, 255, .07);
+			outline: 2px solid var(--programacao);
+			outline-offset: -4px;
+		}
+
+		.copy-button svg {
+			width: 20px;
+			height: 20px;
+			stroke: currentColor;
+		}
+
+		.qr-block {
+			display: inline-block;
+			margin-top: 35px;
+			padding: 16px;
+			border: 1px solid var(--line);
+			background: #fff;
+		}
+
+		.qr-block img {
+			display: block;
+			width: min(300px, 72vw);
+			height: auto;
+		}
+
+		.editorial-note {
+			max-width: 760px;
+			margin-top: 35px;
+			padding-top: 24px;
+			border-top: 1px solid var(--line);
+			color: var(--muted);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.65;
+		}
+
+		@media (max-width: 800px) {
+			.contribution-section { grid-template-columns: 1fr; gap: 28px; padding: 70px 0; }
+			.material-list { grid-template-columns: 1fr; }
+		}
+
+		@media (max-width: 600px) {
+			.pix-key { grid-template-columns: 1fr; }
+			.copy-button { min-height: 52px; justify-content: center; border-left: 0; border-top: 1px solid var(--line); }
+		}
+	</style>
+
+	<SiteHeader accent="var(--experimentacao)" />
+	<main class="container">
+		<header class="contribution-hero">
+			<div class="eyebrow">[ SYSTEM / CONTRIBUIÇÕES ]</div>
+			<h1>CONTRIBUA<br />COM A GALERIA.</h1>
+			<div class="lead">
+				<p>A Galeria -2048 é um acervo de projetos, experimentos e documentação construído ao longo do tempo.</p>
+				<p>Se alguma coisa publicada aqui foi útil para você, existem diferentes maneiras de contribuir de volta.</p>
+				<p>Nem toda contribuição precisa ser financeira. Correções, testes, documentação, peças, equipamentos e experiências compartilhadas podem ser tão importantes quanto qualquer outro tipo de apoio.</p>
+				<p>A ideia desta página é reunir essas possibilidades.</p>
+			</div>
+		</header>
+
+		<section class="contribution-section">
+			<div class="section-label">[ 01 / CONHECIMENTO ]</div>
+			<div>
+				<h2>Compartilhe o que você sabe</h2>
+				<div class="prose">
+					<p>Encontrou um erro ou tem uma informação que pode melhorar algum projeto? Vá até a página correspondente e use os canais indicados ali. Para contribuições em código e documentação, os repositórios públicos estão disponíveis no GitHub.</p>
+					<p>Correções, observações técnicas e novas informações são bem-vindas.</p>
+					<p>Sempre que possível, indique a fonte, a condição do teste e o que você conseguiu observar diretamente. Isso ajuda a manter a documentação útil e separa melhor fato, hipótese e interpretação.</p>
+				</div>
+				<div class="actions">
+					<a class="action" href="https://github.com/akioShaolin?tab=repositories" target="_blank" rel="noopener noreferrer">VER REPOSITÓRIOS <span>↗</span></a>
+				</div>
+			</div>
+		</section>
+
+		<section class="contribution-section">
+			<div class="section-label">[ 02 / CÓDIGO E DOCUMENTAÇÃO ]</div>
+			<div>
+				<h2>Melhore um projeto</h2>
+				<div class="prose">
+					<p>Parte dos projetos da Galeria -2048 possui código e documentação públicos.</p>
+					<p>Issues, pull requests, testes em outro hardware, melhorias de documentação, exemplos de uso e correções de comportamento são formas diretas de contribuir com esses projetos.</p>
+					<p>Uma contribuição pequena e bem documentada pode ser mais útil do que uma grande mudança difícil de reproduzir.</p>
+				</div>
+				<div class="actions">
+					<a class="action" href="https://github.com/akioShaolin" target="_blank" rel="noopener noreferrer">GITHUB / akioShaolin <span>↗</span></a>
+				</div>
+			</div>
+		</section>
+
+		<section class="contribution-section">
+			<div class="section-label">[ 03 / APOIO MATERIAL ]</div>
+			<div>
+				<h2>Ajude a manter os experimentos acontecendo</h2>
+				<div class="prose">
+					<p>Alguns projetos exigem componentes, placas, instrumentos de medição, materiais ou equipamentos que nem sempre estão disponíveis.</p>
+					<p>Se você quiser apoiar a continuidade dos experimentos, isso também pode ser feito de forma material.</p>
+					<p>Equipamentos defeituosos, placas sem utilização e hardwares obsoletos às vezes são excelentes pontos de partida para novos projetos — desde que sejam tecnicamente interessantes e viáveis de receber, armazenar ou transportar.</p>
+				</div>
+
+				<div class="material-list" aria-label="Exemplos de apoio material">
+					<span>COMPONENTES</span><span>PLACAS</span><span>INSTRUMENTOS DE MEDIÇÃO</span>
+					<span>MATERIAIS</span><span>EQUIPAMENTOS</span><span>HARDWARE SEM USO</span>
+				</div>
+
+				<div class="notice">O envio de hardware ou material não implica obrigação de análise, reparo, publicação ou desenvolvimento de um projeto.</div>
+
+				<div class="pix-panel">
+					<div class="pix-label">APOIO FINANCEIRO</div>
+					<h3>PIX</h3>
+					<div class="prose"><p>Para quem preferir apoiar financeiramente algum experimento ou a manutenção da Galeria, também deixo uma chave PIX disponível.</p></div>
+
+					<div class="pix-label">CHAVE PIX</div>
+					<div class="pix-key">
+						<code class="pix-value">{pixKey}</code>
+						<button class="copy-button" type="button" data-copy-pix data-pix-key={pixKey} aria-label="Copiar chave PIX" title="Copiar chave PIX">
+							<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="1"></rect><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"></path></svg>
+							<span data-copy-label>COPIAR</span>
+						</button>
+					</div>
+
+					<div class="qr-block">
+						<img src="/images/contribuicoes/pix-qrcode.svg" alt="QR Code PIX para apoio à Galeria -2048" width="300" height="300" />
+					</div>
+
+					<div class="editorial-note">
+						<div class="note-label">INDEPENDÊNCIA EDITORIAL</div>
+						Apoiar um projeto não significa determinar seu resultado. Testes, conclusões e documentação publicados na Galeria continuam seguindo aquilo que foi observado, medido e reproduzido.
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<SiteFooter rightText="CONTRIBUIÇÕES / GALERIA -2048" />
+
+	<script>
+		const button = document.querySelector<HTMLButtonElement>("[data-copy-pix]");
+		const label = button?.querySelector<HTMLElement>("[data-copy-label]");
+		let feedbackTimer: number | undefined;
+
+		const fallbackCopy = (value: string) => {
+			const input = document.createElement("textarea");
+			input.value = value;
+			input.setAttribute("readonly", "");
+			input.style.position = "fixed";
+			input.style.opacity = "0";
+			document.body.append(input);
+			input.select();
+			const copied = document.execCommand("copy");
+			input.remove();
+			if (!copied) throw new Error("Não foi possível copiar a chave PIX.");
+		};
+
+		button?.addEventListener("click", async () => {
+			const key = button.dataset.pixKey ?? "";
+			try {
+				if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(key);
+				else fallbackCopy(key);
+				if (label) label.textContent = "COPIADO";
+				button.title = "Chave PIX copiada";
+				window.clearTimeout(feedbackTimer);
+				feedbackTimer = window.setTimeout(() => {
+					if (label) label.textContent = "COPIAR";
+					button.title = "Copiar chave PIX";
+				}, 2500);
+			} catch {
+				if (label) label.textContent = "SELECIONE A CHAVE";
+			}
+		});
+	</script>
+</BaseLayout>

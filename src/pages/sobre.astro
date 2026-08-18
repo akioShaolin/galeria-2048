@@ -2,50 +2,15 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
+import { areas, getAreaPath } from "../data/areas";
 
-const areas = [
-	{
-		numero: "01",
-		nome: "ELETRÔNICA",
-		cor: "eletronica",
-		texto:
-			"Desenvolvimento, diagnóstico, reparo e experimentação com circuitos eletrônicos, sistemas embarcados, interfaces e instrumentação.",
-	},
-	{
-		numero: "02",
-		nome: "PROGRAMAÇÃO",
-		cor: "programacao",
-		texto:
-			"Software como ferramenta para fazer hardware conversar, automatizar processos, coletar dados e transformar experimentos em sistemas utilizáveis.",
-	},
-	{
-		numero: "03",
-		nome: "AUTOMAÇÃO",
-		cor: "automacao",
-		texto:
-			"CLPs, comunicação industrial, Modbus, RS485, redes e integração entre equipamentos que nem sempre foram projetados para trabalhar juntos.",
-	},
-	{
-		numero: "04",
-		nome: "ÁUDIO",
-		cor: "audio",
-		texto:
-			"Pedais, amplificadores, pré-amplificadores e experiências em que o circuito deixa de ser apenas medido e também passa a ser ouvido.",
-	},
-	{
-		numero: "05",
-		nome: "LUTHIERIA",
-		cor: "luthieria",
-		texto:
-			"Instrumentos como projetos em evolução: elétrica, captadores, peças, restauração, modificações e experimentação.",
-	},
-	{
-		numero: "06",
-		nome: "EXPERIMENTAÇÃO",
-		cor: "experimentacao",
-		texto:
-			"Construir para entender. Medir, desmontar, testar hipóteses, errar, modificar e tentar novamente.",
-	},
+const areaDescriptions = [
+	"Desenvolvimento, diagnóstico, reparo e experimentação com circuitos eletrônicos, sistemas embarcados, interfaces e instrumentação.",
+	"Software como ferramenta para fazer hardware conversar, automatizar processos, coletar dados e transformar experimentos em sistemas utilizáveis.",
+	"CLPs, comunicação industrial, Modbus, RS485, redes e integração entre equipamentos que nem sempre foram projetados para trabalhar juntos.",
+	"Pedais, amplificadores, pré-amplificadores e experiências em que o circuito deixa de ser apenas medido e também passa a ser ouvido.",
+	"Instrumentos como projetos em evolução: elétrica, captadores, peças, restauração, modificações e experimentação.",
+	"Construir para entender. Medir, desmontar, testar hipóteses, errar, modificar e tentar novamente.",
 ];
 
 const ferramentas = [
@@ -69,7 +34,7 @@ const ferramentas = [
 
 <BaseLayout
 	title="Sobre — Galeria -2048"
-	description="Sobre AkioShaolin e a Galeria -2048: eletrônica, programação, automação, áudio, luthieria e experimentação."
+	description="Sobre Pedro Akio Sakuma, akioShaolin, e o processo por trás da Galeria -2048."
 >
 	<style is:global>
 		body {
@@ -250,6 +215,29 @@ const ferramentas = [
 			color: var(--text);
 		}
 
+		.context-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+
+			margin-top: 10px;
+			padding-bottom: 7px;
+
+			border-bottom: 1px solid var(--programacao);
+
+			color: var(--programacao);
+
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+			letter-spacing: .04em;
+		}
+
+		.context-link:hover,
+		.context-link:focus-visible {
+			color: var(--text);
+		}
+
 		/* QUEM */
 
 		.identity {
@@ -257,7 +245,7 @@ const ferramentas = [
 
 			display: grid;
 
-			grid-template-columns: repeat(2, 1fr);
+			grid-template-columns: repeat(3, 1fr);
 
 			border: 1px solid var(--line);
 		}
@@ -344,6 +332,13 @@ const ferramentas = [
 			font-family: Georgia, "Times New Roman", serif;
 			font-size: 1.0625rem;
 			line-height: 1.7;
+		}
+
+		.area-name a:hover,
+		.area-name a:focus-visible {
+			text-decoration: underline;
+			text-underline-offset: 5px;
+			outline: 0;
 		}
 
 		.eletronica { color: var(--eletronica); }
@@ -563,16 +558,15 @@ const ferramentas = [
 
 				<div class="intro">
 
-					Eu sou
-					<strong>AkioShaolin</strong>.
+					Meu nome é{" "}
+					<strong>Pedro Akio Sakuma</strong>.
 
 					<br /><br />
 
 					<span class="muted">
-						Gosto de entender como as coisas
-						funcionam — e, quando possível,
-						desmontá-las, modificá-las e construir
-						outra coisa a partir disso.
+						Na internet, assino como akioShaolin.
+						Construo, desmonto e documento coisas
+						para entender como elas funcionam.
 					</span>
 
 					<span
@@ -583,6 +577,18 @@ const ferramentas = [
 				</div>
 
 				<div class="identity">
+
+					<div class="identity-item">
+
+						<div class="identity-label">
+							NOME
+						</div>
+
+						<div class="identity-value">
+							PEDRO AKIO SAKUMA
+						</div>
+
+					</div>
 
 					<div class="identity-item">
 
@@ -617,36 +623,36 @@ const ferramentas = [
 				<div class="section-grid">
 
 					<div class="section-label">
-						[ 01 / QUEM ]
+						[ 01 / SOBRE ]
 					</div>
 
 					<div class="prose">
 
 						<h2>
-							Entre software e ferro de solda.
+							Aqui os projetos simplesmente acontecem.
 						</h2>
 
 						<p>
-							Minha formação e meu trabalho me levaram
-							para a programação, eletrônica e automação.
-							Mas a curiosidade raramente respeita
-							a divisão entre essas áreas.
+							Meu nome é Pedro Akio Sakuma. Na internet,
+							uso o nome akioShaolin. A Galeria -2048 é
+							o lugar onde reúno projetos, experiências,
+							reparos e investigações que surgem entre
+							a bancada, o computador e os instrumentos.
 						</p>
 
 						<p>
-							Um problema de comunicação pode virar
-							um <strong>sniffer de protocolo</strong>.
-							Um instrumento pode virar uma experiência
-							de <strong>luthieria e eletrônica</strong>.
-							Um circuito de áudio pode acabar conectado
-							a um osciloscópio só para descobrir o que
-							está acontecendo com o sinal.
+							Não existe uma fronteira muito clara entre
+							o que faço por necessidade e o que começo
+							por curiosidade. Uma falha de comunicação
+							pode virar uma ferramenta; um instrumento
+							pode se transformar em experiência de
+							luthieria, eletrônica e áudio.
 						</p>
 
 						<p>
-							É nesse espaço entre necessidade,
-							curiosidade e experimentação que boa
-							parte dos projetos daqui aparece.
+							Aqui os projetos simplesmente acontecem.
+							Alguns chegam a uma versão estável; outros
+							continuam abertos. Ambos merecem registro.
 						</p>
 
 					</div>
@@ -660,41 +666,38 @@ const ferramentas = [
 				<div class="section-grid">
 
 					<div class="section-label">
-						[ 02 / A GALERIA ]
+						[ 02 / O PROCESSO ]
 					</div>
 
 					<div class="prose">
 
 						<h2>
-							Por que -2048?
+							O caminho também faz parte do projeto.
 						</h2>
 
 						<p>
-							Por muito tempo, projetos, códigos,
-							fotografias, medições e experiências
-							terminavam simplesmente guardados em
-							pastas no computador.
+							Quase nada nasce pronto. Antes do resultado
+							existem hipóteses, medições, peças trocadas,
+							código provisório, decisões revistas e
+							tentativas que não levam aonde eu esperava.
 						</p>
 
 						<p>
-							A <strong>Galeria -2048</strong> nasceu
-							para mudar isso.
+							É justamente essa parte que costuma
+							desaparecer quando se mostra apenas o objeto
+							final. Na <strong>Galeria -2048</strong>,
+							o processo permanece visível.
 						</p>
 
 						<p>
-							Este é um acervo público de projetos e
-							experiências envolvendo tecnologia,
-							eletrônica, programação, automação,
-							áudio, instrumentos e outras coisas
-							que fizerem sentido aparecer por aqui.
+							Documentar serve para organizar o raciocínio,
+							preservar o que aprendi e permitir que uma
+							ideia antiga volte a produzir sinal no futuro.
 						</p>
 
 						<p>
-							Não é apenas um portfólio de coisas
-							prontas. <strong>Versões, erros,
-							hipóteses, medições, reparos e caminhos
-							abandonados também fazem parte do
-							projeto.</strong>
+							<strong>O processo é tão importante quanto
+							o resultado.</strong>
 						</p>
 
 					</div>
@@ -708,7 +711,98 @@ const ferramentas = [
 				<div class="section-grid">
 
 					<div class="section-label">
-						[ 03 / ÁREAS ]
+						[ 03 / O ACUMULADOR ]
+					</div>
+
+					<div class="prose">
+
+						<h2>
+							Guardar peças também é guardar possibilidades.
+						</h2>
+
+						<p>
+							Tenho o hábito de guardar componentes,
+							módulos, instrumentos incompletos e objetos
+							que parecem ter alguma história técnica para
+							contar. Nem tudo tem uso imediato.
+						</p>
+
+						<p>
+							Às vezes uma peça espera anos até encontrar
+							o problema certo. Em outras ocasiões, o objeto
+							é o próprio problema: identificar o circuito,
+							entender o protocolo ou descobrir por que ele
+							deixou de funcionar.
+						</p>
+
+						<p>
+							O estudo do <strong>ED100</strong> nasceu desse
+							tipo de encontro: um datalogger, uma interface
+							RS485 e perguntas suficientes para transformar
+							o hardware em referência técnica.
+						</p>
+
+						<a class="context-link" href="/artigos/ed100-hardware-rs485/">
+							LER O ARTIGO DO ED100 <span>→</span>
+						</a>
+
+					</div>
+
+				</div>
+
+			</section>
+
+			<section class="content">
+
+				<div class="section-grid">
+
+					<div class="section-label">
+						[ 04 / A MÚSICA ]
+					</div>
+
+					<div class="prose">
+
+						<h2>
+							Ouvir também é uma forma de medir.
+						</h2>
+
+						<p>
+							A música atravessa muitos dos projetos daqui.
+							Ela aparece na construção e modificação de
+							instrumentos, nos circuitos de áudio e na
+							curiosidade sobre o percurso de um sinal.
+						</p>
+
+						<p>
+							Uma guitarra pode ser instrumento, objeto de
+							estudo e plataforma de testes ao mesmo tempo.
+							Madeira, captadores, elétrica e regulagem se
+							encontram em uma experiência que também precisa
+							ser ouvida, não apenas medida.
+						</p>
+
+						<p>
+							A <strong>GTR-01</strong> registra esse caminho:
+							uma guitarra em transformação, preservada como
+							processo e não apresentada como peça definitiva.
+						</p>
+
+						<a class="context-link" href="/projetos/gtr-01/">
+							VER O PROJETO GTR-01 <span>→</span>
+						</a>
+
+					</div>
+
+				</div>
+
+			</section>
+
+			<section class="content">
+
+				<div class="section-grid">
+
+					<div class="section-label">
+						[ 05 / ÁREAS ]
 					</div>
 
 					<div>
@@ -718,31 +812,13 @@ const ferramentas = [
 						</h2>
 
 						<div class="areas">
-
-							{
-								areas.map((area) => (
-
-									<div class="area">
-
-										<div class="area-number">
-											{area.numero}
-										</div>
-
-										<div
-											class={`area-name ${area.cor}`}
-										>
-											{area.nome}
-										</div>
-
-										<div class="area-text">
-											{area.texto}
-										</div>
-
-									</div>
-
-								))
-							}
-
+							{areas.map((area, index) => (
+								<div class="area">
+									<div class="area-number">{(index + 1).toString().padStart(2, "0")}</div>
+									<div class={`area-name ${area.tone}`}><a href={getAreaPath(area)}>{area.label} →</a></div>
+									<div class="area-text">{areaDescriptions[index]}</div>
+								</div>
+							))}
 						</div>
 
 					</div>
@@ -756,7 +832,7 @@ const ferramentas = [
 				<div class="section-grid">
 
 					<div class="section-label">
-						[ 04 / BANCADA ]
+						[ 06 / BANCADA ]
 					</div>
 
 					<div>
@@ -766,17 +842,9 @@ const ferramentas = [
 						</h2>
 
 						<div class="tools">
-
-							{
-								ferramentas.map((ferramenta) => (
-
-									<span class="tool">
-										{ferramenta}
-									</span>
-
-								))
-							}
-
+							{ferramentas.map((ferramenta) => (
+								<span class="tool">{ferramenta}</span>
+							))}
 						</div>
 
 					</div>
@@ -806,7 +874,7 @@ const ferramentas = [
 				</div>
 
 				<div class="signature">
-					— AKIOSHAOLIN / GALERIA -2048
+					— akioShaolin / GALERIA -2048
 				</div>
 
 			</section>
@@ -816,7 +884,7 @@ const ferramentas = [
 				<div class="section-grid">
 
 					<div class="section-label">
-						[ 05 / ENCONTRE ]
+						[ 07 / ENCONTRE ]
 					</div>
 
 					<div>

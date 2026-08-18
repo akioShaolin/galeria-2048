@@ -7,13 +7,16 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const Wrapper = project.path ? "a" : "article";
 ---
 
-<Wrapper href={project.path} class:list={["card", { future: !project.path }]}>
-	<div class="card-image">
-		<img src={project.image} alt={project.title} />
-	</div>
+<article class:list={["card", { future: !project.path }]}>
+	{project.path ? (
+		<a class="card-image" href={project.path} aria-label={`Abrir ${project.title}`}>
+			<img src={project.image} alt={project.title} />
+		</a>
+	) : (
+		<div class="card-image"><img src={project.image} alt={project.title} /></div>
+	)}
 
 	<div class="card-content">
 		<div class={`card-code ${project.categories[0].tone}`}>
@@ -22,7 +25,7 @@ const Wrapper = project.path ? "a" : "article";
 
 		{!project.path && <div class="availability">[ EM DESENVOLVIMENTO ]</div>}
 
-		<h2>{project.title}</h2>
+		<h2>{project.path ? <a href={project.path}>{project.title}</a> : project.title}</h2>
 
 		<div class="tags">
 			{project.categories.map(({ label, tone }) => <Tag label={label} tone={tone} compact />)}
@@ -30,10 +33,10 @@ const Wrapper = project.path ? "a" : "article";
 
 		<div class="card-bottom">
 			<div class="card-description">{project.description}</div>
-			{project.path && <div class="arrow" aria-hidden="true">→</div>}
+			{project.path && <a class="arrow" href={project.path} aria-label={`Abrir ${project.title}`}>→</a>}
 		</div>
 	</div>
-</Wrapper>
+</article>
 
 <style>
 	.future {
@@ -53,5 +56,16 @@ const Wrapper = project.path ? "a" : "article";
 		font-weight: bold;
 		line-height: 1.45;
 		letter-spacing: .03em;
+	}
+
+	.card-image {
+		display: block;
+	}
+
+	h2 a:focus-visible,
+	.arrow:focus-visible,
+	.card-image:focus-visible {
+		outline: 2px solid var(--programacao);
+		outline-offset: 3px;
 	}
 </style>

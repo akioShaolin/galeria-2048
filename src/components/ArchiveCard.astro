@@ -1,0 +1,118 @@
+---
+import Tag from "./Tag.astro";
+import type { ArchiveItem } from "../data/archive";
+
+interface Props {
+	item: ArchiveItem;
+}
+
+const { item } = Astro.props;
+---
+
+<article class:list={["archive-card", { unavailable: !item.url }]}>
+	{item.image && (
+		item.url ? (
+			<a class="archive-image" href={item.url} aria-label={`Abrir ${item.title}`}>
+				<img src={item.image} alt="" loading="lazy" />
+			</a>
+		) : (
+			<div class="archive-image"><img src={item.image} alt="" loading="lazy" /></div>
+		)
+	)}
+
+	<div class="archive-content">
+		<div class="archive-type">{item.type}{item.code && ` / ${item.code}`}</div>
+		<h2>{item.url ? <a href={item.url}>{item.title}</a> : item.title}</h2>
+		{!item.url && <div class="archive-status">[ EM DESENVOLVIMENTO ]</div>}
+		<p>{item.description}</p>
+		<div class="archive-areas">
+			{item.areas.map(({ label, tone }) => <Tag label={label} tone={tone} compact />)}
+		</div>
+	</div>
+</article>
+
+<style>
+	.archive-card {
+		display: grid;
+		grid-template-columns: minmax(220px, .65fr) 1.35fr;
+		border: 1px solid var(--line);
+		background: linear-gradient(135deg, var(--surface), #070a0b);
+	}
+
+	.archive-image {
+		display: block;
+		min-height: 250px;
+		overflow: hidden;
+	}
+
+	.archive-image img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		filter: saturate(.82) contrast(1.04) brightness(.82);
+		transition: filter .2s ease, transform .25s ease;
+	}
+
+	.archive-image:hover img {
+		filter: saturate(1) contrast(1.04) brightness(.94);
+		transform: scale(1.015);
+	}
+
+	.archive-content {
+		padding: clamp(24px, 4vw, 48px);
+	}
+
+	.archive-type,
+	.archive-status {
+		color: var(--programacao);
+		font-family: monospace;
+		font-size: .875rem;
+		font-weight: bold;
+		line-height: 1.5;
+	}
+
+	.archive-status {
+		margin-bottom: 15px;
+		color: var(--muted);
+	}
+
+	h2 {
+		margin: 12px 0 16px;
+		font-size: clamp(1.7rem, 3vw, 2.8rem);
+		line-height: 1.05;
+		letter-spacing: -.035em;
+	}
+
+	p {
+		max-width: 680px;
+		margin: 0;
+		color: var(--muted);
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.0625rem;
+		line-height: 1.7;
+	}
+
+	.archive-areas {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin-top: 24px;
+	}
+
+	a:focus-visible {
+		outline: 2px solid var(--programacao);
+		outline-offset: 4px;
+	}
+
+	@media (max-width: 700px) {
+		.archive-card {
+			grid-template-columns: 1fr;
+		}
+
+		.archive-image {
+			min-height: 210px;
+			max-height: 360px;
+		}
+	}
+</style>

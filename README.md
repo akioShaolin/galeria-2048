@@ -1,6 +1,6 @@
 # Galeria -2048
 
-Acervo pessoal e público de **AkioShaolin** para documentar projetos, experimentos, reparos e processos técnicos ou criativos.
+Acervo pessoal e público de **akioShaolin** para documentar projetos, experimentos, reparos e processos técnicos ou criativos.
 
 > Construir para entender. Documentar para não deixar o que foi aprendido desaparecer em alguma pasta.
 
@@ -79,6 +79,6 @@ A publicação deve usar GitHub Actions a partir da branch `main`, gerando o con
 
 ## Identidade pública
 
-O projeto é mantido publicamente como **AkioShaolin**. Informações pessoais, confidenciais ou irrelevantes ao acervo não devem ser adicionadas automaticamente.
+O projeto é mantido publicamente como **akioShaolin**. Informações pessoais, confidenciais ou irrelevantes ao acervo não devem ser adicionadas automaticamente.
 
 Consulte o `AGENTS.md` antes de alterar identidade visual, estrutura editorial, páginas de projeto ou regras de conteúdo.

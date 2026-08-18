@@ -1,14 +1,20 @@
 ---
+import { getAreaByLabel, getAreaPath } from "../data/areas";
+
 interface Props {
 	label: string;
 	tone: string;
 	compact?: boolean;
+	href?: string;
 }
 
-const { label, tone, compact = false } = Astro.props;
+const { label, tone, compact = false, href } = Astro.props;
+const area = getAreaByLabel(label);
+const target = href ?? (area ? getAreaPath(area) : undefined);
+const Element = target ? "a" : "span";
 ---
 
-<span class:list={["tag", tone, { compact }]}>{label}</span>
+<Element href={target} class:list={["tag", tone, { compact, interactive: target }]}>{label}</Element>
 
 <style>
 	.tag {
@@ -25,5 +31,17 @@ const { label, tone, compact = false } = Astro.props;
 
 	.compact {
 		padding: 5px 10px;
+	}
+
+	.interactive {
+		transition: background-color .2s ease, color .2s ease, box-shadow .2s ease;
+	}
+
+	.interactive:hover,
+	.interactive:focus-visible {
+		background: color-mix(in srgb, currentColor 14%, transparent);
+		box-shadow: 0 0 12px color-mix(in srgb, currentColor 35%, transparent);
+		outline: 1px solid currentColor;
+		outline-offset: 3px;
 	}
 </style>

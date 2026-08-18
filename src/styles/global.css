@@ -18,6 +18,18 @@
 	box-sizing: border-box;
 }
 
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
 html {
 	background: var(--bg);
 	scroll-behavior: smooth;
@@ -32,6 +44,31 @@ body {
 a {
 	color: inherit;
 	text-decoration: none;
+}
+
+/* Cores semânticas compartilhadas pelas áreas da Galeria. */
+.eletronica {
+	color: var(--eletronica);
+}
+
+.programacao {
+	color: var(--programacao);
+}
+
+.automacao {
+	color: var(--automacao);
+}
+
+.audio {
+	color: var(--audio);
+}
+
+.luthieria {
+	color: var(--luthieria);
+}
+
+.experimentacao {
+	color: var(--experimentacao);
 }
 
 .container {

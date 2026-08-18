@@ -5,15 +5,8 @@ import NeonSign from "../components/NeonSign.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import Tag from "../components/Tag.astro";
 import { projects } from "../data/projects";
-
-const areas = [
-	["ELETRÔNICA", "eletronica"],
-	["PROGRAMAÇÃO", "programacao"],
-	["AUTOMAÇÃO", "automacao"],
-	["ÁUDIO", "audio"],
-	["LUTHIERIA", "luthieria"],
-	["EXPERIMENTAÇÃO", "experimentacao"],
-];
+import { articles } from "../data/articles";
+import { areas, getAreaPath } from "../data/areas";
 ---
 
 <BaseLayout
@@ -342,6 +335,52 @@ const areas = [
 				max-width: 660px;
 			}
 
+			.home-search {
+				display: grid;
+				grid-template-columns: 1fr auto;
+				max-width: 660px;
+				margin-top: 28px;
+				border: 1px solid var(--line);
+				background: var(--surface);
+			}
+
+			.home-search:focus-within {
+				border-color: var(--programacao);
+				box-shadow: 0 0 12px rgba(0, 217, 255, .12);
+			}
+
+			.home-search input {
+				min-width: 0;
+				padding: 14px 16px;
+				border: 0;
+				background: transparent;
+				color: var(--text);
+				font: inherit;
+				font-size: .875rem;
+				outline: 0;
+			}
+
+			.home-search input::placeholder { color: var(--muted); }
+
+			.home-search button {
+				padding: 0 18px;
+				border: 0;
+				border-left: 1px solid var(--line);
+				background: transparent;
+				color: var(--programacao);
+				font-family: monospace;
+				font-size: .875rem;
+				font-weight: bold;
+				cursor: pointer;
+			}
+
+			.home-search button:hover,
+			.home-search button:focus-visible {
+				background: rgba(0, 217, 255, .08);
+				outline: 2px solid var(--programacao);
+				outline-offset: -4px;
+			}
+
 			.tags {
 				display: flex;
 				flex-wrap: wrap;
@@ -419,6 +458,18 @@ const areas = [
 
 				font-size: .875rem;
 				line-height: 1.5;
+			}
+
+			a.system-row {
+				transition: background-color .2s ease, padding-left .2s ease;
+			}
+
+			a.system-row:hover,
+			a.system-row:focus-visible {
+				padding-left: 8px;
+				background: rgba(255,255,255,.025);
+				outline: 1px solid var(--line);
+				outline-offset: 3px;
 			}
 
 			.dot {
@@ -603,12 +654,95 @@ const areas = [
 			}
 
 			/* =========================
+			   ARTIGOS
+			========================= */
+
+			.articles {
+				padding: 28px 0 36px;
+				border-top: 1px solid var(--line);
+			}
+
+			.article-card {
+				display: grid;
+				grid-template-columns: minmax(280px, .85fr) 1.4fr;
+				border: 1px solid var(--line);
+				background: linear-gradient(135deg, var(--surface), #070a0b);
+				transition: border-color .2s ease, transform .2s ease;
+			}
+
+			.article-card:hover {
+				transform: translateY(-3px);
+				border-color: var(--programacao);
+			}
+
+			.article-card img {
+				display: block;
+				width: 100%;
+				height: 100%;
+				min-height: 280px;
+				object-fit: cover;
+				filter: saturate(.82) contrast(1.04) brightness(.82);
+			}
+
+			.article-image { display: block; overflow: hidden; }
+
+			.article-card h2 a:focus-visible,
+			.article-image:focus-visible {
+				outline: 2px solid var(--programacao);
+				outline-offset: 4px;
+			}
+
+			.article-areas {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 9px;
+				margin-top: 22px;
+			}
+
+			.article-card-content {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				padding: clamp(28px, 5vw, 65px);
+			}
+
+			.article-label {
+				color: var(--programacao);
+				font-size: .875rem;
+				font-weight: bold;
+				line-height: 1.5;
+			}
+
+			.article-card h2 {
+				margin: 18px 0;
+				font-family: Arial, Helvetica, sans-serif;
+				font-size: clamp(2rem, 4vw, 4rem);
+				line-height: 1;
+				letter-spacing: -.045em;
+			}
+
+			.article-description {
+				max-width: 690px;
+				color: var(--muted);
+				font-family: Georgia, "Times New Roman", serif;
+				font-size: 1.0625rem;
+				line-height: 1.7;
+			}
+
+			.article-search-terms {
+				margin-top: 22px;
+				color: var(--muted);
+				font-size: .875rem;
+				line-height: 1.5;
+			}
+
+			/* =========================
 			   LINKS
 			========================= */
 
 			.quick-links {
 				display: grid;
-				grid-template-columns: repeat(5, 1fr);
+				grid-template-columns: repeat(4, 1fr);
 
 				border-top: 1px solid var(--line);
 				border-bottom: 1px solid var(--line);
@@ -701,6 +835,9 @@ const areas = [
 					padding: 0 20px;
 				}
 
+				.home-search { grid-template-columns: 1fr; }
+				.home-search button { min-height: 48px; border-left: 0; border-top: 1px solid var(--line); }
+
 				.hero {
 					grid-template-columns: 1fr;
 				}
@@ -715,6 +852,15 @@ const areas = [
 
 				.cards {
 					grid-template-columns: 1fr;
+				}
+
+				.article-card {
+					grid-template-columns: 1fr;
+				}
+
+				.article-card img {
+					min-height: 0;
+					max-height: 420px;
 				}
 
 				.quick-links {
@@ -739,16 +885,20 @@ const areas = [
 						PROJETOS
 					</a>
 
+					<a href="#artigos">
+						ARTIGOS
+					</a>
+
+					<a href="/pesquisa/">
+						PESQUISA
+					</a>
+
 					<a href="/playlist/">
 						PLAYLIST
 					</a>
 
-					<a href="#curriculo">
-						CURRÍCULO ONLINE
-					</a>
-
-					<a href="#contribuicoes">
-						CONTRIBUIÇÕES $
+					<a href="/contribuicoes/">
+						CONTRIBUIÇÕES
 					</a>
 
 					<a href="/sobre/">
@@ -779,10 +929,16 @@ const areas = [
 							modificadas e compreendidas.
 						</div>
 
+						<form class="home-search" action="/pesquisa/" method="get" role="search">
+							<label class="sr-only" for="home-search">Pesquisar na Galeria</label>
+							<input id="home-search" type="search" name="q" placeholder="BUSCAR NO ACERVO..." />
+							<button type="submit">PESQUISAR →</button>
+						</form>
+
 						<div class="tags">
 							{
-								areas.map(([nome, classe]) => (
-									<Tag label={nome} tone={classe} />
+								areas.map(({ label, tone }) => (
+									<Tag label={label} tone={tone} />
 								))
 							}
 						</div>
@@ -795,22 +951,22 @@ const areas = [
 						</div>
 
 						{
-							areas.map(([nome, classe]) => (
-								<div class="system-row">
+							areas.map((area) => (
+								<a class="system-row" href={getAreaPath(area)}>
 									<span
-										class={`dot ${classe}`}
+										class={`dot ${area.tone}`}
 									></span>
 
 									<span>
-										{nome}
+										{area.label}
 									</span>
 
 									<span
-										class={`active-label ${classe}`}
+										class={`active-label ${area.tone}`}
 									>
 										ACTIVE
 									</span>
-								</div>
+								</a>
 							))
 						}
 
@@ -839,6 +995,30 @@ const areas = [
 
 				</section>
 
+				<section class="articles" id="artigos">
+					<div class="projects-header">
+						<div class="section-code">[ ACERVO / ARTIGOS E REFERÊNCIAS ]</div>
+						<span class="see-all">REFERÊNCIA TÉCNICA</span>
+					</div>
+
+					{articles.map((article) => (
+						<article class="article-card">
+							<a class="article-image" href={article.path} aria-label={`Abrir ${article.title}`}>
+								<img src={article.image} alt="Hardware ED100 utilizado como plataforma RS485" />
+							</a>
+							<div class="article-card-content">
+								<div class="article-label">{article.label}</div>
+								<h2><a href={article.path}>{article.title}</a></h2>
+								<div class="article-description">{article.description}</div>
+								<div class="article-areas">
+									{article.areas.map(({ label, tone }) => <Tag label={label} tone={tone} compact />)}
+								</div>
+								<div class="article-search-terms">{article.keywords.join(" / ")}</div>
+							</div>
+						</article>
+					))}
+				</section>
+
 				<section class="quick-links">
 
 					<a
@@ -863,27 +1043,7 @@ const areas = [
 						</div>
 					</a>
 
-					<article class="quick unavailable" id="curriculo">
-						<div
-							class="quick-icon programacao"
-						>
-							▤
-						</div>
-
-						<div>
-							<div class="quick-title">
-								CURRÍCULO ONLINE
-							</div>
-
-							<div class="quick-description">
-								Meu percurso, habilidades
-								e experiências.
-							</div>
-							<span class="quick-status">EM DESENVOLVIMENTO</span>
-						</div>
-					</article>
-
-					<article class="quick unavailable" id="contribuicoes">
+					<a class="quick" href="/contribuicoes/">
 						<div
 							class="quick-icon automacao"
 						>
@@ -892,18 +1052,17 @@ const areas = [
 
 						<div>
 							<div class="quick-title">
-								CONTRIBUIÇÕES $
+								CONTRIBUIÇÕES
 							</div>
 
 							<div class="quick-description">
-								Apoie o projeto e mantenha
-								a galeria viva.
+								Conhecimento, código,
+								documentação e apoio material.
 							</div>
-							<span class="quick-status">EM DESENVOLVIMENTO</span>
 						</div>
-					</article>
+					</a>
 
-					<article class="quick unavailable">
+					<a class="quick" href="/areas/experimentacao/">
 						<div
 							class="quick-icon experimentacao"
 						>
@@ -919,9 +1078,8 @@ const areas = [
 								Testes, ideias e coisas
 								que ainda vão virar projeto.
 							</div>
-							<span class="quick-status">EM DESENVOLVIMENTO</span>
 						</div>
-					</article>
+					</a>
 
 					<a
 						class="quick"

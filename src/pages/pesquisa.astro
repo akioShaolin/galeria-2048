@@ -1,0 +1,278 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import ArchiveCard from "../components/ArchiveCard.astro";
+import { archive } from "../data/archive";
+---
+
+<BaseLayout
+	title="Pesquisa — Galeria -2048"
+	description="Pesquisa por metadados, Áreas e palavras-chave no acervo da Galeria -2048."
+	noindex
+>
+	<style is:global>
+		body {
+			background:
+				linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px),
+				var(--bg);
+			background-size: 42px 42px;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		.search-hero {
+			padding: 85px 0 65px;
+			border-bottom: 1px solid var(--line);
+		}
+
+		.eyebrow,
+		.result-count {
+			color: var(--programacao);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+			letter-spacing: .08em;
+		}
+
+		h1 {
+			margin: 22px 0 35px;
+			font-size: clamp(3.4rem, 9vw, 7rem);
+			line-height: .88;
+			letter-spacing: -.065em;
+		}
+
+		.search-form {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			max-width: 900px;
+			border: 1px solid var(--line);
+			background: var(--surface);
+		}
+
+		.search-form:focus-within {
+			border-color: var(--programacao);
+			box-shadow: 0 0 15px rgba(0, 217, 255, .12);
+		}
+
+		.search-input {
+			min-width: 0;
+			padding: 18px 20px;
+			border: 0;
+			background: transparent;
+			color: var(--text);
+			font-family: monospace;
+			font-size: 1rem;
+			line-height: 1.5;
+			outline: 0;
+		}
+
+		.search-input::placeholder {
+			color: var(--muted);
+		}
+
+		.search-submit {
+			padding: 0 24px;
+			border: 0;
+			border-left: 1px solid var(--line);
+			background: transparent;
+			color: var(--programacao);
+			font-family: monospace;
+			font-size: .875rem;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		.search-submit:hover,
+		.search-submit:focus-visible {
+			background: rgba(0, 217, 255, .08);
+			outline: 2px solid var(--programacao);
+			outline-offset: -4px;
+		}
+
+		.search-content {
+			padding: 65px 0 110px;
+		}
+
+		.result-header {
+			margin-bottom: 28px;
+		}
+
+		.result-label {
+			margin-bottom: 10px;
+			color: var(--muted);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+		}
+
+		.result-query {
+			margin: 0 0 16px;
+			font-size: clamp(2rem, 5vw, 4rem);
+			line-height: 1;
+			letter-spacing: -.04em;
+		}
+
+		.search-results {
+			display: grid;
+			gap: 20px;
+		}
+
+		.search-empty,
+		.search-initial {
+			max-width: 760px;
+			padding: 36px;
+			border: 1px solid var(--line);
+			background: var(--surface);
+		}
+
+		.search-empty p,
+		.search-initial p {
+			margin: 0;
+			color: var(--muted);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 1.125rem;
+			line-height: 1.75;
+		}
+
+		.empty-title {
+			margin-bottom: 12px;
+			font-family: monospace;
+			font-size: .875rem;
+			font-weight: bold;
+			line-height: 1.5;
+		}
+
+		.empty-action {
+			display: inline-block;
+			margin-top: 22px;
+			padding-bottom: 5px;
+			border-bottom: 1px solid var(--programacao);
+			color: var(--programacao);
+			font-family: monospace;
+			font-size: .875rem;
+			font-weight: bold;
+		}
+
+		[hidden] { display: none !important; }
+
+		@media (max-width: 600px) {
+			.search-form { grid-template-columns: 1fr; }
+			.search-submit { min-height: 52px; border-left: 0; border-top: 1px solid var(--line); }
+		}
+	</style>
+
+	<SiteHeader accent="var(--programacao)" />
+	<main class="container">
+		<header class="search-hero">
+			<div class="eyebrow">[ SYSTEM / PESQUISA ]</div>
+			<h1>PESQUISAR<br />NO ACERVO</h1>
+			<form class="search-form" action="/pesquisa/" method="get" role="search">
+				<label class="sr-only" for="archive-search">Pesquisar na Galeria</label>
+				<input id="archive-search" class="search-input" type="search" name="q" placeholder="BUSCAR NO ACERVO..." autocomplete="off" />
+				<button class="search-submit" type="submit">PESQUISAR →</button>
+			</form>
+		</header>
+
+		<section class="search-content" aria-live="polite">
+			<div class="search-initial" data-search-initial>
+				<div class="empty-title">ÍNDICE PRONTO</div>
+				<p>Pesquise por título, código, descrição, Área, tipo de conteúdo ou palavra-chave.</p>
+			</div>
+
+			<div class="result-header" data-result-header hidden>
+				<div class="result-label">RESULTADOS PARA:</div>
+				<h2 class="result-query" data-result-query></h2>
+				<div class="result-count" data-result-count></div>
+			</div>
+
+			<div class="search-results" data-search-results>
+				{archive.map((item) => (
+					<div
+						class="search-result"
+						data-search-result
+						data-title={item.title}
+						data-code={item.code ?? ""}
+						data-description={item.description}
+						data-keywords={item.keywords.join(" ")}
+						data-areas={item.areas.map(({ label }) => label).join(" ")}
+						data-type={item.type}
+						hidden
+					>
+						<ArchiveCard item={item} />
+					</div>
+				))}
+			</div>
+
+			<div class="search-empty" data-search-empty hidden>
+				<div class="empty-title">NENHUM ITEM ENCONTRADO</div>
+				<p>Nenhum registro do acervo corresponde a esta pesquisa.</p>
+				<a class="empty-action" href="/">VER TODO O ACERVO →</a>
+			</div>
+
+			<noscript><p>A pesquisa requer JavaScript habilitado no navegador.</p></noscript>
+		</section>
+	</main>
+	<SiteFooter rightText="ÍNDICE ESTÁTICO / METADADOS" />
+
+	<script>
+		const normalize = (value: string) => value
+			.normalize("NFD")
+			.replace(/[\u0300-\u036f]/g, "")
+			.toLocaleLowerCase("pt-BR")
+			.replace(/[^a-z0-9]+/g, " ")
+			.trim();
+
+		const compact = (value: string) => normalize(value).replace(/\s+/g, "");
+		const params = new URLSearchParams(window.location.search);
+		const query = params.get("q")?.trim() ?? "";
+		const input = document.querySelector<HTMLInputElement>("#archive-search");
+		const initial = document.querySelector<HTMLElement>("[data-search-initial]");
+		const header = document.querySelector<HTMLElement>("[data-result-header]");
+		const queryOutput = document.querySelector<HTMLElement>("[data-result-query]");
+		const countOutput = document.querySelector<HTMLElement>("[data-result-count]");
+		const results = document.querySelector<HTMLElement>("[data-search-results]");
+		const empty = document.querySelector<HTMLElement>("[data-search-empty]");
+		const nodes = [...document.querySelectorAll<HTMLElement>("[data-search-result]")];
+
+		if (input) input.value = query;
+
+		if (query && results) {
+			initial?.setAttribute("hidden", "");
+			header?.removeAttribute("hidden");
+			if (queryOutput) queryOutput.textContent = query.toLocaleUpperCase("pt-BR");
+
+			const normalizedQuery = normalize(query);
+			const compactQuery = compact(query);
+			const scoreField = (value: string | undefined, weight: number) => {
+				const normalizedValue = normalize(value ?? "");
+				if (!normalizedValue) return 0;
+				if (normalizedValue === normalizedQuery || compact(value ?? "") === compactQuery) return weight * 3;
+				return normalizedValue.includes(normalizedQuery) || compact(value ?? "").includes(compactQuery) ? weight : 0;
+			};
+
+			const matches = nodes
+				.map((node) => ({
+					node,
+					score:
+						scoreField(node.dataset.title, 12) +
+						scoreField(node.dataset.code, 12) +
+						scoreField(node.dataset.keywords, 8) +
+						scoreField(node.dataset.areas, 5) +
+						scoreField(node.dataset.type, 4) +
+						scoreField(node.dataset.description, 2),
+				}))
+				.filter(({ score }) => score > 0)
+				.sort((a, b) => b.score - a.score);
+
+			nodes.forEach((node) => node.setAttribute("hidden", ""));
+			matches.forEach(({ node }) => {
+				node.removeAttribute("hidden");
+				results.append(node);
+			});
+
+			if (countOutput) countOutput.textContent = `${matches.length.toString().padStart(2, "0")} ${matches.length === 1 ? "ITEM ENCONTRADO" : "ITENS ENCONTRADOS"}`;
+			empty?.toggleAttribute("hidden", matches.length > 0);
+		}
+	</script>
+</BaseLayout>

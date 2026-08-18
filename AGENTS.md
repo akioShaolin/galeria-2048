@@ -1,6 +1,6 @@
 # 1. Sobre o projeto
 
-A **Galeria -2048** é um acervo pessoal e público mantido por **AkioShaolin**.
+A **Galeria -2048** é um acervo pessoal e público mantido por **akioShaolin**.
 
 O objetivo é documentar projetos, experimentos, reparos, desenvolvimento de software, eletrônica, automação, áudio, luthieria e outros trabalhos técnicos ou criativos relacionados.
 
@@ -33,7 +33,7 @@ A frase de identidade usada no site é:
 
 A identidade pública utilizada no projeto é:
 
-**AkioShaolin**
+**akioShaolin**
 
 "Akio" e "Shaolin" fazem parte da identidade usada pelo autor online.
 
@@ -404,7 +404,7 @@ O texto deve ser direto, técnico quando necessário e compreensível para quem 
 - evitar linguagem promocional exagerada;
 - não esconder incertezas;
 - separar opinião de resultado medido;
-- preservar a voz pessoal de AkioShaolin sem expor dados pessoais desnecessários;
+- preservar a voz pessoal de akioShaolin sem expor dados pessoais desnecessários;
 - não publicar credenciais, chaves, números de série sensíveis, endereços de rede privados ou dados de terceiros;
 - não adicionar automaticamente informações de empregadores ou clientes.
 

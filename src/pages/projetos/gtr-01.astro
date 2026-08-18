@@ -4,6 +4,8 @@ import SiteHeader from "../../components/SiteHeader.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import StatusGrid from "../../components/StatusGrid.astro";
 import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
 import { getProject } from "../../data/projects";
 
 const project = getProject("gtr-01");
@@ -192,8 +194,14 @@ const page = project.page;
 		}
 
 		.event h3 {
-			font-size:1.5rem;
-			margin:0 0 12px;
+			font-size:clamp(1.5rem, 3vw, 2.2rem);
+			margin:0 0 20px;
+		}
+
+		.event h4 {
+			margin:50px 0 15px;
+			font-size:1.25rem;
+			letter-spacing:-.02em;
 		}
 
 		.event p {
@@ -202,7 +210,33 @@ const page = project.page;
 			font-size:1.0625rem;
 			line-height:1.75;
 			max-width:700px;
-			margin:0;
+			margin:0 0 20px;
+		}
+
+		.event p:last-child {
+			margin-bottom:0;
+		}
+
+		.event strong {
+			color:var(--text);
+		}
+
+		.event blockquote {
+			max-width:700px;
+			margin:30px 0;
+			padding:5px 0 5px 24px;
+			border-left:2px solid var(--luthieria);
+			color:var(--text);
+			font-family:Georgia, "Times New Roman", serif;
+			font-size:1.125rem;
+			line-height:1.75;
+		}
+
+		.image-pair {
+			display:grid;
+			grid-template-columns:repeat(2, minmax(0, 1fr));
+			gap:20px;
+			max-width:900px;
 		}
 
 		.specs {
@@ -266,6 +300,14 @@ const page = project.page;
 				grid-template-columns:1fr;
 				gap:7px;
 			}
+
+			.image-pair {
+				grid-template-columns:1fr;
+			}
+
+			.event {
+				padding-left:28px;
+			}
 		}
 	</style>
 
@@ -317,20 +359,22 @@ const page = project.page;
 					<div class="prose">
 
 						<h2>
-							Um instrumento que nunca ficou realmente pronto.
+							Um instrumento que nunca ficou realmente pronto (e que nunca vai ficar)
 						</h2>
 
 						<p>
-							Esta guitarra faz parte da minha história há anos.
+							Esta guitarra faz parte da minha história há vários anos.
 							Antes de virar um projeto documentado, ela já havia
-							passado por uso, desmontagens, modificações e longos
+							passado por uso, desmontagens, modificações, venda,
+							presenteamento e longos
 							períodos esperando a próxima ideia.
 						</p>
 
 						<p>
 							Em 2026 decidi retomar o instrumento com outra
-							abordagem: <strong>não apenas consertá-lo, mas experimentar
-							com ele</strong>.
+							abordagem: <strong>documentar</strong>. Eu já vinha fazendo
+							modificações havia muito tempo; agora, além de continuar
+							experimentando com ele, quero registrar o processo.
 						</p>
 
 						<p>
@@ -367,25 +411,98 @@ const page = project.page;
 
 						<div class="timeline">
 
-							{
-								page.timeline.map((entry) => (
-									<article class="event">
+							<article class="event">
+								<div class="event-year">DÉCADA DE 2010</div>
+								<h3>O começo</h3>
+								<p>Desde criança eu me interessava por tocar um instrumento musical, principalmente por influência da minha irmã e do violão dela. Queria porque queria uma guitarra, até que, de tanto insistir, meu pai me deu uma.</p>
+								<p>Na época ele pagou cerca de R$ 400 nela em uma loja de Barretos que hoje nem existe mais, a Frujelle Musical.</p>
+								<p>Não era das melhores guitarras, e tanto eu quanto ele sabíamos disso. O som não me agradava: eu o achava frio e magro. Minha diversão era ligar a guitarra na entrada de microfone do aparelho de som de casa e aumentar o volume para ouvi-lo distorcendo — até o dia em que consegui queimar a entrada do aparelho.</p>
+								<p>Meu pai também me lançou um desafio: eu deveria aprender a tocar <strong>O Milionário</strong>, d'Os Incríveis. É um desafio que ainda não consegui cumprir, mesmo depois de quase 15 anos.</p>
+								<EditorialImage src="/images/gtr-01/inicio-decada-2010.jpg" alt="Pedro ainda jovem segurando a guitarra preta no início de sua história com o instrumento" caption="A guitarra no começo da história, ainda na década de 2010." position="center 45%" />
 
-										<div class="event-year">
-											{entry.year}
-										</div>
+								<h4>O que eu tocava</h4>
+								<p>Conforme fui crescendo, acabei optando por tocar baixo. Na época eu via a base da música como um caminho mais fácil para começar — uma ideia bastante comum entre muitos músicos que acabaram se tornando baixistas.</p>
+								<p>Na guitarra eu também tocava principalmente bases. Raramente arriscava riffs, embora alguns clássicos aparecessem: <em>Sweet Child O' Mine</em>, <em>Smoke on the Water</em>, <em>Highway to Hell</em>, <em>Back in Black</em>, <em>Toxicity</em>, além de alguns solos como <em>So Far Away</em>, do Avenged Sevenfold, e o primeiro solo de <em>Knockin' on Heaven's Door</em>, do Guns N' Roses.</p>
+								<p>Nunca fui guitarrista de banda; fui baixista. A guitarra ficou como hobby.</p>
+								<p>Ganhei do meu tio uma pedaleira Zoom G1XNext, mas eu não tinha muita paciência para efeitos. O wah-wah parecia estranho, eu sentia falta de uma alavanca e, principalmente, faltava habilidade para entender o que eu estava fazendo.</p>
+								<p>Um amigo meu, o Cristrian, pegava a guitarra e conseguia tirar um som bom. Quando eu tocava, saía um som que me desagradava.</p>
+								<p>Resumindo: eu não sabia regular ou equalizar direito e nunca estava satisfeito com o que já tinha. Isso me frustrou por anos.</p>
+							</article>
 
-										<h3>
-											{entry.title}
-										</h3>
+							<article class="event">
+								<div class="event-year">ANTES DA PANDEMIA</div>
+								<h3>O fim do início</h3>
+								<p>Quando eu tinha acabado de fazer 19 anos, fui morar sozinho e levei meus instrumentos comigo. Minha vida passou a ser trabalhar, fazer faculdade e sobreviver.</p>
+								<p>Algum tempo depois, pouco antes da pandemia, eu havia me mudado para um condomínio onde o aluguel já incluía água, luz, internet e mobília. As kitnets eram pequenas e espaço era um problema.</p>
+								<p>Foi lá que conheci Marcos, meu vizinho. Ele gostava de música como eu. Havia sido vocalista de uma banda na juventude e, naquele momento, estava se desafiando nos instrumentos de corda. Foi quando perguntou se eu queria vender a guitarra e a pedaleira.</p>
+								<p>Depois de negociarmos, a guitarra passou a ser dele.</p>
+								<EditorialImage src="/images/gtr-01/instrumento-antes-da-venda.jpeg" alt="Guitarra preta desmontada, com o braço separado do corpo" caption="O instrumento durante uma das fases anteriores à venda." variant="portrait" position="center 42%" />
+								<p>Essa escolha acabou dando um novo significado à existência do instrumento. Foi o Marcos quem começou a dar outra personalidade à guitarra: colou adesivos, colocou cordas de calibre maior e expandiu o repertório que passava por ela.</p>
+								<EditorialImage src="/images/gtr-01/marcos-com-a-guitarra.jpg" alt="Marcos tocando a guitarra preta já modificada com adesivos" caption="Com Marcos, a guitarra ganhou outras marcas, cordas e repertório." position="center 58%" />
 
-										<p>
-											{entry.text}
-										</p>
+								<h4>O acidente</h4>
+								<p>Alguns dias depois de perceber que não via Marcos pelo condomínio, descobri que ele havia sofrido um grave acidente de moto. A recuperação seria longa e ele precisou voltar a morar com a família.</p>
+								<p>Nesse período decidiu vender a guitarra e a pedaleira. Assim que vi o anúncio da guitarra no Facebook, não pensei duas vezes. Consegui comprá-la de volta, embora a pedaleira já tivesse sido vendida.</p>
+								<p>Depois, emprestei a guitarra para que ele pudesse continuar praticando durante a recuperação.</p>
+								<EditorialImage src="/images/gtr-01/marcos-praticando.jpg" alt="Marcos praticando com a guitarra preta em frente a equipamentos musicais" caption="A guitarra voltou temporariamente para que Marcos continuasse praticando." position="center 55%" />
+								<p>Com o tempo, Marcos se recuperou, comprou a guitarra de volta e continuou tocando e experimentando com o instrumento. Trocou adesivos, fez novos ajustes e chegou a fazer uma blindagem utilizando manta asfáltica.</p>
+								<p>Juntos também fomos tocar na pista de skate e no lago da cidade e chegamos a formar uma banda — mas essa é história para outro dia.</p>
+								<EditorialImage src="/images/gtr-01/encontro-musical.jpg" alt="Dois músicos tocando guitarra e baixo em um encontro informal" caption="Uma das ocasiões em que eu e Marcos nos reunimos para tocar em banda." position="center 52%" />
+							</article>
 
-									</article>
-								))
-							}
+							<article class="event">
+								<div class="event-year">O PRESENTE</div>
+								<h3>A guitarra volta para casa</h3>
+								<p>Antes de eu me mudar do condomínio, Marcos me deu a guitarra de presente para que eu a levasse comigo.</p>
+								<p>Relembrei as vezes em que consertamos o instrumento, trocamos cordas e improvisamos soluções — inclusive quando o jack plate quebrou e eu coloquei no lugar uma tampa de margarina cortada.</p>
+								<p>Decidi não parar por ali.</p>
+								<EditorialImage src="/images/gtr-01/jack-plate-margarina.jpg" alt="Jack da guitarra instalado em uma peça vermelha recortada de tampa de margarina" caption="O jack plate improvisado com uma tampa de margarina." variant="detail" position="center 58%" />
+
+								<p>Certo dia desmontei a guitarra inteira. Coloquei as peças metálicas em álcool isopropílico para limpeza, substituí a blindagem anterior por alumínio adesivo, lixei, poli e remontei o instrumento.</p>
+								<div class="image-pair">
+									<EditorialImage src="/images/gtr-01/corpo-desmontado.jpg" alt="Corpo e braço da guitarra desmontados, com cavidades e marcas das modificações expostas" caption="O corpo desmontado antes da limpeza e da remontagem." variant="detail" position="center" />
+									<EditorialImage src="/images/gtr-01/limpeza-blindagem-tarraxas.jpg" alt="Sequência mostrando blindagem com alumínio, peças metálicas em limpeza e montagem das tarraxas" caption="Blindagem, limpeza das ferragens e remontagem das tarraxas." variant="detail" position="center" />
+								</div>
+
+								<p>Em outro momento decidi trocar o humbucker da ponte por um captador barato que encontrei para comprar. Só depois percebi que havia comprado um captador destinado à posição do braço de uma Stratocaster.</p>
+								<p>Não tem problema. Isso também passou a fazer parte do som peculiar do instrumento.</p>
+								<EditorialImage src="/images/gtr-01/troca-captador-ponte.jpg" alt="Captador claro removido acima da guitarra enquanto outro captador está instalado na ponte" caption="O captador comprado para a posição errada entrou na história do instrumento." variant="detail" position="center 55%" />
+
+								<p>Depois substituí aquele jack plate improvisado de tampa de margarina por um jack plate de bambu que eu mesmo fiz.</p>
+								<div class="image-pair">
+									<EditorialImage src="/images/gtr-01/abertura-jack.jpg" alt="Lateral da guitarra com a abertura do jack e fios expostos durante a modificação" caption="A abertura antes da instalação da nova peça." variant="detail" position="center" />
+									<EditorialImage src="/images/gtr-01/jack-plate-bambu.jpg" alt="Jack da guitarra instalado em uma placa quadrada feita de bambu" caption="O jack plate de bambu feito à mão." variant="detail" position="center" />
+								</div>
+
+								<p>Troquei também a ponte original, que desalinhava as cordas e fazia o mizão ficar para fora da posição correta, por uma ponte curta de Telecaster. Com ela consegui corrigir o alinhamento.</p>
+								<div class="image-pair">
+									<EditorialImage src="/images/gtr-01/configuracao-ponte-antiga.jpg" alt="Corpo da guitarra com a configuração anterior de captadores e ponte" caption="A configuração anterior, ainda com o problema de alinhamento." variant="detail" position="center" />
+									<EditorialImage src="/images/gtr-01/ponte-telecaster.jpg" alt="Detalhe da ponte curta de Telecaster instalada na guitarra" caption="A ponte curta de Telecaster corrigiu o alinhamento das cordas." variant="detail" position="center" />
+								</div>
+
+								<p>O single coil original do braço foi substituído por um mini humbucker.</p>
+								<EditorialImage src="/images/gtr-01/mini-humbucker-braco.jpg" alt="Guitarra preta pendurada com mini humbucker instalado na posição do braço" caption="O mini humbucker já instalado na posição do braço." variant="portrait" position="center 46%" />
+
+								<p>Mais tarde troquei os potenciômetros por equivalentes da marca Alpha. Atualmente estou trabalhando também em molduras de bambu para os captadores. Antes da fabricação definitiva, fiz moldes de papelão para testar dimensões e encaixe.</p>
+								<EditorialImage src="/images/gtr-01/moldes-papelao.jpg" alt="Guitarra com moldes de papelão ao redor dos dois captadores" caption="Moldes de papelão usados para testar dimensões e encaixe das futuras molduras." variant="portrait" position="center 54%" />
+							</article>
+
+							<article class="event">
+								<div class="event-year">META ATIVA</div>
+								<h3>Molduras de bambu</h3>
+								<p>A ideia de trabalhar com bambu surgiu ainda durante a confecção do jack plate, mas eu não sabia ao certo como executar peças mais elaboradas tendo à disposição basicamente um pedaço grande de bambu, serrote e lixa.</p>
+								<p>A sugestão do método de fabricação das molduras surgiu durante uma conversa com IA.</p>
+								<p>A proposta atual é produzir as molduras a partir de <strong>duas lâminas de bambu laminadas entre si, com as fibras orientadas aproximadamente a 90°</strong>, aumentando a resistência da peça, e depois realizar o corte a laser.</p>
+								<EditorialImage src="/images/gtr-01/desenho-molduras-bambu.png" alt="Desenho técnico de quatro formatos de molduras para captadores" caption="Estudo das geometrias das molduras que serão produzidas em bambu laminado." variant="detail" position="center" />
+							</article>
+
+							<article class="event">
+								<div class="event-year">PRÓXIMOS PASSOS</div>
+								<h3>O que o futuro trará</h3>
+								<p>O projeto continua aberto.</p>
+								<p>Ainda pretendo desenvolver knobs, outros detalhes mecânicos e estéticos e explorar a possibilidade de eletrônica ativa.</p>
+								<p>Entre as ideias está incorporar circuitos com JFET, experimentando uma eletrônica ativa capaz de acrescentar brilho e definição ao instrumento. Neste momento, isso ainda é uma possibilidade a ser desenvolvida e testada.</p>
+							</article>
 
 						</div>
 
@@ -450,6 +567,8 @@ const page = project.page;
 		</div>
 
 	</main>
+
+	<ImageLightbox />
 
 	<SiteFooter rightText={`${project.type} / ${project.number}`} />
 

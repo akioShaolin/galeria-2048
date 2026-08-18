@@ -1,0 +1,635 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import Tag from "../../components/Tag.astro";
+import { articles } from "../../data/articles";
+
+const article = articles.find(({ id }) => id === "ed100-hardware-rs485");
+
+if (!article) {
+	throw new Error("Dados do artigo ED100 não encontrados.");
+}
+
+const validation = [
+	["Bridge com A/B desconectados, sem 0x00 falso", "APROVADO", "approved"],
+	["Bridge conectada ao BMS JBD em 9600 8N1", "APROVADO", "approved"],
+	["Comunicação pelo JBDTools", "APROVADO", "approved"],
+	["Sniffer RS485 conectado em paralelo", "APROVADO", "approved"],
+	["Preservação do primeiro byte da resposta", "APROVADO", "approved"],
+	["Teste contínuo por 30 minutos", "PENDENTE", "pending"],
+	["Sequência completa de 0x00 a 0xFF", "PENDENTE", "pending"],
+	["Verificação com analisador lógico", "PENDENTE", "pending"],
+	["Outros formatos seriais", "NÃO TESTADOS", "untested"],
+];
+---
+
+<BaseLayout
+	title="ED100 — de datalogger a plataforma RS485 | Galeria -2048"
+	description={article.description}
+	image={article.image}
+	type="article"
+	keywords={article.keywords}
+>
+	<style is:global>
+		body {
+			background:
+				radial-gradient(circle at 75% 8%, rgba(0, 217, 255, .055), transparent 520px),
+				linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px),
+				var(--bg);
+			background-size: auto, 40px 40px, 40px 40px, auto;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		.container {
+			width: min(1180px, calc(100% - 48px));
+		}
+
+		.article-hero {
+			padding: 90px 0 65px;
+			border-bottom: 1px solid var(--line);
+		}
+
+		.eyebrow,
+		.section-label,
+		.meta-label,
+		.diagram-label,
+		.notice-title,
+		.related-label {
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+			letter-spacing: .08em;
+		}
+
+		.eyebrow,
+		.section-label,
+		.diagram-label,
+		.notice-title {
+			color: var(--programacao);
+		}
+
+		.article-hero h1 {
+			max-width: 1000px;
+			margin: 24px 0 30px;
+			font-size: clamp(3.4rem, 8vw, 7.8rem);
+			line-height: .88;
+			letter-spacing: -.065em;
+		}
+
+		.article-hero h1 span {
+			display: block;
+			color: var(--programacao);
+		}
+
+		.lead {
+			max-width: 820px;
+			margin: 0;
+			color: var(--muted);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: clamp(1.25rem, 2.2vw, 1.65rem);
+			line-height: 1.6;
+		}
+
+		.tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			margin-top: 32px;
+		}
+
+		.article-meta {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			margin-top: 50px;
+			border: 1px solid var(--line);
+		}
+
+		.meta-item {
+			padding: 20px;
+			border-right: 1px solid var(--line);
+		}
+
+		.meta-item:last-child { border-right: 0; }
+		.meta-label { margin-bottom: 8px; color: var(--muted); }
+		.meta-value { font-family: monospace; font-size: .9375rem; line-height: 1.5; }
+
+		.hero-photo {
+			margin: 55px 0 0;
+			border: 1px solid var(--line);
+			background: var(--surface);
+		}
+
+		.hero-photo img {
+			display: block;
+			width: 100%;
+			height: auto;
+			max-height: 720px;
+			object-fit: contain;
+		}
+
+		.hero-photo figcaption {
+			padding: 14px 18px;
+			border-top: 1px solid var(--line);
+			color: var(--muted);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.55;
+		}
+
+		.content-section {
+			padding: 95px 0;
+			border-bottom: 1px solid var(--line);
+		}
+
+		.section-grid {
+			display: grid;
+			grid-template-columns: 230px minmax(0, 1fr);
+			gap: 70px;
+		}
+
+		.section-body { max-width: 790px; }
+		.section-body.wide { max-width: none; }
+
+		h2 {
+			margin: 0 0 32px;
+			font-size: clamp(2.2rem, 4.5vw, 4.5rem);
+			line-height: .98;
+			letter-spacing: -.05em;
+		}
+
+		h3 {
+			margin: 45px 0 18px;
+			font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+			letter-spacing: -.025em;
+		}
+
+		.prose p,
+		.prose li {
+			color: var(--muted);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 1.125rem;
+			line-height: 1.8;
+		}
+
+		.prose p { margin: 0 0 24px; }
+		.prose ul { margin: 20px 0 28px; padding-left: 24px; }
+		.prose strong { color: var(--text); }
+		.prose code { color: var(--programacao); font-family: monospace; }
+
+		.question {
+			margin: 0 0 42px;
+			padding-left: 24px;
+			border-left: 2px solid var(--programacao);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: clamp(1.7rem, 3vw, 2.6rem);
+			line-height: 1.35;
+		}
+
+		.diagram {
+			margin: 35px 0;
+			padding: 28px;
+			border: 1px solid var(--line);
+			background: rgba(9, 12, 14, .88);
+		}
+
+		.diagram-flow {
+			display: flex;
+			align-items: stretch;
+			gap: 12px;
+			margin-top: 20px;
+		}
+
+		.node {
+			flex: 1;
+			display: grid;
+			place-items: center;
+			min-height: 76px;
+			padding: 14px;
+			border: 1px solid var(--line);
+			font-family: monospace;
+			font-size: .875rem;
+			font-weight: bold;
+			line-height: 1.45;
+			text-align: center;
+		}
+
+		.arrow-node {
+			display: grid;
+			place-items: center;
+			color: var(--programacao);
+			font-size: 1.5rem;
+		}
+
+		.fact-grid,
+		.related-grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 14px;
+			margin: 32px 0;
+		}
+
+		.fact,
+		.related-item {
+			padding: 22px;
+			border: 1px solid var(--line);
+			background: var(--surface);
+		}
+
+		.fact strong,
+		.related-item strong {
+			display: block;
+			margin-bottom: 9px;
+			font-family: monospace;
+			font-size: .9375rem;
+		}
+
+		.fact span,
+		.related-item span {
+			color: var(--muted);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 1rem;
+			line-height: 1.65;
+		}
+
+		.notice {
+			margin: 38px 0;
+			padding: 26px;
+			border: 1px solid var(--programacao);
+			background: rgba(0, 217, 255, .025);
+		}
+
+		.notice.warning {
+			border-color: var(--automacao);
+			background: rgba(255, 138, 0, .025);
+		}
+
+		.notice.warning .notice-title { color: var(--automacao); }
+		.notice p:last-child { margin-bottom: 0; }
+
+		.repo-link {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 30px;
+			margin: 38px 0;
+			padding: 26px;
+			border: 1px solid var(--programacao);
+			color: var(--programacao);
+			font-family: monospace;
+			font-size: 1rem;
+			font-weight: bold;
+		}
+
+		.repo-link:hover { background: rgba(0, 217, 255, .055); }
+
+		.diagnostic {
+			display: grid;
+			grid-template-columns: repeat(5, 1fr);
+			gap: 10px;
+			margin: 34px 0;
+		}
+
+		.diagnostic .node { min-height: 98px; }
+
+		.validation-table {
+			margin-top: 35px;
+			border-top: 1px solid var(--line);
+		}
+
+		.validation-row {
+			display: grid;
+			grid-template-columns: 1fr 170px;
+			gap: 24px;
+			align-items: center;
+			padding: 17px 0;
+			border-bottom: 1px solid var(--line);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+		}
+
+		.result { font-weight: bold; }
+		.approved { color: var(--eletronica); }
+		.pending { color: var(--automacao); }
+		.untested { color: var(--muted); }
+
+		.related-label { margin-bottom: 8px; color: var(--muted); }
+		.related-item a { color: var(--programacao); }
+		.related-item.future { opacity: .76; }
+
+		.closing {
+			padding: 110px 0;
+			text-align: center;
+		}
+
+		.closing p {
+			max-width: 900px;
+			margin: auto;
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: clamp(1.8rem, 4vw, 3.8rem);
+			line-height: 1.2;
+			letter-spacing: -.035em;
+		}
+
+		@media (max-width: 900px) {
+			.section-grid { grid-template-columns: 1fr; gap: 25px; }
+			.diagram-flow { flex-direction: column; }
+			.arrow-node { transform: rotate(90deg); }
+			.diagnostic { grid-template-columns: 1fr; }
+			.diagnostic .node { min-height: auto; }
+		}
+
+		@media (max-width: 700px) {
+			.article-hero { padding: 65px 0 45px; }
+			.content-section { padding: 70px 0; }
+			.article-meta, .fact-grid, .related-grid { grid-template-columns: 1fr; }
+			.meta-item { border-right: 0; border-bottom: 1px solid var(--line); }
+			.meta-item:last-child { border-bottom: 0; }
+			.validation-row { grid-template-columns: 1fr; gap: 7px; }
+			.repo-link { align-items: flex-start; flex-direction: column; }
+		}
+	</style>
+
+	<SiteHeader accent="var(--programacao)" />
+
+	<main>
+		<article>
+			<div class="container">
+				<header class="article-hero">
+					<div class="eyebrow">[ ARTIGO / REFERÊNCIA TÉCNICA ]</div>
+					<h1>ED100 <span>DE DATALOGGER<br />A PLATAFORMA RS485</span></h1>
+					<p class="lead">{article.description}</p>
+
+					<div class="tags">
+						{article.areas.map(({ label, tone }) => <Tag label={label} tone={tone} />)}
+					</div>
+
+					<div class="article-meta">
+						<div class="meta-item"><div class="meta-label">PLATAFORMA</div><div class="meta-value">ESP32 / ST485E / RS485</div></div>
+						<div class="meta-item"><div class="meta-label">REFERÊNCIA</div><div class="meta-value programacao">MAPEAMENTO INDEPENDENTE</div></div>
+						<div class="meta-item"><div class="meta-label">ESTADO</div><div class="meta-value eletronica">BASE VALIDADA EM HARDWARE</div></div>
+					</div>
+
+					<figure class="hero-photo">
+						<img src={article.image} alt="Hardware ED100 utilizado no desenvolvimento e nos testes do ESP RS485 Bridge" />
+						<figcaption>Exemplar efetivamente analisado e reaproveitado neste trabalho. A fotografia não representa documentação oficial de todas as revisões do produto.</figcaption>
+					</figure>
+				</header>
+			</div>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 01 / CONTEXTO ]</div>
+					<div class="section-body prose">
+						<p class="question">O que ainda existe dentro de um equipamento quando deixamos de considerar apenas sua função original?</p>
+						<h2>Uma função terminou. O hardware continuou ali.</h2>
+						<p>O ED100 chegou a este trabalho como um datalogger de terceiro. Ao examinar a unidade disponível, a questão deixou de ser o que o equipamento fazia originalmente e passou a ser <strong>quais recursos físicos ainda poderiam ser compreendidos e reaproveitados</strong>.</p>
+						<p>O exemplar revelou uma plataforma com ESP32, interface serial e transceiver RS485. A partir daí, o trabalho seguiu três trilhas separadas: levantamento independente da placa, desenvolvimento de firmware próprio e validação das interfaces em bancada.</p>
+						<p>O resultado não transforma a Galeria em fabricante do ED100 nem implica vínculo com seu fabricante. Documenta somente a unidade efetivamente examinada e o que foi desenvolvido a partir dela.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 02 / HARDWARE ]</div>
+					<div class="section-body wide prose">
+						<h2>Os blocos encontrados.</h2>
+						<div class="diagram">
+							<div class="diagram-label">[ CAMINHO DE COMUNICAÇÃO ]</div>
+							<div class="diagram-flow">
+								<div class="node">ESP32-WROOM-32E</div><div class="arrow-node">→</div>
+								<div class="node">UART2</div><div class="arrow-node">→</div>
+								<div class="node">ST485E</div><div class="arrow-node">→</div>
+								<div class="node">BARRAMENTO A/B</div>
+							</div>
+						</div>
+
+						<div class="fact-grid">
+							<div class="fact"><strong>UART0 / CN2</strong><span>Interface com o computador por conversor USB–TTL de 3,3 V. No exemplar mapeado: RX/GPIO3, TX/GPIO1 e GND.</span></div>
+							<div class="fact"><strong>UART2 / RS485</strong><span>GPIO16 recebe RO e GPIO17 envia dados ao DI do ST485E.</span></div>
+							<div class="fact"><strong>CONTROLE DE DIREÇÃO</strong><span>GPIO4 controla DE e /RE: LOW para recepção, HIGH para transmissão.</span></div>
+							<div class="fact"><strong>INDICAÇÃO DE ATIVIDADE</strong><span>GPIO27 indica transmissão RS485 e GPIO14 indica recepção no firmware desenvolvido.</span></div>
+						</div>
+
+						<p>Wi-Fi, Bluetooth, RTC, servidores e protocolos de rede não são inicializados pelo firmware da bridge. O objetivo é usar as interfaces seriais existentes como uma ferramenta direta de comunicação e diagnóstico.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 03 / MAPEAMENTO ]</div>
+					<div class="section-body prose">
+						<h2>Circuito levantado a partir da unidade examinada.</h2>
+						<p>O circuito foi redesenhado de forma independente para identificar o ESP32, o transceiver RS485, conectores e sinais relevantes. Ele <strong>não é um esquemático oficial do fabricante</strong>.</p>
+						<div class="notice">
+							<div class="notice-title">[ LIMITES DA REFERÊNCIA ]</div>
+							<p>O levantamento representa somente a unidade/revisão examinada, pode conter erros e deve ser conferido diretamente no hardware. Outras revisões podem ser diferentes. O material não contém layout de PCB, Gerbers, arquivos de fabricação ou firmware original e não constitui um projeto pronto para fabricação.</p>
+						</div>
+						<a class="repo-link" href="https://github.com/akioShaolin/esp-rs485-bridge/blob/main/docs/ed100-hardware-reference/ed100-hardware-reference.pdf" target="_blank" rel="noopener noreferrer"><span>ABRIR MAPEAMENTO INDEPENDENTE (PDF)</span><span>↗</span></a>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 04 / TRANSFORMAÇÃO ]</div>
+					<div class="section-body wide prose">
+						<h2>Do hardware identificado à ESP RS485 Bridge.</h2>
+						<div class="diagram">
+							<div class="diagram-label">[ PROCESSO ]</div>
+							<div class="diagram-flow">
+								<div class="node">ED100 ORIGINAL</div><div class="arrow-node">→</div>
+								<div class="node">HARDWARE IDENTIFICADO</div><div class="arrow-node">→</div>
+								<div class="node">INTERFACES REAPROVEITÁVEIS</div><div class="arrow-node">→</div>
+								<div class="node">FIRMWARE INDEPENDENTE</div><div class="arrow-node">→</div>
+								<div class="node">ESP RS485 BRIDGE</div>
+							</div>
+						</div>
+						<p>O hardware comercial foi reaproveitado. O levantamento foi produzido independentemente. O firmware <code>esp-rs485-bridge</code> também foi escrito independentemente e não utiliza nem distribui o firmware original do equipamento.</p>
+						<a class="repo-link" href="https://github.com/akioShaolin/esp-rs485-bridge" target="_blank" rel="noopener noreferrer"><span>GITHUB / ESP-RS485-BRIDGE</span><span>↗</span></a>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 05 / BRIDGE MODE ]</div>
+					<div class="section-body wide prose">
+						<h2>Bytes entre duas interfaces.</h2>
+						<div class="diagram">
+							<div class="diagram-label">[ BRIDGE MODE ]</div>
+							<div class="diagram-flow">
+								<div class="node">PC</div><div class="arrow-node">↔</div>
+								<div class="node">USB–TTL 3,3 V</div><div class="arrow-node">↔</div>
+								<div class="node">ESP32 / ED100</div><div class="arrow-node">↔</div>
+								<div class="node">RS485</div><div class="arrow-node">↔</div>
+								<div class="node">DISPOSITIVO</div>
+							</div>
+						</div>
+						<p>A bridge encaminha dados binários entre UART0 e UART2. Ela não interpreta Modbus ou JBD, não altera frames, não calcula CRC e não acrescenta delimitadores. Bytes como <code>0x00</code> e <code>0x0D</code> são transportados como recebidos.</p>
+						<p>A transparência é de conteúdo, não necessariamente de temporização. Dados vindos do computador são agrupados até 3,5 tempos de caractere em silêncio ou até o buffer estático atingir 512 bytes. Em 9600 8N1, o intervalo calculado é aproximadamente 3646 µs; pausas maiores e fluxos contínuos acima de 512 bytes podem dividir uma transmissão.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 06 / SNIFFER MODE ]</div>
+					<div class="section-body wide prose">
+						<h2>Observar sem transmitir por software.</h2>
+						<div class="diagram">
+							<div class="diagram-label">[ SNIFFER MODE ]</div>
+							<div class="diagram-flow">
+								<div class="node">MASTER</div><div class="arrow-node">↔</div>
+								<div class="node">BARRAMENTO RS485</div><div class="arrow-node">↔</div>
+								<div class="node">SLAVE</div><div class="arrow-node">→</div>
+								<div class="node">ED100 → PC</div>
+							</div>
+						</div>
+						<p>No modo sniffer, a entrada enviada pelo computador é descartada e GPIO4 permanece LOW, impedindo transmissões comandadas pelo firmware. O tráfego recebido pelo RS485 segue para a UART0.</p>
+						<div class="notice warning">
+							<div class="notice-title">[ PASSIVIDADE TEM UM LIMITE ]</div>
+							<p>O modo é passivo no nível do protocolo, mas não eletricamente isolado. Transceiver, proteção e polarização continuam conectados e carregam o barramento. A montagem não deve ser apresentada como analisador totalmente passivo ou isolado.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 07 / DIAGNÓSTICO 0x00 ]</div>
+					<div class="section-body wide prose">
+						<h2>O byte que aparecia sem ter sido enviado.</h2>
+						<div class="diagnostic">
+							<div class="node">SINTOMA<br />0x00 ESPÚRIO</div>
+							<div class="node">HIPÓTESES<br />FRAME / UART / TRANSCEIVER</div>
+							<div class="node">TESTES<br />A/B DESCONECTADOS</div>
+							<div class="node">CAUSA<br />RX2 EM LOW DURANTE TX</div>
+							<div class="node">CORREÇÃO<br />GPIO MATRIX</div>
+						</div>
+						<p>Durante transmissão, <code>/RE</code> desabilita o receptor do ST485E e sua saída RO fica em alta impedância. No circuito levantado, o pull-down externo pode levar GPIO16 a LOW, condição capaz de iniciar um BREAK e produzir um <code>0x00</code> falso na UART2.</p>
+						<p>A correção mantém a entrada interna RX2 em nível ocioso HIGH pela GPIO Matrix enquanto o transceiver transmite. Depois de <code>uart_wait_tx_done()</code>, a entrada RX2 é limpa ainda isolada; GPIO4 retorna a LOW e GPIO16 é reconectado imediatamente, sem janela destinada a descartar o primeiro byte real.</p>
+						<div class="diagram">
+							<div class="diagram-label">[ TRANSIÇÃO TX → RX ]</div>
+							<div class="diagram-flow">
+								<div class="node">TX RS485</div><div class="arrow-node">→</div>
+								<div class="node">uart_wait_tx_done()</div><div class="arrow-node">→</div>
+								<div class="node">LIMPA RX2 ISOLADO</div><div class="arrow-node">→</div>
+								<div class="node">DE/RE → RECEIVE</div><div class="arrow-node">→</div>
+								<div class="node">RECONECTA GPIO16</div>
+							</div>
+						</div>
+						<p>Com A e B desconectados, o frame <code>DD A5 03 00 FF FD 77</code> foi enviado em Bridge Mode. O LED de TX indicou atividade, o de RX permaneceu inativo e nenhum byte retornou ao computador: o <code>0x00</code> espúrio deixou de ser produzido.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 08 / POLARIDADE A/B ]</div>
+					<div class="section-body prose">
+						<h2>Nem todo zero vinha do firmware.</h2>
+						<div class="diagram">
+							<div class="diagram-label">[ INVESTIGAÇÃO ]</div>
+							<div class="diagram-flow">
+								<div class="node">HIPÓTESE<br />PROBLEMA NO FIRMWARE</div><div class="arrow-node">→</div>
+								<div class="node">CAUSA<br />A/B INVERTIDOS</div><div class="arrow-node">→</div>
+								<div class="node">RESULTADO<br />RESPOSTA VÁLIDA</div>
+							</div>
+						</div>
+						<p>Na primeira ligação ao BMS, eram observados apenas bytes <code>0x00</code>. Após desenergizar o conjunto e inverter A/B, a comunicação pelo JBDTools funcionou e respostas válidas passaram a começar por <code>DD</code>.</p>
+						<p>A conclusão vale para o conjunto ensaiado: nomenclaturas A/B variam entre fabricantes. Cor e nome do fio, usados isoladamente, não provam polaridade e não substituem verificação elétrica.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 09 / VALIDAÇÃO ]</div>
+					<div class="section-body wide prose">
+						<h2>Validado com o conjunto ensaiado.</h2>
+						<p>Testes físicos realizados em <strong>17/08/2026</strong> com ESP32-WROOM-32E, ST485E, placa reaproveitada de um ED100, BMS JBD <code>SP24S004L24S120A</code>, JBDTools e comunicação em 9600 baud, 8N1.</p>
+						<div class="diagram">
+							<div class="diagram-label">[ ARRANJO DE VALIDAÇÃO ]</div>
+							<div class="diagram-flow">
+								<div class="node">JBDTools</div><div class="arrow-node">↔</div>
+								<div class="node">USB–TTL</div><div class="arrow-node">↔</div>
+								<div class="node">ED100 / BRIDGE</div><div class="arrow-node">↔</div>
+								<div class="node">RS485</div><div class="arrow-node">↔</div>
+								<div class="node">BMS JBD</div>
+							</div>
+						</div>
+						<div class="validation-table">
+							{validation.map(([test, result, state]) => <div class="validation-row"><span>{test}</span><span class={`result ${state}`}>{result}</span></div>)}
+						</div>
+						<p>Esses resultados demonstram o conjunto ensaiado. Não estabelecem compatibilidade universal com todos os BMS JBD, dispositivos RS485, baud rates, formatos seriais ou revisões do ED100.</p>
+						<a class="repo-link" href="https://github.com/akioShaolin/esp-rs485-bridge/blob/main/docs/testing.md" target="_blank" rel="noopener noreferrer"><span>PROCEDIMENTOS E RESULTADOS DETALHADOS</span><span>↗</span></a>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 10 / SEGURANÇA ]</div>
+					<div class="section-body prose">
+						<h2>Antes de ligar os cabos.</h2>
+						<div class="notice warning">
+							<div class="notice-title">[ INTERFACE NÃO ISOLADA ]</div>
+							<p>A interface não possui isolamento galvânico. Verifique referência elétrica, tensão de modo comum e compatibilidade dos níveis lógicos antes de conectar computador, bateria ou barramento. Não conecte indiscriminadamente o negativo de uma bateria de tração ao GND de um computador.</p>
+						</div>
+						<ul>
+							<li>GPIOs do ESP32 não toleram 5 V; o conversor USB–TTL deve usar lógica de 3,3 V.</li>
+							<li>Com a placa alimentada normalmente, o VCC do USB–TTL deve permanecer desconectado.</li>
+							<li>O esquema analisado não apresenta terminação integrada de 120 Ω entre A e B.</li>
+							<li>Terminação e polarização dependem da topologia e não são adaptadas pelo firmware.</li>
+							<li>A UART0 é compartilhada com gravação e mensagens de boot do ESP32 podem aparecer nela.</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 11 / ESCOPO E AUTORIA ]</div>
+					<div class="section-body prose">
+						<h2>O que este trabalho afirma — e o que não afirma.</h2>
+						<div class="notice">
+							<div class="notice-title">[ ESCOPO E AUTORIA ]</div>
+							<p>ED100 é identificação de produto/marca de terceiro, utilizada aqui para documentar a plataforma efetivamente analisada. A Galeria -2048 não afirma afiliação, suporte, aprovação ou patrocínio de seu fabricante.</p>
+							<p>O mapeamento corresponde à unidade examinada, foi produzido independentemente e pode divergir de outras revisões. O <code>esp-rs485-bridge</code> é desenvolvimento independente. Firmware original, layout de PCB e arquivos de fabricação do equipamento não são publicados.</p>
+						</div>
+						<p>Esse cuidado não substitui precisão técnica: observações de bancada, implementação do firmware, resultados aprovados e testes ainda pendentes permanecem identificados separadamente.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section" id="relacionados">
+				<div class="container section-grid">
+					<div class="section-label">[ 12 / RELACIONADOS ]</div>
+					<div class="section-body wide prose">
+						<h2>Uma base para os próximos projetos.</h2>
+						<p>Este artigo concentra a descrição do hardware, a origem do mapeamento e as limitações já conhecidas. Projetos futuros da Galeria -2048 poderão apontar para esta referência sem repetir toda a investigação.</p>
+						<div class="related-grid">
+							<div class="related-item"><div class="related-label">REFERÊNCIA DE HARDWARE</div><strong>ED100 / MAPEAMENTO INDEPENDENTE</strong><span>Esta página e o PDF técnico mantido no repositório.</span></div>
+							<div class="related-item"><div class="related-label">SOFTWARE</div><strong><a href="https://github.com/akioShaolin/esp-rs485-bridge" target="_blank" rel="noopener noreferrer">ESP-RS485-BRIDGE ↗</a></strong><span>Código, configuração, compilação, testes e documentação técnica completa.</span></div>
+							<div class="related-item future"><div class="related-label">PROJETO DERIVADO</div><strong>SNIFFER</strong><span>EM DESENVOLVIMENTO</span></div>
+							<div class="related-item future"><div class="related-label">PROJETO DERIVADO</div><strong>JBD BMS MONITOR</strong><span>EM DESENVOLVIMENTO</span></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="closing">
+				<div class="container">
+					<p>O <span class="programacao">esp-rs485-bridge</span> não encerra o trabalho com este hardware. Ele estabelece a base.</p>
+				</div>
+			</section>
+		</article>
+	</main>
+
+	<SiteFooter rightText="ARTIGO / ED100 / RS485" />
+</BaseLayout>
