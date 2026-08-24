@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+	<title id="title">Optimus Sun</title>
+	<desc id="desc">Placeholder técnico para futura captura da interface do Optimus Sun</desc>
+	<rect width="1200" height="700" fill="#090c0e"/>
+	<g stroke="#293238" stroke-width="1" opacity=".7">
+		<path d="M0 70h1200M0 140h1200M0 210h1200M0 280h1200M0 350h1200M0 420h1200M0 490h1200M0 560h1200M0 630h1200"/>
+		<path d="M100 0v700M200 0v700M300 0v700M400 0v700M500 0v700M600 0v700M700 0v700M800 0v700M900 0v700M1000 0v700M1100 0v700"/>
+	</g>
+	<circle cx="600" cy="270" r="105" fill="none" stroke="#ffe000" stroke-width="5"/>
+	<g stroke="#ffe000" stroke-width="4">
+		<path d="M600 110V55M600 485v-55M440 270h-55M815 270h-55M487 157l-39-39M752 422l-39-39M713 157l39-39M448 422l39-39"/>
+	</g>
+	<text x="600" y="545" fill="#f0f2f2" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="700" text-anchor="middle">OPTIMUS SUN</text>
+	<text x="600" y="600" fill="#9aa4a9" font-family="monospace" font-size="22" text-anchor="middle">[ CAPTURA DA INTERFACE PENDENTE ]</text>
+</svg>

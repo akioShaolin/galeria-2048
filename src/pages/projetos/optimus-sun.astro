@@ -1,0 +1,451 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("optimus-sun");
+
+if (!project?.page) {
+	throw new Error("Dados do projeto Optimus Sun não encontrados.");
+}
+
+const page = project.page;
+---
+
+<BaseLayout
+	title="Optimus Sun — Galeria -2048"
+	description={page.subtitle}
+	image={project.image}
+	keywords={project.keywords}
+>
+	<style is:global>
+		body {
+			background:
+				radial-gradient(circle at 76% 8%, rgba(255, 224, 0, .045), transparent 520px),
+				linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px),
+				var(--bg);
+			background-size: auto, 42px 42px, 42px 42px, auto;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		.hero {
+			padding: 100px 0 75px;
+		}
+
+		.code,
+		.section-label,
+		.event-year,
+		.pending-label {
+			color: var(--programacao);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+			letter-spacing: .08em;
+		}
+
+		h1 {
+			max-width: 1050px;
+			margin: 25px 0 0;
+			font-size: clamp(4rem, 11vw, 9rem);
+			line-height: .82;
+			letter-spacing: -.075em;
+		}
+
+		.subtitle {
+			max-width: 790px;
+			margin-top: 38px;
+			color: var(--muted);
+			font-size: clamp(1.2rem, 2vw, 1.6rem);
+			line-height: 1.55;
+		}
+
+		.tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			margin-top: 30px;
+		}
+
+		.status { margin-top: 55px; }
+
+		.hero-image {
+			margin: 0;
+			border: 1px solid var(--line);
+			background: var(--surface);
+		}
+
+		.hero-image img {
+			display: block;
+			width: 100%;
+			height: clamp(340px, 55vw, 620px);
+			object-fit: contain;
+		}
+
+		.hero-image figcaption {
+			padding: 12px 15px;
+			border-top: 1px solid var(--line);
+			color: var(--muted);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+		}
+
+		.content {
+			padding: 100px 0;
+			border-bottom: 1px solid var(--line);
+		}
+
+		.section-grid {
+			display: grid;
+			grid-template-columns: 250px 1fr;
+			gap: 75px;
+		}
+
+		h2 {
+			max-width: 850px;
+			margin: 0 0 35px;
+			font-size: clamp(2.2rem, 5vw, 4.4rem);
+			line-height: .96;
+			letter-spacing: -.05em;
+		}
+
+		.prose {
+			max-width: 760px;
+		}
+
+		.prose p,
+		.prose li {
+			color: var(--muted);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 1.125rem;
+			line-height: 1.8;
+		}
+
+		.prose p { margin: 0 0 22px; }
+		.prose strong { color: var(--text); }
+		.prose ul,
+		.prose ol { padding-left: 24px; }
+		.prose li + li { margin-top: 10px; }
+
+		.distinctions {
+			display: grid;
+			gap: 1px;
+			margin-top: 40px;
+			border: 1px solid var(--line);
+			background: var(--line);
+		}
+
+		.distinction {
+			padding: 22px;
+			background: var(--surface);
+		}
+
+		.distinction strong {
+			display: block;
+			margin-bottom: 8px;
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+			letter-spacing: .04em;
+		}
+
+		.distinction span {
+			color: var(--muted);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 1.0625rem;
+			line-height: 1.7;
+		}
+
+		.pending {
+			max-width: 760px;
+			margin-top: 35px;
+			padding: 24px;
+			border: 1px solid var(--line);
+			border-left: 2px solid var(--automacao);
+			background: rgba(255, 138, 0, .035);
+		}
+
+		.pending p {
+			margin: 10px 0 0;
+			color: var(--muted);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.65;
+		}
+
+		.media-placeholder {
+			display: grid;
+			place-items: center;
+			min-height: 300px;
+			margin-top: 40px;
+			padding: 30px;
+			border: 1px dashed var(--line);
+			background: var(--surface);
+			color: var(--muted);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.6;
+			text-align: center;
+		}
+
+		.workflow {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 1px;
+			margin: 40px 0;
+			border: 1px solid var(--line);
+			background: var(--line);
+		}
+
+		.workflow-step {
+			padding: 22px;
+			background: var(--surface);
+		}
+
+		.workflow-step strong {
+			display: block;
+			color: var(--programacao);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+		}
+
+		.workflow-step span {
+			display: block;
+			margin-top: 9px;
+			color: var(--muted);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 1rem;
+			line-height: 1.65;
+		}
+
+		.screen-list {
+			display: grid;
+			gap: 1px;
+			margin: 35px 0;
+			border: 1px solid var(--line);
+			background: var(--line);
+		}
+
+		.screen-item {
+			display: grid;
+			grid-template-columns: 180px 1fr;
+			gap: 24px;
+			padding: 22px;
+			background: var(--surface);
+		}
+
+		.screen-item strong { font-family: monospace; font-size: .875rem; line-height: 1.5; }
+		.screen-item span { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.0625rem; line-height: 1.7; }
+
+		.project-link {
+			display: inline-block;
+			margin-top: 35px;
+			padding: 14px 18px;
+			border: 1px solid var(--line);
+			color: var(--text);
+			font: 700 .875rem/1.4 monospace;
+			text-decoration: none;
+		}
+
+		.project-link:hover,
+		.project-link:focus-visible { border-color: var(--programacao); color: var(--programacao); outline: none; }
+
+		.timeline { border-left: 1px solid var(--line); }
+
+		.event {
+			position: relative;
+			padding: 0 0 55px 42px;
+		}
+
+		.event:last-child { padding-bottom: 0; }
+
+		.event::before {
+			content: "";
+			position: absolute;
+			left: -5px;
+			top: 5px;
+			width: 9px;
+			height: 9px;
+			border-radius: 50%;
+			background: var(--programacao);
+			box-shadow: 0 0 12px var(--programacao);
+		}
+
+		.event h3 {
+			margin: 10px 0 12px;
+			font-size: 1.5rem;
+		}
+
+		.event p {
+			max-width: 700px;
+			margin: 0;
+			color: var(--muted);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 1.0625rem;
+			line-height: 1.75;
+		}
+
+		.project-open {
+			padding: 120px 0;
+			text-align: center;
+		}
+
+		.project-open div {
+			margin-bottom: 20px;
+			color: var(--programacao);
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+		}
+
+		.project-open h2 { margin: auto; }
+
+		@media (max-width: 800px) {
+			.hero { padding: 70px 0 55px; }
+			.content { padding: 75px 0; }
+			.section-grid { grid-template-columns: 1fr; gap: 30px; }
+			.event { padding-left: 28px; }
+			.workflow { grid-template-columns: 1fr 1fr; }
+			.screen-item { grid-template-columns: 1fr; gap: 10px; }
+		}
+
+		@media (max-width: 600px) { .workflow { grid-template-columns: 1fr; } }
+	</style>
+
+	<SiteHeader accent="var(--programacao)" />
+
+	<main>
+		<div class="container">
+			<section class="hero">
+				<div class="code">{project.type} / {project.number}</div>
+				<h1>{page.code}</h1>
+				<div class="subtitle">{page.subtitle}</div>
+				<div class="tags">{project.categories.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+				<div class="status"><StatusGrid items={page.status} /></div>
+			</section>
+
+			<EditorialImage src={project.image} alt="Identidade visual do Optimus Sun com módulo fotovoltaico, inversor e sol" caption="Identidade visual atual do Optimus Sun." eager={true} />
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">[ 01 / A ORIGEM ]</div>
+					<div class="prose">
+						<h2>Uma ferramenta que começou como uma planilha</h2>
+						<p>A ideia do Optimus Sun surgiu em 2022, quando eu trabalhava em uma empresa de energia fotovoltaica e era responsável por acompanhar obras remotamente e orientar instaladores em campo.</p>
+						<p>Parte desse trabalho envolvia verificar combinações entre inversores e módulos fotovoltaicos. Era necessário saber não apenas se determinada configuração poderia funcionar, mas também quais eram as condições mínimas para a partida e operação do inversor e como montar os arranjos de forma compatível com suas faixas de tensão de trabalho.</p>
+						<p>A intenção era facilitar esses cálculos e tornar mais rápida a análise das combinações entre módulos e inversores, incluindo as condições necessárias para funcionamento e a busca por configurações que respeitassem as tensões de operação relevantes para uma boa utilização do equipamento.</p>
+						<p>No início, o Optimus Sun era apenas uma planilha de Excel. Conforme a necessidade aumentou, a ferramenta começou a evoluir. Vieram automações em VBA, experimentações em Python e outras formas de organizar e executar os cálculos.</p>
+						<p>O que começou como uma planilha para resolver uma tarefa recorrente acabou se tornando um projeto por si só.</p>
+						<div class="pending">
+							<div class="pending-label">NOTA TÉCNICA</div>
+							<p>Uma combinação precisa ser confrontada com as especificações do fabricante, as condições ambientais, o projeto elétrico e os critérios aplicáveis. Esta página não apresenta o Optimus Sun como garantia universal de compatibilidade ou desempenho.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">[ 02 / O QUE FAZ ]</div>
+					<div>
+						<h2>Compatibilidade transformada em limites legíveis</h2>
+						<div class="prose">
+							<p>Na versão 2.3.8, o Optimus Sun relaciona modelos de inversores e módulos cadastrados em um banco SQLite e compara seus parâmetros elétricos. A interface calcula quantidades mínimas e máximas de módulos por string, número de strings por MPPT, potência e limite global do inversor.</p>
+							<p>Os resultados separam faixa de operação, condição de carga máxima e valores fora dos limites. Gráficos adicionais mostram qual critério restringiu cada resultado.</p>
+						</div>
+						<div class="distinctions">
+							<div class="distinction"><strong>POR STRING</strong><span>Compara tensão de circuito aberto, faixa de operação e faixa de carga máxima para estabelecer os intervalos admitidos.</span></div>
+							<div class="distinction"><strong>POR MPPT</strong><span>Compara corrente de curto-circuito, corrente de operação e quantidade física de entradas para limitar o número de strings.</span></div>
+							<div class="distinction"><strong>POR INVERSOR</strong><span>Consolida os grupos de MPPT e confronta circuito aberto, operação, sobrecarga e carga máxima para indicar o limite global.</span></div>
+						</div>
+						<EditorialImage src="/images/optimus-sun/interface-1.png" alt="Tela principal do Optimus Sun com seleção de inversor e módulo e limites calculados" caption="Tela principal: seleção dos equipamentos, potência máxima e faixa de módulos por string." />
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">[ 03 / COMO UTILIZAR ]</div>
+					<div>
+						<h2>Da seleção ao resumo do arranjo</h2>
+						<div class="prose">
+							<p>O cálculo é atualizado quando um inversor e um módulo são selecionados. Antes de interpretar o resultado, o usuário pode abrir as fichas técnicas e conferir se o cadastro corresponde aos datasheets vigentes.</p>
+						</div>
+						<div class="workflow">
+							<div class="workflow-step"><strong>01 / SELECIONAR</strong><span>Fabricante e modelo do inversor e do módulo.</span></div>
+							<div class="workflow-step"><strong>02 / CONFERIR</strong><span>Dados técnicos e parâmetros cadastrados.</span></div>
+							<div class="workflow-step"><strong>03 / ANALISAR</strong><span>Limites por string e por grupo de MPPT.</span></div>
+							<div class="workflow-step"><strong>04 / CONSOLIDAR</strong><span>Quantidade e potência no inversor completo.</span></div>
+						</div>
+						<div class="screen-list">
+							<div class="screen-item"><strong>FICHAS TÉCNICAS</strong><span>Apresentam sistema, propriedades elétricas e MPPTs do inversor; tecnologia, grandezas elétricas e coeficientes de temperatura do módulo.</span></div>
+							<div class="screen-item"><strong>LIMITES POR MPPT</strong><span>As barras comparam restrições simultâneas. Vermelho identifica o valor limitante; verde, condições que ainda permitem valor maior.</span></div>
+							<div class="screen-item"><strong>RESUMO GLOBAL</strong><span>Confronta os limites do inversor inteiro e detalha quantidade e potência por grupo de MPPTs.</span></div>
+						</div>
+						<EditorialImage src="/images/optimus-sun/interface-2.png" alt="Janelas de detalhes técnicos do inversor e do módulo no Optimus Sun" caption="Fichas técnicas usadas para revisar os dados que alimentam o cálculo." />
+						<EditorialImage src="/images/optimus-sun/interface-3.png" alt="Gráficos do Optimus Sun comparando limites de strings e módulos por MPPT" caption="Detalhes dos limites por MPPT: cada conjunto mostra qual condição restringe o resultado." />
+						<EditorialImage src="/images/optimus-sun/interface-4.png" alt="Resumo geral do Optimus Sun com limite de módulos no inversor e distribuição por MPPT" caption="Resumo do inversor: limite global e distribuição calculada por grupos de MPPT." />
+						<div class="pending"><div class="pending-label">OPÇÕES AVANÇADAS</div><p>“Ignorar corrente de operação” e “Ignorar faixa de carga máxima” removem critérios do cálculo. Devem ser usadas somente com justificativa técnica e conferência nos documentos dos fabricantes.</p></div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">[ 04 / EVOLUÇÃO ]</div>
+					<div>
+						<h2>Da planilha ao software</h2>
+						<div class="timeline">
+							{page.timeline.map((entry) => (
+								<article class="event">
+									<div class="event-year">{entry.year}</div>
+									<h3>{entry.title}</h3>
+									<p>{entry.text}</p>
+								</article>
+							))}
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">[ 05 / ONDE APLICAR ]</div>
+					<div class="prose">
+						<h2>Apoio para verificações recorrentes</h2>
+						<p>O Optimus Sun é útil como ferramenta de apoio em situações nas quais muitas combinações entre módulos e inversores precisam ser verificadas. Essa necessidade apareceu no acompanhamento remoto de obras e na orientação técnica a instaladores.</p>
+						<p>A ferramenta busca organizar e automatizar parte dessas verificações. Ela não substitui datasheets e documentação oficial dos fabricantes, critérios de engenharia e projeto, normas técnicas aplicáveis ou a análise das condições ambientais e elétricas reais da instalação.</p>
+						<p>A proposta é auxiliar a análise, não emitir uma garantia universal de compatibilidade ou desempenho.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">[ 06 / O FUTURO ]</div>
+					<div class="prose">
+						<h2>O projeto continua aberto</h2>
+						<p>O Optimus Sun nasceu para resolver uma necessidade específica, mas a própria evolução de planilha para outras implementações mostrou que o problema comporta ferramentas melhores. O projeto permanece aberto a novas formas de organizar os dados, automatizar verificações e tornar os resultados mais fáceis de interpretar.</p>
+						<p>Metas futuras serão adicionadas quando estiverem registradas no projeto ou forem confirmadas. Até lá, esta página preserva a trajetória conhecida sem transformar possibilidades em promessas.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="project-open">
+				<div>[ PROJETO ABERTO ]</div>
+				<h2>Esta página continuará mudando junto com a ferramenta.</h2>
+				<a class="project-link" href="https://github.com/akioShaolin/optimussun/" target="_blank" rel="noreferrer">CÓDIGO, GUIA E RELEASES NO GITHUB ↗</a>
+			</section>
+		</div>
+	</main>
+
+	<SiteFooter rightText={`${project.type} / ${project.number}`} />
+	<ImageLightbox />
+</BaseLayout>
