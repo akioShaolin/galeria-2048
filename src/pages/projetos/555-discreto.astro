@@ -1,0 +1,234 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("555-discreto");
+if (!project?.page) throw new Error("Dados do projeto 555 Discreto não encontrados.");
+const page = project.page;
+
+const nationalQuotes = [
+	{ quantity: "5 placas", unit: "R$ 168,69", total: "R$ 843,45" },
+	{ quantity: "10 placas", unit: "R$ 94,57", total: "R$ 945,70", selected: true },
+	{ quantity: "20 placas", unit: "R$ 57,51", total: "R$ 1.150,20" },
+];
+---
+
+<BaseLayout title="555 Discreto — Galeria -2048" description={page.subtitle} image={project.image} keywords={project.keywords}>
+	<style is:global>
+		body {
+			background: radial-gradient(circle at 80% 8%, rgba(207,255,0,.035), transparent 520px), linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px), var(--bg);
+			background-size: auto, 42px 42px, 42px 42px, auto;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		.hero { padding: 100px 0 75px; }
+		.code, .section-label, .event-year, .note-label { color: var(--eletronica); font-family: monospace; font-size: .875rem; line-height: 1.5; letter-spacing: .08em; }
+		h1 { max-width: 1050px; margin: 25px 0 0; font-size: clamp(4rem, 12vw, 9rem); line-height: .82; letter-spacing: -.075em; }
+		.subtitle { max-width: 810px; margin-top: 38px; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.2rem, 2vw, 1.6rem); line-height: 1.6; }
+		.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+		.status { margin-top: 55px; }
+		.content { padding: 100px 0; border-bottom: 1px solid var(--line); }
+		.section-grid { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 75px; }
+		h2 { max-width: 850px; margin: 0 0 35px; font-size: clamp(2.2rem, 5vw, 4.4rem); line-height: .96; letter-spacing: -.05em; }
+		h3 { margin: 42px 0 18px; font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.15; }
+		.prose { max-width: 760px; }
+		.prose p, .prose li { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.125rem; line-height: 1.8; }
+		.prose p { margin: 0 0 22px; }
+		.prose strong { color: var(--text); }
+		.prose ul, .prose ol { padding-left: 24px; }
+		.prose li + li { margin-top: 10px; }
+		.callout { margin: 38px 0; padding: 28px; border: 1px solid var(--line); border-left: 2px solid var(--eletronica); background: rgba(207,255,0,.025); }
+		.callout p:last-child { margin-bottom: 0; }
+		.quote { margin: 35px 0; padding: 24px 0 24px 28px; border-left: 2px solid var(--experimentacao); color: var(--text); font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.25rem, 2.4vw, 1.7rem); line-height: 1.55; }
+		.block-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin-top: 35px; border: 1px solid var(--line); background: var(--line); }
+		.block { padding: 24px; background: var(--surface); }
+		.block strong { display: block; margin-bottom: 9px; font-family: monospace; font-size: .875rem; letter-spacing: .04em; }
+		.block span { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.0625rem; line-height: 1.65; }
+		.media-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; max-width: 980px; }
+		.media-pair .editorial-image { margin-top: 0; }
+		.budget { max-width: 820px; margin-top: 38px; border: 1px solid var(--line); }
+		.budget-row { display: grid; grid-template-columns: 1.1fr 1fr 1fr; }
+		.budget-row > * { padding: 15px 18px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-family: monospace; font-size: .875rem; line-height: 1.5; }
+		.budget-row > *:last-child { border-right: 0; }
+		.budget-row:last-child > * { border-bottom: 0; }
+		.budget-head { color: var(--muted); background: var(--surface); }
+		.budget-row.selected { box-shadow: inset 3px 0 var(--eletronica); background: rgba(207,255,0,.035); }
+		.timeline { max-width: 820px; border-top: 1px solid var(--line); }
+		.event { display: grid; grid-template-columns: 145px 1fr; gap: 28px; padding: 28px 0; border-bottom: 1px solid var(--line); }
+		.event h3 { margin: 0 0 10px; font-size: 1.2rem; }
+		.event p { margin: 0; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.0625rem; line-height: 1.7; }
+		.references a { color: var(--programacao); overflow-wrap: anywhere; }
+		.references a:hover { color: var(--text); }
+		@media (max-width: 800px) {
+			.hero { padding: 70px 0 55px; }
+			.content { padding: 70px 0; }
+			.section-grid { grid-template-columns: 1fr; gap: 28px; }
+			.block-grid, .media-pair { grid-template-columns: 1fr; }
+			.budget-head { display: none; }
+			.budget-row { grid-template-columns: 1fr; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+			.budget-row:last-child { border-bottom: 0; }
+			.budget-row > * { padding: 5px 0; border: 0; }
+			.budget-row > *::before { display: inline-block; width: 112px; color: var(--muted); }
+			.budget-row > *:nth-child(1)::before { content: "QUANTIDADE"; }
+			.budget-row > *:nth-child(2)::before { content: "UNITÁRIO"; }
+			.budget-row > *:nth-child(3)::before { content: "TOTAL"; }
+			.event { grid-template-columns: 1fr; gap: 8px; }
+		}
+	</style>
+
+	<SiteHeader accent="var(--eletronica)" />
+	<main>
+		<section class="hero container">
+			<div class="code">~/GALERIA/PROJETOS/002/</div>
+			<h1>555<br />DISCRETO</h1>
+			<p class="subtitle">{page.subtitle}</p>
+			<div class="tags">{project.categories.map((category) => <Tag label={category.label} tone={category.tone} />)}</div>
+			<div class="status"><StatusGrid items={page.status} /></div>
+		</section>
+
+		<section class="content">
+			<div class="container section-grid">
+				<div class="section-label">[ CONTEXTO ]</div>
+				<div class="prose">
+					<h2>ENTENDER A RODA POR DENTRO.</h2>
+					<p>Em 2020, eu estava especialmente interessado em circuitos construídos com componentes discretos. O temporizador 555 parecia um bom objeto de estudo: pequeno por fora, mas organizado internamente em blocos analógicos e lógicos que aparecem em muitos outros circuitos.</p>
+					<p>Quando contei a ideia a um colega, ele resumiu o projeto como <strong>“reinventar a roda”</strong>. A observação fazia sentido do ponto de vista prático. Um CI 555 pronto é barato, estável e compacto. Mas a intenção era outra.</p>
+					<div class="quote">“Às vezes não basta usar a roda. É preciso entender como ela foi construída.”</div>
+					<p>O objetivo não era substituir o circuito integrado, e sim ampliar sua estrutura até que comparadores, latch, descarga e estágio de saída pudessem ser vistos, montados e medidos individualmente.</p>
+					<EditorialImage src="/images/555-discreto/esquematico.jpg" alt="Esquemático completo do temporizador 555 redesenhado com transistores discretos" caption="Esquemático redesenhado no Fritzing a partir do circuito usado como referência." variant="detail" />
+				</div>
+			</div>
+		</section>
+
+		<section class="content">
+			<div class="container section-grid">
+				<div class="section-label">[ ARQUITETURA ]</div>
+				<div class="prose">
+					<h2>O QUE EXISTE DENTRO DE UM 555.</h2>
+					<p>Projetado por Hans Camenzind para a Signetics e lançado em 1971, o 555 reuniu em oito pinos uma arquitetura versátil para temporização e oscilação. Seu funcionamento pode ser entendido como a interação de alguns blocos principais.</p>
+					<div class="block-grid">
+						<div class="block"><strong>DIVISOR DE TENSÃO</strong><span>Cria referências próximas de 1/3 e 2/3 da alimentação.</span></div>
+						<div class="block"><strong>DOIS COMPARADORES</strong><span>Comparam Trigger e Threshold com esses limiares.</span></div>
+						<div class="block"><strong>LATCH RS</strong><span>Memoriza o estado definido pelos comparadores.</span></div>
+						<div class="block"><strong>DESCARGA</strong><span>Controla a descarga do capacitor externo de temporização.</span></div>
+						<div class="block"><strong>ESTÁGIO DE SAÍDA</strong><span>Entrega o estado final ao circuito conectado.</span></div>
+					</div>
+					<p>Essa combinação permite modos monoestável e astável, geração de pulsos, atrasos, clocks simples, pisca-piscas e formas rudimentares de modulação por largura de pulso. Aqui, porém, o valor principal era didático: acompanhar o sinal atravessando cada bloco.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="content">
+			<div class="container section-grid">
+				<div class="section-label">[ PLACA DIDÁTICA ]</div>
+				<div>
+					<div class="prose">
+						<h2>UM CI EM ESCALA VISÍVEL.</h2>
+						<p>O circuito de referência foi redesenhado no Fritzing como uma PCB de 75 × 100 mm. A placa recebeu componentes PTH, bornes banana fêmea nos oito sinais e serigrafia com os blocos funcionais. No centro, a identificação <strong>Discrete 555</strong> reforçava a proposta de transformar o encapsulamento em mapa.</p>
+					</div>
+					<div class="media-pair">
+						<EditorialImage src="/images/555-discreto/layout-superior.png" alt="Vista superior do layout didático da PCB do 555 discreto" caption="Camada superior e serigrafia com os blocos funcionais." variant="detail" />
+						<EditorialImage src="/images/555-discreto/layout-inferior.png" alt="Vista inferior do layout da PCB do 555 discreto" caption="Camada inferior do roteamento desenvolvido no Fritzing." variant="detail" />
+					</div>
+					<EditorialImage src="/images/555-discreto/pcb-sem-componentes.jpg" alt="PCB preta do 555 discreto ainda sem componentes" caption="Placa fabricada, ainda vazia, com os blocos e sinais identificados na serigrafia." variant="portrait" position="center" />
+				</div>
+			</div>
+		</section>
+
+		<section class="content">
+			<div class="container section-grid">
+				<div class="section-label">[ CUSTO / 2020 ]</div>
+				<div class="prose">
+					<h2>O PREÇO DE UMA IDEIA DIDÁTICA.</h2>
+					<p>Uma cotação nacional feita em 2020 registrou os valores abaixo para placas de 75 × 100 mm e prazo informado de cinco dias. São valores nominais da época, sem correção monetária. A cotação não foi contratada.</p>
+					<div class="budget" role="table" aria-label="Cotação nacional de placas em 2020">
+						<div class="budget-row budget-head" role="row"><span>QUANTIDADE</span><span>VALOR UNITÁRIO</span><span>TOTAL</span></div>
+						{nationalQuotes.map((quote) => <div class:list={["budget-row", { selected: quote.selected }]} role="row"><span>{quote.quantity}</span><span>{quote.unit}</span><span>{quote.total}</span></div>)}
+					</div>
+					<div class="callout"><div class="note-label">REGISTRO HISTÓRICO</div><p>A alternativa escolhida foi fabricar dez PCBs na JLCPCB. O documento preservado registra aproximadamente <strong>R$ 81,61</strong> pela fabricação e cerca de <strong>R$ 15</strong> de liberação ou importação. Esses números descrevem aquela compra em 2020 e não representam condições comerciais atuais.</p></div>
+				</div>
+			</div>
+		</section>
+
+		<section class="content">
+			<div class="container section-grid">
+				<div class="section-label">[ MONTAGEM ]</div>
+				<div>
+					<div class="prose">
+						<h2>A FORMA FUNCIONOU MELHOR QUE O CIRCUITO.</h2>
+						<p>Para completar a analogia com um circuito integrado, foram impressas em 3D peças que funcionariam como grandes pernas do encapsulamento. A solução ficou visualmente clara e tornou a placa fácil de apoiar e apresentar.</p>
+						<p>Na prática, a mecânica também expôs erros: algumas pernas quebraram, houve problemas de alinhamento e os parafusos escolhidos não combinaram bem com os furos e as peças impressas.</p>
+					</div>
+					<div class="media-pair">
+						<EditorialImage src="/images/555-discreto/comparacao-ci-e-pernas-3d.jpg" alt="Circuito integrado de oito pinos diante da placa com pernas impressas em 3D" caption="A escala do CI original comparada à estrutura mecânica da placa." variant="portrait" />
+						<EditorialImage src="/images/555-discreto/pernas-3d-vista-lateral.jpg" alt="Vista lateral das pernas impressas em 3D montadas sob a PCB" caption="Vista lateral da tentativa de reproduzir as pernas de um encapsulamento DIP." variant="detail" />
+					</div>
+					<div class="media-pair">
+						<EditorialImage src="/images/555-discreto/montagem-parcial.jpg" alt="PCB do 555 discreto parcialmente montada" caption="Montagem parcial com resistores, transistores e bornes banana." variant="portrait" />
+						<EditorialImage src="/images/555-discreto/placa-montada.jpg" alt="Placa do 555 discreto montada sobre a bancada" caption="Uma das unidades montadas para os testes funcionais." variant="portrait" />
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="content">
+			<div class="container section-grid">
+				<div class="section-label">[ ERRO / EVIDÊNCIA ]</div>
+				<div class="prose">
+					<h2>A PLACA FOI FABRICADA ANTES DE SER VALIDADA.</h2>
+					<p>O maior erro do processo foi não montar e verificar o circuito inteiro em protoboard antes de enviar a PCB para fabricação. A placa física consolidou, de uma vez, hipóteses elétricas, pinagens, footprints, dimensões mecânicas e decisões de roteamento que ainda não tinham sido demonstradas.</p>
+					<div class="quote">“A maior falha não foi o circuito não funcionar. Foi fabricar antes de validar.”</div>
+					<p>Em configuração astável, o melhor resultado observado foi um único acionamento próximo do intervalo esperado pela rede RC. Depois disso, o circuito permanecia travado. Isso não demonstra que a arquitetura estivesse correta; apenas oferece uma pista de que parte do caminho de temporização reagia ao estado inicial.</p>
+					<h3>Hipóteses para o travamento</h3>
+					<ul>
+						<li>transistor de descarga sem comutar ou capacitor sem descarregar;</li>
+						<li>latch permanecendo em um único estado;</li>
+						<li>comparador inferior sem produzir o reset esperado;</li>
+						<li>pinagem E/B/C ou footprint incompatível com o transistor usado;</li>
+						<li>RESET ou CONTROL sem uma condição elétrica bem definida;</li>
+						<li>erro de conexão entre esquema e layout ou polarização incorreta de um nó interno.</li>
+					</ul>
+					<p>Esses itens continuam sendo hipóteses. Sem medições organizadas dos nós internos, não existe base para atribuir o problema a uma causa única.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="content">
+			<div class="container section-grid">
+				<div class="section-label">[ RETOMADA ]</div>
+				<div class="prose">
+					<h2>AINDA EXISTEM PLACAS PARA INVESTIGAR.</h2>
+					<p>As unidades não montadas preservam a possibilidade de retomar o projeto sem esconder a primeira revisão. O caminho mais seguro agora é voltar do sistema completo para os blocos.</p>
+					<ol>
+						<li>localizar e documentar a unidade que apresentou o pulso inicial;</li>
+						<li>comparar novamente o esquema redesenhado com as fontes de referência;</li>
+						<li>confirmar footprints, pinagens e continuidade da placa;</li>
+						<li>medir os limiares próximos de 1/3 e 2/3 de VCC;</li>
+						<li>isolar latch, descarga e curva do capacitor durante o teste;</li>
+						<li>corrigir a primeira revisão com jumpers, fios inferiores ou patches claros antes de fabricar outra placa;</li>
+						<li>revisar furos, parafusos e pernas impressas em 3D.</li>
+					</ol>
+					<p>O projeto permanece pausado. Seu resultado atual não é um substituto funcional para o NE555, mas um registro útil de como uma boa intenção didática pode falhar quando o protótipo mecânico e a fabricação avançam mais rápido que a validação elétrica.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="content references">
+			<div class="container section-grid">
+				<div class="section-label">[ REFERÊNCIAS ]</div>
+				<div class="prose">
+					<h2>FONTES E INSPIRAÇÃO.</h2>
+					<p><a href="https://0creativeengineering0.blogspot.com/2018/12/discrete-555.html" rel="external noreferrer">Creative Engineering — Discrete 555 Using Transistors</a><br />Circuito que serviu de inspiração e referência para o redesenho. A autoria do esquema original não é reivindicada por este projeto.</p>
+					<p><a href="https://www.computerhistory.org/revolution/digital-logic/12/281/1476" rel="external noreferrer">Computer History Museum — NE555 timer and multivibrator, Signetics, 1971</a><br />Registro histórico do componente e de seu projetista, Hans Camenzind.</p>
+				</div>
+			</div>
+		</section>
+	</main>
+	<SiteFooter rightText={`${project.type} / ${project.number}`} />
+	<ImageLightbox />
+</BaseLayout>
