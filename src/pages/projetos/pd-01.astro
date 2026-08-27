@@ -1,0 +1,189 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("pd-01");
+if (!project?.page) throw new Error("Dados do projeto PD-01 não encontrados.");
+const page = project.page;
+---
+
+<BaseLayout title="PD-01 — Mini Fuzz do Bertola — Galeria -2048" description={page.subtitle} image={project.image} keywords={project.keywords}>
+	<style is:global>
+		body { background: radial-gradient(circle at 82% 10%, rgba(255,32,199,.04), transparent 520px), linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px), var(--bg); background-size: auto, 42px 42px, 42px 42px, auto; font-family: Arial, Helvetica, sans-serif; }
+		.hero { padding: 100px 0 75px; }
+		.code, .section-label, .event-year, .note-label { color: var(--audio); font-family: monospace; font-size: .875rem; line-height: 1.5; letter-spacing: .08em; }
+		h1 { max-width: 1100px; margin: 25px 0 0; font-size: clamp(3.8rem, 10vw, 8rem); line-height: .86; letter-spacing: -.07em; }
+		.subtitle { max-width: 830px; margin-top: 38px; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.2rem, 2vw, 1.6rem); line-height: 1.6; }
+		.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+		.status { margin-top: 55px; }
+		.status .status-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+		.content { padding: 95px 0; border-bottom: 1px solid var(--line); }
+		.section-grid { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 75px; }
+		h2 { max-width: 850px; margin: 0 0 35px; font-size: clamp(2.2rem, 5vw, 4.3rem); line-height: .96; letter-spacing: -.05em; }
+		h3 { margin: 42px 0 18px; font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.15; }
+		.prose { max-width: 760px; }
+		.prose p, .prose li { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.125rem; line-height: 1.8; }
+		.prose p { margin: 0 0 22px; }
+		.prose strong { color: var(--text); }
+		.prose ul { padding-left: 24px; }
+		.prose li + li { margin-top: 10px; }
+		.prose a, .references a { color: var(--programacao); overflow-wrap: anywhere; }
+		.prose a:hover, .references a:hover { color: var(--text); }
+		.callout { margin: 36px 0; padding: 28px; border: 1px solid var(--line); border-left: 2px solid var(--audio); background: rgba(255,32,199,.025); }
+		.callout p:last-child { margin-bottom: 0; }
+		.schematic-placeholder { display: grid; min-height: 250px; margin: 38px 0; padding: 30px; border: 1px dashed var(--line); background: linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px), var(--surface); background-size: 24px 24px; place-content: center; text-align: center; }
+		.schematic-placeholder p { max-width: 590px; margin: 10px auto 0; }
+		.documentation-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin-top: 35px; border: 1px solid var(--line); background: var(--line); }
+		.documentation-block { padding: 25px; background: var(--surface); }
+		.documentation-block ul { margin-bottom: 0; }
+		.media-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; max-width: 980px; }
+		.media-pair .editorial-image { margin-top: 0; }
+		.video-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; max-width: 900px; margin-top: 40px; }
+		.video-figure { margin: 0; }
+		.video-figure video { display: block; width: 100%; max-height: 680px; border: 1px solid var(--line); background: #000; }
+		.video-figure figcaption { margin-top: 12px; color: var(--muted); font-family: monospace; font-size: .875rem; line-height: 1.5; }
+		.timeline { max-width: 820px; border-top: 1px solid var(--line); }
+		.event { display: grid; grid-template-columns: 145px 1fr; gap: 28px; padding: 28px 0; border-bottom: 1px solid var(--line); }
+		.event h3 { margin: 0 0 10px; font-size: 1.2rem; }
+		.event p { margin: 0; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.0625rem; line-height: 1.7; }
+		@media (max-width: 800px) { .hero { padding: 70px 0 55px; } .content { padding: 70px 0; } .section-grid { grid-template-columns: 1fr; gap: 28px; } .status .status-grid, .media-pair, .video-grid, .documentation-grid { grid-template-columns: 1fr; } .event { grid-template-columns: 1fr; gap: 8px; } }
+	</style>
+
+	<SiteHeader accent="var(--audio)" />
+	<main>
+		<section class="hero">
+			<div class="container">
+				<p class="code">[ PROJETO / ÁUDIO ANALÓGICO ]</p>
+				<h1>PD-01<br />MINI FUZZ<br />DO BERTOLA</h1>
+				<p class="subtitle">{page.subtitle}</p>
+				<div class="tags">{project.categories.map((category) => <Tag label={category.label} tone={category.tone} />)}</div>
+				<div class="status"><StatusGrid items={page.status} /></div>
+			</div>
+		</section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">01 / ORIGEM</p>
+			<div class="prose">
+				<h2>O PRIMEIRO PEDAL.</h2>
+				<p>Na época eu tocava baixo em uma banda e queria entender melhor o que existia entre o instrumento e o amplificador. A curiosidade encontrou um ponto de partida em um vídeo do canal Darta Effects sobre o <strong>Mini Fuzz do Bertola</strong>.</p>
+				<p>O circuito original é atribuído a Bertola. O material do Darta serviu como referência prática e trouxe sugestões de montagem; esta página registra apenas a minha adaptação e não reivindica autoria sobre o projeto original.</p>
+				<EditorialImage src="/images/pd-01/montagem-fechada.jpg" alt="Protótipo do Mini Fuzz montado em uma caixa de telefone com painel de madeira" caption="A montagem mecânica improvisada: caixa reaproveitada, painel de madeira e controles marcados à mão." eager={true} fit="contain" />
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">02 / CIRCUITO</p>
+			<div class="prose">
+				<h2>ADAPTADO AO QUE HAVIA NA BANCADA.</h2>
+				<p>Eu não tinha um transistor Darlington pronto. A solução foi montar o par com <strong>dois C945</strong>. Também adotei o potenciômetro no emissor apresentado pelo Darta para variar o ganho e acrescentei, por iniciativa própria, um capacitor em paralelo nesse trecho.</p>
+				<p>Na entrada usei <strong>220 nF</strong> no lugar dos 470 nF vistos na referência, repetindo 220 nF na saída. Essa diferença está documentada como escolha de montagem; sem medições comparativas, não atribuo a ela uma mudança sonora específica.</p>
+				<div class="callout"><p class="note-label">COMPONENTE CONFIRMADO</p><p>Neste protótipo foi utilizado o diodo original <strong>1N4148</strong>. Não foram instaladas chaves de seleção de clipping.</p></div>
+				<h3>Esquemático de referência</h3>
+				<p>O desenho abaixo acompanha o material consultado no vídeo do Darta Effects e ajuda a compreender o circuito-base Mini Fuzz do Bertola. Ele é apresentado somente como referência histórica e técnica: <strong>não documenta exatamente a versão do PD-01 que foi construída</strong>.</p>
+				<EditorialImage src="/images/pd-01/esquematico-referencia-darta.jpg" alt="Esquemático de referência do circuito Mini Fuzz apresentado no material do Darta Effects" caption="ESQUEMÁTICO DE REFERÊNCIA — circuito-base apresentado no material do Darta Effects. Esta imagem não representa o esquema definitivo da versão construída do PD-01." fit="contain" />
+				<div class="schematic-placeholder" role="note" aria-label="Espaço reservado para o esquemático da versão construída">
+					<p class="note-label">[ ESQUEMÁTICO REAL DO PD-01 / PENDENTE ]</p>
+					<p>O esquemático correspondente exatamente à versão construída será adicionado após a recuperação dos arquivos originais ou uma conferência segura da montagem.</p>
+				</div>
+				<div class="media-pair">
+					<EditorialImage src="/images/pd-01/placa-superior.jpg" alt="Face de componentes da placa universal do pedal, com potenciômetros e LED aceso" caption="Face de componentes da placa universal durante a montagem." variant="portrait" fit="contain" />
+					<EditorialImage src="/images/pd-01/placa-inferior.jpg" alt="Face de soldagem da placa universal instalada na caixa" caption="Face inferior da placa: soldagem ponto a ponto e cabeamento do protótipo." variant="portrait" fit="contain" />
+				</div>
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">03 / PROTÓTIPO</p>
+			<div class="prose">
+				<h2>DO FRITZING À PLACA UNIVERSAL.</h2>
+				<p>Antes da soldagem, organizei o circuito no Fritzing para planejar as ligações na placa perfurada. As imagens recuperadas documentam esse desenho e permitem compará-lo diretamente à montagem física.</p>
+				<p>O layout serviu como guia de montagem e soldagem em placa universal; ele não representa uma PCB fabricada. O arquivo editável do Fritzing poderá ser acrescentado futuramente caso seja localizado.</p>
+				<EditorialImage src="/images/pd-01/fritzing-layout.jpg" alt="Layout de montagem aberto no Fritzing" caption="Desenho de referência no Fritzing usado para planejar as ligações da montagem em placa universal." fit="contain" />
+				<EditorialImage src="/images/pd-01/fritzing-comparativo.jpg" alt="Placa universal soldada diante do desenho correspondente aberto no Fritzing" caption="Comparação entre o planejamento no Fritzing e a montagem física executada em placa universal." fit="contain" />
+				<p>A caixa veio de um telefone antigo. Por dentro, recebeu fita de alumínio, jacks, potenciômetros, bateria de 9 V e a placa universal. No painel de madeira, as marcações <strong>V</strong> e <strong>G</strong> indicavam volume e ganho.</p>
+				<EditorialImage src="/images/pd-01/blindagem-interna.jpg" alt="Interior da caixa do pedal com fita de alumínio, bateria, placa e cabeamento" caption="Interior do protótipo com blindagem improvisada e os componentes ainda sem fixação definitiva." fit="contain" />
+				<p>O circuito funcionou e chegou a ser tocado. O que ficou incompleto foi a mecânica: a madeira nunca foi fixada permanentemente à caixa. Portanto, este registro não trata o projeto como uma falha eletrônica, mas como um protótipo funcional cuja construção física foi interrompida.</p>
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">04 / TESTES</p>
+			<div class="prose">
+				<h2>GUITARRA E BAIXO.</h2>
+				<p>O teste com a <a href="/projetos/gtr-01/">GTR-01</a> deixou uma impressão subjetiva de som agressivo, com bastante volume e uma textura de fuzz marcada. Os vídeos abaixo são registros de uso, não medições de resposta em frequência, ganho ou distorção.</p>
+				<p>No baixo, gostei do efeito, embora ele tenha me parecido mais próximo de uma sonoridade de guitarra. Fica como hipótese para um novo protótipo investigar como diferentes capacitores de acoplamento alteram a resposta nas frequências graves.</p>
+				<p>Mesmo com essa característica, gostei suficientemente do resultado para usar o pedal no baixo durante uma apresentação.</p>
+				<div class="video-grid">
+					<figure class="video-figure"><video controls preload="metadata" playsinline src="/images/pd-01/teste-guitarra.mp4">Seu navegador não consegue reproduzir este vídeo.</video><figcaption>Teste do circuito ainda em protoboard, antes da montagem em placa universal, usando guitarra.</figcaption></figure>
+					<figure class="video-figure"><video controls preload="metadata" playsinline src="/images/pd-01/teste-baixo.mp4">Seu navegador não consegue reproduzir este vídeo.</video><figcaption>Teste do protótipo com baixo. A resposta em graves permanece como tema para medição futura.</figcaption></figure>
+				</div>
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">05 / NO PALCO</p>
+			<div class="prose">
+				<h2>DE PROTÓTIPO A PEDAL DE SHOW.</h2>
+				<p>Apesar da montagem improvisada e do acabamento mecânico nunca ter sido concluído, o PD-01 não ficou restrito à bancada.</p>
+				<p>Em 21 de junho de 2024, levei o pedal para um show da banda em Guaíra e usei o efeito no meu baixo.</p>
+				<p>Para mim, foi uma experiência especialmente marcante. Aquele circuito que eu havia montado à mão em uma placa universal, adaptado com os componentes que tinha e colocado dentro de uma combinação improvável de madeira, caixa de telefone e fita de alumínio estava agora ligado ao meu instrumento durante uma apresentação real.</p>
+				<p>Foi simplesmente emocionante.</p>
+				<p>O pedal não deixou de ser um protótipo por causa disso. Mas naquele momento ele deixou de ser apenas uma experiência de bancada e passou a fazer parte de uma lembrança musical concreta.</p>
+				{/* Vitor aprovou a menção ao primeiro nome, o contexto musical e o uso desta fotografia. */}
+				<EditorialImage src="/images/pd-01/show-guaira-2024.jpg" alt="Pedro e Vitor durante uma apresentação musical em Guaíra" caption="Show em Guaíra, 21/06/2024. Pedro e Vitor durante a apresentação em que o PD-01 foi usado no baixo." variant="portrait" fit="contain" />
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">06 / DIÁLOGO</p>
+			<div class="prose">
+				<h2>UMA POSSÍVEL CAIXA DEFINITIVA.</h2>
+				<p>Em uma conversa posterior, Bertola sugeriu a caixa Patola PB-108 e uma chave DPDT para implementar bypass. A observação é preservada como orientação técnica recebida, sem reproduzir mensagens privadas e sem implicar parceria, endosso comercial ou participação dele nesta montagem.</p>
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">07 / REVISÃO</p>
+			<div class="prose">
+				<h2>O QUE EU FARIA HOJE.</h2>
+				<ul>
+					<li>Montaria primeiro uma versão mensurável em bancada e registraria alimentação, ganho e resposta em frequência.</li>
+					<li>Compararia capacitores de entrada e saída, especialmente pensando no uso com baixo.</li>
+					<li>Separaria eletrônica e mecânica em etapas, usando uma caixa adequada e bypass definido.</li>
+					<li>Produziria diagrama de ligação, lista de materiais e fotografias antes de fechar o conjunto.</li>
+				</ul>
+				<h3>Documentação recuperada e pendente</h3>
+				<p>Parte da documentação original já pôde ser recuperada, incluindo registros do desenho no Fritzing e da montagem física. Ainda falta localizar ou reconstruir com segurança o esquemático correspondente exatamente à versão construída.</p>
+				<div class="documentation-grid">
+					<div class="documentation-block"><p class="note-label">RECUPERADO</p><ul><li>Imagens do design no Fritzing.</li><li>Comparação entre design e placa física.</li><li>Fotografias da montagem.</li><li>Vídeos de teste.</li></ul></div>
+					<div class="documentation-block"><p class="note-label">PENDENTE</p><ul><li>Esquemático da versão efetivamente construída.</li></ul><p>Como registro secundário, o arquivo editável do Fritzing ainda poderá ser incluído caso seja localizado.</p></div>
+				</div>
+				<div class="callout"><p class="note-label">NÃO FOI UM FRACASSO</p><p>O acabamento mecânico nunca ficou pronto, mas o circuito funcionou, foi usado na guitarra, no baixo e chegou ao palco. Para mim, isso é suficiente para que essa montagem tenha uma história própria.</p></div>
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">08 / HISTÓRICO</p>
+			<div class="timeline">{page.timeline.map((event) => <article class="event"><p class="event-year">{event.year}</p><div><h3>{event.title}</h3><p>{event.text}</p></div></article>)}</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid references">
+			<p class="section-label">09 / REFERÊNCIAS</p>
+			<div class="prose">
+				<h2>FONTES E CRÉDITOS.</h2>
+				<p><strong>Bertola</strong> — autor do circuito Mini Fuzz usado como base.</p>
+				<p><strong>Darta Effects</strong> — vídeos consultados durante a construção:</p>
+				<ul><li><a href="https://youtu.be/BKW753mV-R4?is=B81xXqyhXehHVqqU" rel="external noreferrer">Mini Fuzz do Bertola — referência de montagem</a></li><li><a href="https://youtu.be/MLR3b_ab-Cc?is=0PtCy4gkaGctnk5d" rel="external noreferrer">Material complementar do Darta Effects</a></li></ul>
+				<p>O esquema exibido nesta página é reproduzido apenas como referência do material do Darta Effects e permanece separado do futuro esquemático específico do PD-01. Fotografias, vídeos e relato da montagem pertencem ao acervo de akioShaolin.</p>
+			</div>
+		</div></section>
+	</main>
+	<SiteFooter rightText={`${project.type} / ${project.number}`} />
+	<ImageLightbox />
+</BaseLayout>

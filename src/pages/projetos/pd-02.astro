@@ -1,0 +1,166 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("pd-02");
+if (!project?.page) throw new Error("Dados do projeto PD-02 não encontrados.");
+const page = project.page;
+---
+
+<BaseLayout title="PD-02 — Amplificador JFET — Galeria -2048" description={page.subtitle} image={project.image} keywords={project.keywords}>
+	<style is:global>
+		body { background: radial-gradient(circle at 82% 8%, rgba(255,32,199,.04), transparent 520px), linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px), var(--bg); background-size: auto, 42px 42px, 42px 42px, auto; font-family: Arial, Helvetica, sans-serif; }
+		.hero { padding: 100px 0 75px; }
+		.code, .section-label, .note-label, .event-year { color: var(--audio); font-family: monospace; font-size: .875rem; line-height: 1.5; letter-spacing: .08em; }
+		h1 { max-width: 1100px; margin: 25px 0 0; font-size: clamp(3.8rem, 10vw, 8rem); line-height: .86; letter-spacing: -.07em; }
+		.subtitle { max-width: 830px; margin-top: 38px; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.2rem, 2vw, 1.6rem); line-height: 1.6; }
+		.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+		.status { margin-top: 55px; }
+		.status .status-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+		.content { padding: 95px 0; border-bottom: 1px solid var(--line); }
+		.section-grid { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 75px; }
+		h2 { max-width: 850px; margin: 0 0 35px; font-size: clamp(2.2rem, 5vw, 4.3rem); line-height: .96; letter-spacing: -.05em; }
+		h3 { margin: 42px 0 18px; font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.15; }
+		.prose { max-width: 760px; }
+		.prose p, .prose li { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.125rem; line-height: 1.8; }
+		.prose p { margin: 0 0 22px; }
+		.prose strong { color: var(--text); }
+		.prose ul { padding-left: 24px; }
+		.prose li + li { margin-top: 10px; }
+		.prose a, .references a { color: var(--programacao); overflow-wrap: anywhere; }
+		.prose a:hover, .references a:hover { color: var(--text); }
+		.callout { margin: 36px 0; padding: 28px; border: 1px solid var(--line); border-left: 2px solid var(--audio); background: rgba(255,32,199,.025); }
+		.callout p:last-child { margin-bottom: 0; }
+		.signal-flow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; margin: 38px 0; border: 1px solid var(--line); background: var(--line); }
+		.signal-step { padding: 20px 12px; background: var(--surface); text-align: center; font-family: monospace; font-size: .875rem; line-height: 1.5; }
+		.signal-step:not(:last-child)::after { content: "→"; float: right; color: var(--audio); transform: translateX(18px); }
+		.compare-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: 35px 0; border: 1px solid var(--line); background: var(--line); }
+		.compare-card { padding: 24px; background: var(--surface); }
+		.compare-card h3 { margin: 0 0 15px; font-size: 1.15rem; }
+		.compare-card p { margin: 0; font-size: 1rem; line-height: 1.7; }
+		.clipping-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 35px; }
+		.clipping-card { padding: 25px; border: 1px solid var(--line); background: var(--surface); }
+		.clipping-card h3 { margin-top: 0; }
+		.wave { width: 100%; height: 110px; margin: 15px 0 20px; }
+		.wave path { fill: none; stroke: var(--audio); stroke-width: 3; vector-effect: non-scaling-stroke; }
+		.video-grid, .media-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 40px; }
+		.video-figure { margin: 0; }
+		.video-figure video { display: block; width: 100%; max-height: 680px; border: 1px solid var(--line); background: #000; }
+		.video-figure figcaption { margin-top: 12px; color: var(--muted); font-family: monospace; font-size: .875rem; line-height: 1.5; }
+		.media-pair .editorial-image { margin-top: 0; }
+		.timeline { max-width: 820px; border-top: 1px solid var(--line); }
+		.event { display: grid; grid-template-columns: 145px 1fr; gap: 28px; padding: 28px 0; border-bottom: 1px solid var(--line); }
+		.event h3 { margin: 0 0 10px; font-size: 1.2rem; }
+		.event p { margin: 0; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.0625rem; line-height: 1.7; }
+		@media (max-width: 800px) { .hero { padding: 70px 0 55px; } .content { padding: 70px 0; } .section-grid { grid-template-columns: 1fr; gap: 28px; } .status .status-grid, .compare-grid, .clipping-grid, .video-grid, .media-pair { grid-template-columns: 1fr; } .signal-flow { grid-template-columns: 1fr; } .signal-step:not(:last-child)::after { content: "↓"; float: none; display: block; transform: translateY(12px); } .event { grid-template-columns: 1fr; gap: 8px; } }
+	</style>
+
+	<SiteHeader accent="var(--audio)" />
+	<main>
+		<section class="hero"><div class="container">
+			<p class="code">[ PROJETO / 005 / ÁUDIO ANALÓGICO ]</p>
+			<h1>PD-02<br />AMPLIFICADOR<br />JFET</h1>
+			<p class="subtitle">{page.subtitle}</p>
+			<div class="tags">{project.categories.map((category) => <Tag label={category.label} tone={category.tone} />)}</div>
+			<div class="status"><StatusGrid items={page.status} /></div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">01 / A DESCOBERTA</p><div class="prose">
+				<h2>UM CIRCUITO PEQUENO QUE MUDOU O QUE EU OUVIA.</h2>
+				<p>Encontrei este circuito em um vídeo do Professor Bairros. Era um pré-amplificador simples usando um JFET e alimentação de 9 V.</p>
+				<p>Eu já vinha experimentando circuitos de áudio e pedais, mas esse projeto acabou tendo um efeito diferente em mim. Não foi apenas mais uma montagem que funcionou: foi um dos circuitos que começou a mudar a forma como eu prestava atenção ao comportamento de uma amplificação.</p>
+				<div class="callout"><p class="note-label">AUTORIA E REFERÊNCIA</p><p>O circuito-base e a referência técnica são do <strong>Professor Bairros</strong>. Esta página documenta minha montagem e minhas percepções; não reivindica a autoria do projeto original.</p></div>
+				<EditorialImage src="/images/pd-02/professor-bairros-jfet-referencia.jpg" alt="Esquemático de referência do pré-amplificador JFET do Professor Bairros" caption="ESQUEMÁTICO DE REFERÊNCIA — estágio JFET em fonte comum apresentado no material do Professor Bairros. Os valores devem ser confrontados com a montagem antes de serem tratados como sua versão definitiva." eager={true} fit="contain" />
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">02 / COMO FUNCIONA</p><div class="prose">
+				<h2>UM ESTÁGIO EM FONTE COMUM.</h2>
+				<p>O capacitor C1 bloqueia a componente contínua da fonte de sinal e leva a variação de áudio ao gate. RG fornece uma referência para esse terminal e contribui para a alta impedância de entrada. A tensão gate-source, VGS, controla a corrente de drain.</p>
+				<div class="signal-flow" aria-label="Fluxo conceitual do sinal"><div class="signal-step">ENTRADA</div><div class="signal-step">C1</div><div class="signal-step">JFET / FONTE COMUM</div><div class="signal-step">GANHO + NÃO LINEARIDADE</div><div class="signal-step">C2 / SAÍDA</div></div>
+				<p>RS cria a auto-polarização no source. A corrente de drain produz uma queda de tensão em RD; quando a corrente varia, a tensão no drain também varia. A saída em fonte comum fica invertida em relação à entrada, e C2 faz o acoplamento em corrente alternada para o estágio seguinte.</p>
+				<p>Na referência, os valores visíveis são: <strong>VCC 9 V, BF245C, RD 1 kΩ, RS 220 Ω, RG 120 kΩ e C1/C2 de 10 µF</strong>. A fotografia documenta a referência consultada, não uma conferência componente por componente da placa montada.</p>
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">03 / NOS INSTRUMENTOS</p><div class="prose">
+				<h2>O MESMO CIRCUITO, DUAS RESPOSTAS.</h2>
+				<h3>Na guitarra</h3>
+				<p>Na guitarra, o resultado foi maravilhoso. O som ficou quente, limpo e brilhante. Quando a distorção começava a aparecer, eu gostava ainda mais. Era uma daquelas situações em que eu tocava e tinha a impressão de que minha guitarra finalmente estava entregando o tipo de som que eu associava a instrumentos e equipamentos muito melhores.</p>
+				<p>O som limpo já me agradava bastante. Mas quando o estágio começava a entrar em distorção, minha nossa — era muito bom mesmo. Essa é uma percepção pessoal desta montagem, não uma medida de qualidade universal do JFET.</p>
+				<h3>No baixo</h3>
+				<p>No baixo, a experiência foi praticamente o oposto. O som ficava “quadrado”, com uma distorção que eu não achava agradável. Era muito diferente do comportamento que havia me conquistado na guitarra.</p>
+				<p>Talvez o baixo ativo e sua pré-amplificação tenham contribuído. Um nível de saída maior <strong>pode</strong> consumir mais rapidamente o headroom de um estágio simples de 9 V e fazê-lo entrar em não linearidade mais cedo. Mas isso não estabelece uma causa: polarização, resposta em frequência, impedâncias, dinâmica e o próprio pré-amplificador do instrumento também podem influenciar.</p>
+				<div class="video-grid">
+					<figure class="video-figure"><video controls preload="metadata" playsinline src="/images/pd-02/demonstracao-01.mp4">Seu navegador não consegue reproduzir este vídeo.</video><figcaption>Registro sonoro 01 da montagem em funcionamento. O arquivo original não identifica com segurança o instrumento usado.</figcaption></figure>
+					<figure class="video-figure"><video controls preload="metadata" playsinline src="/images/pd-02/demonstracao-02.mp4">Seu navegador não consegue reproduzir este vídeo.</video><figcaption>Registro sonoro 02 da montagem em funcionamento. Mantido sem atribuição de instrumento para não inferir informação ausente.</figcaption></figure>
+				</div>
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">04 / OUTRA FORMA DE AMPLIFICAR</p><div class="prose">
+				<h2>FOI ASSIM QUE COMECEI A OLHAR PARA AS VÁLVULAS.</h2>
+				<p>O comportamento desse pequeno estágio foi uma das coisas que despertaram minha curiosidade sobre amplificação valvulada. A analogia é conceitual, não uma equivalência: <strong>um JFET não é uma válvula em silício</strong> e não reproduz automaticamente o comportamento de uma válvula.</p>
+				<div class="compare-grid">
+					<article class="compare-card"><h3>JFET</h3><p>VGS modula a corrente de drain. O gate normalmente opera com corrente muito pequena, permitindo alta impedância de entrada. Sua curva de transferência é não linear.</p></article>
+					<article class="compare-card"><h3>BJT</h3><p>A corrente de coletor depende fortemente da tensão base-emissor, aproximadamente de forma exponencial na região ativa, e a entrada exige corrente de base. Corte e saturação dependem da polarização e do circuito.</p></article>
+					<article class="compare-card"><h3>TRIODO</h3><p>O cathode emite elétrons, o plate os coleta e a grid controla eletrostaticamente o fluxo. A tensão grid-cathode modula a corrente de plate em uma curva também não linear.</p></article>
+				</div>
+				<p>JFET e triodo permitem uma analogia por apresentarem controle por campo/tensão na entrada e alta impedância em condições usuais. Os mecanismos físicos, tensões, capacitâncias e curvas de operação, porém, são diferentes. A configuração emissor comum do BJT é um equivalente conceitual do estágio fonte comum, não uma garantia de resposta sonora igual ou oposta.</p>
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">05 / CLIPPING</p><div class="prose">
+				<h2>HARD, SOFT E AS SIMPLIFICAÇÕES NO MEIO.</h2>
+				<div class="clipping-grid">
+					<article class="clipping-card"><h3>Hard clipping</h3><svg class="wave" viewBox="0 0 300 100" role="img" aria-label="Representação conceitual de hard clipping"><path d="M0 70 L25 70 Q35 70 42 45 L50 25 L90 25 Q100 25 108 50 L120 75 L160 75 Q170 75 178 50 L190 25 L230 25 Q240 25 248 50 L260 70 L300 70" /></svg><p>Os picos encontram um limite de forma relativamente abrupta. Isso tende a acrescentar mais conteúdo harmônico de ordem elevada e pode soar áspero ou agressivo, sem ser necessariamente ruim.</p></article>
+					<article class="clipping-card"><h3>Soft clipping</h3><svg class="wave" viewBox="0 0 300 100" role="img" aria-label="Representação conceitual de soft clipping"><path d="M0 55 C20 55 26 20 55 20 S90 80 120 80 S155 20 185 20 S220 80 250 80 S280 45 300 45" /></svg><p>Os picos começam a ser comprimidos de forma progressiva antes de um limite rígido. O arredondamento e o espectro resultante podem ser percebidos como mais suaves.</p></article>
+				</div>
+				<div class="callout"><p class="note-label">O DISPOSITIVO NÃO DEFINE SOZINHO O CLIPPING</p><p><strong>JFET ≠ soft clipping automático. BJT ≠ hard clipping automático. Válvula ≠ distorção boa automática.</strong> Polarização, alimentação, carga, ganho, realimentação, amplitude de entrada, topologia e estágio seguinte determinam como o circuito deixa a região linear.</p></div>
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">06 / A MONTAGEM</p><div class="prose">
+				<h2>UMA PLACA QUE NUNCA GANHOU CAIXA.</h2>
+				<p>O projeto ficou restrito à placa universal. Quando eu queria tocar, a placa permanecia solta, a bateria de 9 V ficava externa e jacks e potenciômetro eram ligados diretamente, sem gabinete definitivo.</p>
+				<div class="media-pair"><EditorialImage src="/images/pd-02/montagem-completa.jpg" alt="Montagem completa do amplificador JFET sem gabinete" caption="O PD-02 em seu estado real de uso: placa, bateria, potenciômetro e jacks sem gabinete definitivo." fit="contain" /><EditorialImage src="/images/pd-02/face-soldagem.jpg" alt="Face inferior soldada da placa universal do PD-02" caption="Face inferior da placa universal, mostrando a ligação manual dos componentes." variant="portrait" fit="contain" /></div>
+				<p>Ao contrário do <a href="/projetos/pd-01/">PD-01</a>, o PD-02 nunca foi usado em show. A montagem nunca recebeu case e eu também nunca toquei guitarra em apresentações. Isso não foi uma falha do circuito: nos testes domésticos, ele cumpriu a função musical que motivou o projeto.</p>
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">07 / ESTADO ATUAL</p><div class="prose">
+				<h2>FUNCIONAL, MECANICAMENTE INACABADO.</h2>
+				<p>O PD-02 nunca ganhou um gabinete e nunca subiu em um palco. Mesmo assim, acabou sendo um projeto importante para mim. Foi um circuito simples que mudou a maneira como eu ouvia a minha <a href="/projetos/gtr-01/">guitarra</a> e me levou a querer entender por que dispositivos diferentes entram em distorção de maneiras diferentes.</p>
+				<p><strong>Eu comecei procurando um pré-amplificador. Terminei curioso sobre JFETs, válvulas, polarização e clipping.</strong></p>
+			</div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid">
+			<p class="section-label">08 / HISTÓRICO</p><div class="timeline">{page.timeline.map((event) => <article class="event"><p class="event-year">{event.year}</p><div><h3>{event.title}</h3><p>{event.text}</p></div></article>)}</div>
+		</div></section>
+
+		<section class="content references"><div class="container section-grid">
+			<p class="section-label">09 / REFERÊNCIAS</p><div class="prose">
+				<h2>FONTE TÉCNICA.</h2>
+				<p><strong>Professor Bairros — Pré-amplificador / amplificador JFET</strong></p>
+				<p><a href="https://youtu.be/t8HXIdab8GA?is=8ZBAboSXRv6PEWWw" rel="external noreferrer">Assistir ao vídeo de referência no YouTube</a></p>
+				<p>O link registra a fonte a partir da qual o circuito foi construído; não implica parceria, participação ou endosso do Professor Bairros à minha montagem.</p>
+			</div>
+		</div></section>
+	</main>
+	<SiteFooter rightText={`${project.type} / ${project.number}`} />
+	<ImageLightbox />
+</BaseLayout>

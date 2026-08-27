@@ -1,0 +1,150 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("controle-iluminacao-bancada");
+if (!project?.page) throw new Error("Dados do projeto Controle de Iluminação da Bancada não encontrados.");
+const page = project.page;
+
+const firstDocumentation = [
+	{ part: "PARTE 1", title: "Testes iniciais", text: "Fontes e fitas de LED foram verificadas antes da integração com o NodeMCU e a placa de potência.", media: "infinity-light-teste-fitas.webp" },
+	{ part: "PARTE 2", title: "PWM com 555", text: "Um temporizador 555 simulou o PWM que depois seria produzido pelo sistema embarcado e aplicado ao driver de MOSFET.", media: "infinity-light-pwm-555.webp" },
+	{ part: "PARTE 3", title: "Design no Fritzing", text: "O desenho da placa ajudou a lidar com pouco espaço, reduzir erros e sair da protoboard e da fiação solta.", media: "infinity-light-fritzing.webp" },
+	{ part: "PARTE 4", title: "Placa ilhada", text: "A montagem em placa de prototipagem exigiu alterações por erros iniciais e diferenças entre o desenho e os componentes reais.", media: "infinity-light-placa-ilhada.webp" },
+	{ part: "PARTE 5", title: "Aprendizados", text: "Consistência, tempo, espaço, recursos, testes antes da réplica e prática de soldagem passaram a fazer parte do projeto.", media: "infinity-light-aprendizados.webp" },
+];
+---
+
+<BaseLayout title="Controle de Iluminação da Bancada — Galeria -2048" description={page.subtitle} image={project.image} keywords={project.keywords}>
+	<style is:global>
+		body { background: radial-gradient(circle at 82% 8%, rgba(255,138,0,.045), transparent 540px), linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px), var(--bg); background-size: auto, 42px 42px, 42px 42px, auto; font-family: Arial, Helvetica, sans-serif; }
+		.hero { padding: 100px 0 75px; }
+		.code, .section-label, .note-label, .event-part { color: var(--automacao); font-family: monospace; font-size: .875rem; line-height: 1.5; letter-spacing: .08em; }
+		h1 { max-width: 1120px; margin: 25px 0 0; font-size: clamp(3.5rem, 9vw, 7.4rem); line-height: .86; letter-spacing: -.07em; }
+		.subtitle { max-width: 850px; margin-top: 38px; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.2rem, 2vw, 1.6rem); line-height: 1.6; }
+		.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+		.status { margin-top: 55px; }
+		.status .status-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+		.content { padding: 95px 0; border-bottom: 1px solid var(--line); }
+		.section-grid { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 75px; }
+		h2 { max-width: 900px; margin: 0 0 35px; font-size: clamp(2.2rem, 5vw, 4.3rem); line-height: .96; letter-spacing: -.05em; }
+		h3 { margin: 42px 0 18px; font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.15; }
+		.prose { max-width: 780px; }
+		.prose p, .prose li { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.125rem; line-height: 1.8; }
+		.prose p { margin: 0 0 22px; }
+		.prose strong { color: var(--text); }
+		.prose ul { padding-left: 24px; }
+		.prose li + li { margin-top: 10px; }
+		.callout { margin: 36px 0; padding: 28px; border: 1px solid var(--line); border-left: 2px solid var(--automacao); background: rgba(255,138,0,.025); }
+		.callout p:last-child { margin-bottom: 0; }
+		.archive-grid, .tech-grid, .future-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 38px 0; border: 1px solid var(--line); background: var(--line); }
+		.archive-card, .tech-card, .future-card { padding: 25px; background: var(--surface); }
+		.archive-card h3, .tech-card h3, .future-card h3 { margin: 0 0 14px; font-size: 1.2rem; }
+		.archive-card p, .tech-card p, .future-card p { margin: 0; font-size: 1rem; line-height: 1.7; }
+		.documentation { border-top: 1px solid var(--line); }
+		.documentation-event { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 25px; padding: 28px 0; border-bottom: 1px solid var(--line); }
+		.documentation-event h3 { margin: 0 0 10px; font-size: 1.25rem; }
+		.documentation-event p { margin-bottom: 16px; }
+		.media-placeholder { display: grid; min-height: 190px; margin-top: 22px; padding: 25px; place-content: center; border: 1px dashed var(--line); background: linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px), var(--surface); background-size: 24px 24px; color: var(--muted); text-align: center; font-family: monospace; font-size: .875rem; line-height: 1.6; }
+		.protocol { margin: 35px 0; padding: 30px; border: 1px solid var(--line); background: var(--surface); text-align: center; }
+		.protocol code { color: var(--programacao); font-family: monospace; font-size: clamp(1.5rem, 5vw, 3.4rem); letter-spacing: .05em; }
+		.current-placeholders { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 38px; }
+		.current-placeholders .media-placeholder { margin-top: 0; min-height: 240px; }
+		.current-placeholders .editorial-image { margin: 0; }
+		@media (max-width: 800px) { .hero { padding: 70px 0 55px; } .content { padding: 70px 0; } .section-grid { grid-template-columns: 1fr; gap: 28px; } .status .status-grid, .archive-grid, .tech-grid, .future-grid, .current-placeholders { grid-template-columns: 1fr; } .documentation-event { grid-template-columns: 1fr; gap: 8px; } }
+	</style>
+
+	<SiteHeader accent="var(--automacao)" />
+	<main>
+		<section class="hero"><div class="container">
+			<p class="code">[ PROJETO / 008 / ORIGEM: INFINITY LIGHT ]</p>
+			<h1>CONTROLE DE<br />ILUMINAÇÃO<br />DA BANCADA</h1>
+			<p class="subtitle">{page.subtitle}</p>
+			<div class="tags">{project.categories.map((category) => <Tag label={category.label} tone={category.tone} />)}</div>
+			<div class="status"><StatusGrid items={page.status} /></div>
+		</div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">01 / ORIGEM EM 2023</p><div class="prose">
+			<h2>ANTES DA BANCADA, O QUARTO.</h2>
+			<p>O projeto nasceu em 2023 com o nome <strong>Infinity Light</strong>. A ideia era iluminar o quarto com fitas de LED brancas controladas por ESP8266/NodeMCU. Um pino geraria PWM, um driver acionaria o MOSFET e o brilho seria ajustado pelo celular via Wi-Fi.</p>
+			<p>O plano era mais ambicioso que a versão atual: três fileiras, cada uma com seu ESP, um controlador principal, comandos distribuídos, agendamento e uma futura resposta à música. A intenção também era reaproveitar o que já existia em casa e comprar apenas fitas, fontes, ESPs e componentes indispensáveis.</p>
+			<EditorialImage src="/images/controle-iluminacao-bancada/infinity-light-planejamento.jpg" alt="Mapa original de planejamento financeiro, executivo e técnico do Infinity Light" caption="Arquivo histórico de 2023: o planejamento do Infinity Light dividido entre recursos financeiros, execução e objetivos." eager={true} fit="contain" />
+			<div class="archive-grid"><article class="archive-card"><h3>05/04/2023</h3><p>Compra inicial estimada em R$ 316,15: três fontes 12 V / 5 A, três NodeMCU ESP8266 e fitas de LED.</p></article><article class="archive-card"><h3>22/05/2023</h3><p>Conectores do tipo Wago: aproximadamente R$ 38,09. O planejamento também previa driver e MOSFET IRFZ44N.</p></article></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">02 / PRIMEIRA EXECUÇÃO</p><div class="prose">
+			<h2>FUNCIONAVA, MAS NÃO ESTAVA SEGURO.</h2>
+			<p>A primeira instalação chegou a usar aproximadamente 13 metros de fita de LED no perímetro do teto, alimentados por duas fontes de 12 V / 5 A em paralelo. A iluminação era boa e cumpria o objetivo visual.</p>
+			<p>Mas a solução ainda era improvisada: fontes presas a uma placa de madeira, fios expostos, alimentação direta pela tomada e nenhum interruptor adequado. Esse arranjo é preservado como histórico, <strong>não como recomendação de montagem</strong>.</p>
+			<div class="callout"><p class="note-label">SEGURANÇA</p><p>Fontes conectadas à rede e associações em paralelo exigem projeto, proteções e componentes adequados. A execução de 2023 funcionava, mas não era uma instalação madura ou segura.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">03 / PRIMEIRA DOCUMENTAÇÃO</p><div class="prose">
+			<h2>SETE PARTES, E UMA DIFICULDADE MAIOR.</h2>
+			<p>Os cinco vídeos antigos permanecem apenas como fonte histórica fora do repositório da Galeria. Os espaços abaixo receberão imagens leves quando quadros representativos forem selecionados.</p>
+			<div class="documentation">{firstDocumentation.map((item) => <article class="documentation-event"><p class="event-part">{item.part}</p><div><h3>{item.title}</h3><p>{item.text}</p>{/* Substituir o placeholder pelo asset indicado quando houver uma imagem definitiva. */}<div class="media-placeholder">[ IMAGEM DOCUMENTAL / A ADICIONAR ]<br />{item.media}</div></div></article>)}</div>
+			<h3>Parte 6 — planejamento</h3>
+			<p>Planejar começou a consumir tempo. Eu estava mais acostumado com ferramentas técnicas e vetoriais do que com interfaces gráficas como o Canva. A tentativa de organizar eixos financeiros, executivos e criativos deixou claro que planejamento também era trabalho.</p>
+			<EditorialImage src="/images/controle-iluminacao-bancada/infinity-light-planejamento-detalhes.jpg" alt="Trecho do planejamento do Infinity Light exibido em um celular" caption="Planejamento de produtos, fornecedores, agendamentos e possibilidades do Infinity Light." variant="portrait" fit="contain" />
+			<h3>Parte 7 — nome e interrupção</h3>
+			<p>O nome Infinity Light surgiu enquanto trabalho, consertos, banda e outros compromissos mudavam as prioridades. As próximas etapas já não envolviam apenas montar: incluíam ferramentas, tempo, identidade visual e uma maneira de explicar o processo. Executar parecia mais fácil do que planejar e documentar.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">04 / O APRENDIZADO REAL</p><div class="prose">
+			<h2>O PROJETO QUE AJUDOU A REVELAR A NECESSIDADE DA GALERIA.</h2>
+			<p>O projeto não parou porque deixou de fazer sentido. Ele parou porque ainda faltava método. Faltava transformar execução em registro, tentativa em documentação e ideia em projeto comunicável.</p>
+			<p>Tempo e espaço também eram recursos. Testar a primeira placa antes de replicar, registrar alterações, explicar escolhas e praticar soldagem eram tão importantes quanto fazer a fita acender. Esse incômodo ajudou a formar a ideia da Galeria -2048 como lugar para preservar projetos, erros e evolução técnica.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">05 / TRÊS ANOS DEPOIS</p><div class="prose">
+			<h2>DO QUARTO À BANCADA.</h2>
+			<p>Três anos depois, o escopo mudou. A iluminação que antes era pensada para o quarto passou a servir à bancada onde hoje acontecem montagens, testes, consertos e estudos.</p>
+			<p>A própria bancada foi construída com madeira, pallets, bobinas de cabo e uma estrutura funcional reaproveitada. A nova versão é menor que a ideia original, mas muito mais coerente com a rotina atual.</p>
+			<div class="current-placeholders"><EditorialImage src="/images/controle-iluminacao-bancada/bancada-crua.webp" alt="Estrutura inicial da bancada feita com bobinas de cabo e tampo de madeira reaproveitado" caption="A bancada nasceu de materiais reaproveitados, antes mesmo da iluminação ganhar sua forma final." fit="contain" /><EditorialImage src="/images/controle-iluminacao-bancada/parafusos-e-conexoes.webp" alt="Detalhe da estrutura lateral ajustável, parafusos, perfil e fita de LED" caption="Detalhe da estrutura ajustável e da fita de LED instalada no perfil." variant="portrait" fit="contain" /></div>
+			<h3>Resultado atual</h3>
+			<EditorialImage src="/images/controle-iluminacao-bancada/bancada-pronta.webp" alt="Bancada de trabalho pronta com a estrutura superior e a iluminação de LED ligada" caption="A versão atual do projeto: a ideia original de iluminação passou a servir a bancada de trabalho." fit="contain" />
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">06 / VERSÃO ATUAL</p><div class="prose">
+			<h2>UM SISTEMA SIMPLES E EXPANSÍVEL.</h2>
+			<p>O controlador atual usa ESP8266/NodeMCU, PWM, driver de MOSFET, IRFZ44N, fonte de 12 V e buck converter para alimentar o ESP. A interface web embarcada reúne Wi-Fi Manager, mDNS, WebSocket, slider vertical, percentual editável e controle pela rolagem do mouse.</p>
+			<p>A curva gamma aproxima o ajuste elétrico da percepção visual do brilho. Frequência e resolução PWM foram revistas, e o último percentual é preservado na EEPROM.</p>
+			<div class="tech-grid"><article class="tech-card"><h3>PWM</h3><p>Varia a potência por chaveamento, evitando o desperdício típico de um controle linear simples.</p></article><article class="tech-card"><h3>Driver de MOSFET</h3><p>Transforma o sinal lógico do ESP em acionamento adequado do transistor de potência.</p></article><article class="tech-card"><h3>WebSocket</h3><p>Mantém a troca de comandos entre interface e controlador em tempo real.</p></article><article class="tech-card"><h3>Curva gamma</h3><p>Compensa a diferença entre duty cycle e a maneira não linear como percebemos brilho.</p></article></div>
+			<div class="protocol"><p class="note-label">PROTOCOLO COMUM</p><code>SET:0 → SET:100</code></div>
+			<p>A página web, o script Python experimental e futuros controles físicos enviam o mesmo comando lógico. Essa pequena decisão reduz acoplamento e permite expandir a interface sem reescrever o controle de potência.</p>
+			<div class="current-placeholders"><div class="media-placeholder">[ FOTO ATUAL / A ADICIONAR ]<br />bancada-eletronica.webp</div><div class="media-placeholder">[ CAPTURA DE TELA / A ADICIONAR ]<br />interface-web.webp</div></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">07 / DIAGNÓSTICO</p><div class="prose">
+			<h2>O QUE PRECISOU SER CORRIGIDO.</h2>
+			<ul><li>A alimentação inadequada por regulador linear foi substituída por buck converter.</li><li>O driver inicialmente inoperante exigiu análise de tensões.</li><li>Um IRFZ44N suspeito ou danificado foi substituído e sua temperatura foi verificada.</li><li>Frequência e resolução PWM foram ajustadas.</li><li>A curva gamma melhorou o controle nos baixos níveis de brilho.</li><li>A interface deixou de expor duty bruto e passou a trabalhar em percentual.</li><li>Touch e scroll do slider vertical foram corrigidos.</li><li>WebSocket passou a concentrar a comunicação em tempo real.</li></ul>
+			<p>O diagnóstico não tornou o circuito mais complexo; tornou seus limites e interfaces mais claros.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">08 / CONTROLE POR ÁUDIO</p><div class="prose">
+			<h2>OUTRA ENTRADA PARA O MESMO COMANDO.</h2>
+			<p>Um script Python experimental converte a intensidade do áudio do computador em percentuais de brilho. A mesma base poderá evoluir para filtros por frequência, modos de festa ou outras respostas, sem mudar o protocolo do controlador.</p>
+			<div class="media-placeholder">[ CAPTURA OU IMAGEM / A ADICIONAR ]<br />audio-light.webp</div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">09 / PRÓXIMOS PASSOS</p><div class="prose">
+			<h2>MENOS IMPROVISO, MAIS USO.</h2>
+				<div class="future-grid"><article class="future-card"><h3>Controle físico</h3><p>Experimentar uma carcaça de mouse modificada com ESP para controle remoto.</p></article><article class="future-card"><h3>Modos e presets</h3><p>Presets de bancada, modos de festa e filtros por frequência.</p></article><article class="future-card"><h3>Eletrônica protegida</h3><p>Projetar caixa, conexões, proteções e organização definitiva.</p></article><article class="future-card"><h3>Documentação visual</h3><p>Adicionar fotos do controlador, capturas da interface e registros do controle por áudio.</p></article></div>
+			<p>O projeto não voltou igual; voltou menor, mais útil e melhor documentado. Documentar deixou de ser enfeite e virou parte do projeto.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">10 / REGISTRO HISTÓRICO</p><div class="prose">
+			<h2>O REPOSITÓRIO ANTIGO.</h2>
+			<p><strong>akioShaolin/infinitylight</strong> preserva a intenção inicial: iluminação de um quarto, PWM, NodeMCU, controle por smartphone e ideias ainda embrionárias sobre OTA, filesystem, página web, Wi-Fi e resposta à música. Ele é tratado aqui como registro histórico, não como documentação funcional da versão atual.</p>
+			<div class="callout"><p class="note-label">FECHAMENTO</p><p>A Galeria -2048 existe justamente para registrar esse tipo de caminho: uma ideia que funcionou de forma improvisada, parou por falta de método e voltou com um escopo mais coerente.</p></div>
+		</div></div></section>
+	</main>
+	<SiteFooter rightText={`${project.type} / ${project.number}`} />
+	<ImageLightbox />
+</BaseLayout>

@@ -4,6 +4,7 @@ interface Props {
 	alt: string;
 	caption?: string;
 	position?: string;
+	fit?: "cover" | "contain";
 	variant?: "wide" | "portrait" | "detail";
 	eager?: boolean;
 }
@@ -13,6 +14,7 @@ const {
 	alt,
 	caption,
 	position = "center",
+	fit = "cover",
 	variant = "wide",
 	eager = false,
 } = Astro.props;
@@ -33,7 +35,7 @@ const {
 			loading={eager ? "eager" : "lazy"}
 			fetchpriority={eager ? "high" : "auto"}
 			decoding="async"
-			style={`object-position: ${position};`}
+			style={`object-position: ${position}; object-fit: ${fit};`}
 		/>
 		<span class="editorial-image__hint" aria-hidden="true">AMPLIAR ↗</span>
 	</button>

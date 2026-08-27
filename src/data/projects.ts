@@ -41,6 +41,47 @@ export type Project = {
 
 export const projects: Project[] = [
 	{
+		id: "controle-iluminacao-bancada",
+		type: "PROJETO",
+		number: "008",
+		title: "CONTROLE DE ILUMINAÇÃO DA BANCADA",
+		description: "O Infinity Light de 2023 retomado como um sistema PWM útil, conectado e melhor documentado para a bancada.",
+		image: "/images/controle-iluminacao-bancada/bancada-pronta.webp",
+		path: "/projetos/controle-iluminacao-bancada/",
+		categories: [
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "AUTOMAÇÃO", tone: "automacao" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["Infinity Light", "iluminação de bancada", "ESP8266", "NodeMCU", "PWM", "MOSFET", "IRFZ44N", "fita de LED", "WebSocket", "Wi-Fi Manager", "mDNS", "EEPROM", "curva gamma", "controle por áudio", "placa ilhada", "Fritzing", "12 V"],
+		page: {
+			code: "INFINITY LIGHT",
+			subtitle: "Um projeto de iluminação pensado para o quarto, interrompido por falta de planejamento e retomado três anos depois como uma ferramenta real de bancada.",
+			status: [
+				{ label: "STATUS", value: "● EM DESENVOLVIMENTO", tone: "programacao" },
+				{ label: "ORIGEM", value: "2023 / INFINITY LIGHT" },
+				{ label: "RETOMADA", value: "2026 / BANCADA" },
+				{ label: "MÍDIA ATUAL", value: "BANCADA DOCUMENTADA" },
+			],
+			timeline: [
+				{ year: "2023", title: "Infinity Light", text: "A ideia de iluminar o quarto combinava fitas de LED, ESP8266, PWM e controle pelo celular." },
+				{ year: "2023", title: "Primeira execução", text: "Cerca de 13 metros de fita funcionaram, mas a instalação com fontes e fiação expostas não era segura nem definitiva." },
+				{ year: "2023", title: "Documentação interrompida", text: "Testes, placa e planejamento avançaram, mas a execução era mais natural do que transformar o processo em um registro consistente." },
+				{ year: "2026", title: "Do quarto à bancada", text: "O escopo mudou para uma iluminação PWM útil na bancada construída com materiais reaproveitados." },
+				{ year: "AGORA", title: "Controle unificado", text: "Interface web, WebSocket e automações experimentais compartilham comandos SET:0 a SET:100." },
+			],
+			specifications: [
+				{ name: "Controlador", value: "ESP8266 / NodeMCU" },
+				{ name: "Potência", value: "Driver de MOSFET / IRFZ44N" },
+				{ name: "Iluminação", value: "Fita de LED 12 V" },
+				{ name: "Interface", value: "Web + WebSocket" },
+				{ name: "Comando lógico", value: "SET:0 a SET:100" },
+				{ name: "Estado", value: "Último percentual em EEPROM" },
+			],
+		},
+	},
+	{
 		id: "gtr-01",
 		type: "PROJETO",
 		number: "001",
@@ -101,7 +142,7 @@ export const projects: Project[] = [
 	},
 	{
 		id: "555-discreto",
-		type: "EXPERIMENTO",
+		type: "PROJETO",
 		number: "002",
 		title: "555 DISCRETO",
 		description: "Um temporizador 555 reconstruído com transistores e resistores para estudar o circuito por dentro.",
@@ -122,7 +163,7 @@ export const projects: Project[] = [
 			],
 			timeline: [
 				{ year: "2020", title: "Redesenho", text: "O circuito de referência foi refeito no Fritzing e organizado como uma placa didática de componentes PTH." },
-				{ year: "2020", title: "Fabricação", text: "Dez placas foram fabricadas no exterior depois que o orçamento nacional se mostrou incompatível com o caráter experimental do projeto." },
+				{ year: "2020", title: "Fabricação", text: "Dez placas foram fabricadas no exterior depois que o orçamento nacional se mostrou incompatível com o caráter de protótipo do projeto." },
 				{ year: "MONTAGEM", title: "Estrutura em escala", text: "Bornes banana e pernas impressas em 3D aproximaram visualmente a placa de um circuito integrado de oito pinos." },
 				{ year: "TESTE", title: "Um pulso e travamento", text: "Na configuração astável, o circuito produziu um único acionamento próximo ao intervalo RC esperado e depois permaneceu travado." },
 				{ year: "PRÓXIMA ETAPA", title: "Diagnóstico por blocos", text: "A retomada depende de revisar esquema, pinagens, limiares, latch, descarga e continuidade antes de uma nova revisão de placa." },
@@ -140,7 +181,7 @@ export const projects: Project[] = [
 	{
 		id: "dms-portable-logger",
 		type: "PROJETO",
-		number: "005",
+		number: "006",
 		title: "DMS PORTABLE LOGGER",
 		description: "Dois ED100 e um gateway read-only registrando o comportamento real de uma bateria DMS em movimento.",
 		image: "/images/dms-portable-logger/prototipo-instalado.png",
@@ -179,9 +220,90 @@ export const projects: Project[] = [
 		},
 	},
 	{
+		id: "pd-01",
+		type: "PROJETO",
+		number: "004",
+		title: "MINI FUZZ DO BERTOLA",
+		description: "Meu primeiro pedal: um fuzz em placa universal, funcional na eletrônica e inacabado na mecânica.",
+		image: "/images/pd-01/montagem-fechada.jpg",
+		path: "/projetos/pd-01/",
+		categories: [
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "ÁUDIO", tone: "audio" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["fuzz", "pedal", "guitarra", "baixo", "áudio analógico", "transistor", "Darlington", "C945", "placa universal", "GTR-01", "Bertola", "Darta Effects"],
+		page: {
+			code: "PD-01",
+			subtitle: "Meu primeiro pedal: um fuzz construído em placa universal, modificado com os componentes que eu tinha e testado na guitarra e no baixo.",
+			status: [
+				{ label: "CIRCUITO", value: "● FUNCIONAL", tone: "audio" },
+				{ label: "DESIGN NO FRITZING", value: "DOCUMENTADO" },
+				{ label: "USO EM SHOW", value: "REALIZADO / 21.06.2024" },
+				{ label: "ESQUEMÁTICO FINAL", value: "PENDENTE" },
+			],
+			timeline: [
+				{ year: "2024", title: "Construção do PD-01", text: "O circuito foi redesenhado no Fritzing e montado em placa universal com os componentes disponíveis, provavelmente por volta de março." },
+				{ year: "2024", title: "Testes na GTR-01", text: "A eletrônica funcional foi registrada em uso com a guitarra." },
+				{ year: "2024", title: "Testes no baixo", text: "O fuzz também foi testado no instrumento que motivou parte da experiência." },
+				{ year: "21/06/2024", title: "Show em Guaíra", text: "O PD-01 foi usado no baixo durante uma apresentação real da banda." },
+				{ year: "FUTURO", title: "Completar a documentação", text: "Localizar ou reconstruir com segurança o esquemático correspondente exatamente à versão montada." },
+			],
+			specifications: [
+				{ name: "Circuito-base", value: "Mini Fuzz do Bertola" },
+				{ name: "Transistores", value: "2 × C945 em Darlington" },
+				{ name: "Diodo", value: "1N4148" },
+				{ name: "Capacitores de sinal", value: "220 nF na entrada e na saída" },
+				{ name: "Controles", value: "Volume e ganho" },
+				{ name: "Montagem", value: "Placa universal" },
+				{ name: "Alimentação", value: "Bateria de 9 V" },
+			],
+		},
+	},
+	{
+		id: "pd-02",
+		type: "PROJETO",
+		number: "005",
+		title: "AMPLIFICADOR JFET",
+		description: "Um pré-amplificador simples que mudou a forma como eu ouvia minha guitarra e despertou novas perguntas sobre amplificação.",
+		image: "/images/pd-02/montagem-completa.jpg",
+		path: "/projetos/pd-02/",
+		categories: [
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "ÁUDIO", tone: "audio" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["PD-02", "JFET", "BF245C", "pré-amplificador", "amplificador", "guitarra", "baixo", "áudio", "eletrônica analógica", "common source", "fonte comum", "clipping", "hard clipping", "soft clipping", "distorção", "9 V", "placa universal", "Professor Bairros"],
+		page: {
+			code: "PD-02",
+			subtitle: "Um pré-amplificador simples com JFET que transformou o som da minha guitarra e abriu meus ouvidos para outra forma de amplificação.",
+			status: [
+				{ label: "CIRCUITO", value: "● FUNCIONAL", tone: "audio" },
+				{ label: "MONTAGEM EM PLACA", value: "CONCLUÍDA" },
+				{ label: "GABINETE", value: "NÃO DESENVOLVIDO" },
+				{ label: "DOCUMENTAÇÃO", value: "HISTÓRICA" },
+			],
+			timeline: [
+				{ year: "ORIGEM", title: "Circuito do Professor Bairros", text: "Um estágio JFET simples de 9 V se tornou o ponto de partida para a montagem." },
+				{ year: "MONTAGEM", title: "Placa universal", text: "O circuito funcional foi transferido para uma placa perfurada com potenciômetro, jacks e bateria externos." },
+				{ year: "GUITARRA", title: "Uma resposta marcante", text: "O som limpo e a transição para a distorção despertaram interesse por JFETs, válvulas e clipping." },
+				{ year: "BAIXO", title: "Outra resposta", text: "O resultado mais quadrado e desagradável levantou hipóteses sobre nível de entrada, polarização e headroom." },
+				{ year: "ESTADO ATUAL", title: "Funcional, sem gabinete", text: "O circuito cumpriu sua função nos testes domésticos, mas nunca recebeu case definitivo nem foi usado em show." },
+			],
+			specifications: [
+				{ name: "Topologia", value: "JFET em fonte comum" },
+				{ name: "Transistor de referência", value: "BF245C" },
+				{ name: "Alimentação", value: "9 V" },
+				{ name: "RD / RS / RG", value: "1 kΩ / 220 Ω / 120 kΩ" },
+				{ name: "C1 / C2", value: "10 µF / 10 µF" },
+				{ name: "Construção", value: "Placa universal sem gabinete" },
+			],
+		},
+	},
+	{
 		id: "inverter-modbus-lib",
 		type: "PROJETO",
-		number: "006",
+		number: "007",
 		title: "INVERTER MODBUS LIB",
 		description: "Uma camada comum para ler e controlar inversores fotovoltaicos via Modbus RTU.",
 		image: "/images/inverter-modbus-lib.svg",
@@ -220,7 +342,7 @@ export const projects: Project[] = [
 	{
 		id: "optimus-sun",
 		type: "PROJETO",
-		number: "004",
+		number: "003",
 		title: "OPTIMUS SUN",
 		description: "Ferramenta de apoio para analisar combinações entre módulos e inversores fotovoltaicos.",
 		image: "/images/optimus-sun/identidade.png",
@@ -247,7 +369,7 @@ export const projects: Project[] = [
 			specifications: [],
 		},
 	},
-];
+].sort((first, second) => Number(second.number) - Number(first.number));
 
 export function getProject(id: string): Project | undefined {
 	return projects.find((project) => project.id === id);

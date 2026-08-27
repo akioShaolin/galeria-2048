@@ -1,0 +1,330 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import Tag from "../../components/Tag.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { articles } from "../../data/articles";
+
+const article = articles.find(({ id }) => id === "solarview-ubox");
+if (!article) throw new Error("Dados do artigo SolarView uBox não encontrados.");
+
+const blinkCode = `#define LED_UBOX 2
+
+void setup() {
+  pinMode(LED_UBOX, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_UBOX, LOW);
+  delay(1000);
+
+  digitalWrite(LED_UBOX, HIGH);
+  delay(1000);
+}`;
+
+const status = [
+	{ label: "IDENTIFICAÇÃO", value: "UBOX" },
+	{ label: "INÍCIO", value: "2020" },
+	{ label: "DOCUMENTAÇÃO", value: "● EM DESENVOLVIMENTO", tone: "programacao" },
+	{ label: "ÚLTIMA ATUALIZAÇÃO", value: "2026" },
+];
+---
+
+<BaseLayout
+	title="SolarView uBox — do primeiro LED ao Modbus | Galeria -2048"
+	description={article.description}
+	image={article.image}
+	type="article"
+	keywords={article.keywords}
+>
+	<style is:global>
+		body {
+			background:
+				radial-gradient(circle at 78% 7%, rgba(0, 217, 255, .055), transparent 520px),
+				linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px),
+				var(--bg);
+			background-size: auto, 40px 40px, 40px 40px, auto;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		.container { width: min(1180px, calc(100% - 48px)); }
+		.article-hero { padding: 90px 0 70px; border-bottom: 1px solid var(--line); }
+		.eyebrow, .section-label, .notice-title, .tech-label, .reference-label {
+			font-family: monospace;
+			font-size: .875rem;
+			line-height: 1.5;
+			letter-spacing: .08em;
+		}
+		.eyebrow, .section-label, .tech-label, .reference-label { color: var(--programacao); }
+		.article-hero h1 {
+			max-width: 1050px;
+			margin: 24px 0 30px;
+			font-size: clamp(3.6rem, 9vw, 8.4rem);
+			line-height: .86;
+			letter-spacing: -.07em;
+		}
+		.article-hero h1 span { display: block; margin-top: 12px; color: var(--programacao); font-size: .55em; letter-spacing: -.045em; }
+		.lead {
+			max-width: 820px;
+			margin: 0;
+			color: var(--muted);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: clamp(1.25rem, 2.2vw, 1.65rem);
+			line-height: 1.65;
+		}
+		.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+		.article-status { margin-top: 50px; }
+		.article-status .status-grid { grid-template-columns: repeat(4, 1fr); }
+		.article-status .status-item:nth-child(3) { border-right: 1px solid var(--line); }
+
+		.content-section { padding: 95px 0; border-bottom: 1px solid var(--line); }
+		.section-grid { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 70px; }
+		.section-body { max-width: 790px; }
+		.section-body.wide { max-width: none; }
+		h2 { margin: 0 0 32px; font-size: clamp(2.2rem, 4.6vw, 4.5rem); line-height: .98; letter-spacing: -.05em; }
+		h3 { margin: 42px 0 18px; font-size: clamp(1.45rem, 2.6vw, 2.1rem); line-height: 1.15; letter-spacing: -.025em; }
+		.prose p, .prose li {
+			color: var(--muted);
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 1.125rem;
+			line-height: 1.8;
+		}
+		.prose p { margin: 0 0 22px; }
+		.prose strong { color: var(--text); }
+		.prose ul, .prose ol { padding-left: 24px; }
+		.prose li + li { margin-top: 10px; }
+		.prose code { color: var(--programacao); font-family: monospace; font-size: .95em; }
+		.prose a:not(.action-link):not(.continue-link) { color: var(--programacao); text-decoration: underline; text-underline-offset: 3px; }
+		.prose a:focus-visible, .action-link:focus-visible, .continue-link:focus-visible { outline: 2px solid var(--programacao); outline-offset: 4px; }
+
+		.pullquote { margin: 38px 0; padding: 25px 0 25px 28px; border-left: 2px solid var(--programacao); color: var(--text); font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.25rem, 2.4vw, 1.65rem); line-height: 1.55; }
+		.tech-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 38px 0; border: 1px solid var(--line); background: var(--line); }
+		.tech-item { padding: 23px; background: var(--surface); }
+		.tech-item p { margin: 8px 0 0; font-size: 1.0625rem; line-height: 1.65; }
+		.image-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 35px; }
+		.image-pair .editorial-image { margin: 0; }
+
+		.code-block { position: relative; margin: 35px 0; border: 1px solid var(--line); background: #020405; overflow-x: auto; }
+		.code-title { padding: 11px 16px; border-bottom: 1px solid var(--line); color: var(--muted); font-family: monospace; font-size: .875rem; line-height: 1.5; }
+		.code-block pre { margin: 0; padding: 24px; color: var(--text); font-family: "Courier New", Courier, monospace; font-size: .9375rem; line-height: 1.65; tab-size: 2; }
+
+		.notice { margin: 35px 0; padding: 25px; border: 1px solid var(--line); border-left: 2px solid var(--programacao); background: rgba(0, 217, 255, .025); }
+		.notice.warning { border-left-color: var(--automacao); background: rgba(255, 138, 0, .03); }
+		.notice.warning .notice-title { color: var(--automacao); }
+		.notice p:last-child { margin-bottom: 0; }
+
+		.progression { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 35px 0; }
+		.progression span { padding: 12px 14px; border: 1px solid var(--line); background: var(--surface); font-family: monospace; font-size: .875rem; line-height: 1.45; }
+		.progression b { color: var(--programacao); font-family: monospace; }
+
+		.action-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 35px; }
+		.action-link, .continue-link { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 20px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-family: monospace; font-size: .875rem; font-weight: bold; line-height: 1.5; }
+		.action-link:hover, .continue-link:hover { border-color: var(--programacao); color: var(--programacao); }
+		.continue-link { max-width: 790px; margin-top: 35px; border-color: rgba(0,217,255,.45); }
+
+		.reference-list { display: grid; gap: 1px; margin-top: 30px; border: 1px solid var(--line); background: var(--line); }
+		.reference-item { padding: 22px; background: var(--surface); }
+		.reference-item a { display: block; margin-top: 8px; color: var(--text); overflow-wrap: anywhere; }
+		.reference-item a:hover { color: var(--programacao); }
+
+		.closing { padding: 80px 0; }
+		.closing p { max-width: 940px; margin: 0; font-size: clamp(2.1rem, 5vw, 4.7rem); font-weight: 700; line-height: 1.03; letter-spacing: -.05em; }
+		.closing span { color: var(--programacao); }
+
+		@media (max-width: 800px) {
+			.article-hero { padding: 70px 0 55px; }
+			.content-section { padding: 70px 0; }
+			.section-grid { grid-template-columns: 1fr; gap: 28px; }
+			.article-status .status-grid { grid-template-columns: 1fr; }
+			.article-status .status-item:nth-child(3) { border-right: 0; }
+			.tech-grid, .image-pair, .action-grid { grid-template-columns: 1fr; }
+		}
+
+		@media (max-width: 500px) {
+			.article-hero h1 { font-size: clamp(3.1rem, 17vw, 5rem); }
+			.code-block pre { padding: 18px; font-size: .875rem; }
+			.progression { align-items: stretch; flex-direction: column; }
+			.progression b { text-align: center; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after { scroll-behavior: auto !important; }
+		}
+	</style>
+
+	<SiteHeader accent="var(--programacao)" />
+	<main>
+		<article>
+			<header class="article-hero">
+				<div class="container">
+					<div class="eyebrow">[ ARTIGO / REFERÊNCIA TÉCNICA ]</div>
+					<h1>SOLARVIEW UBOX <span>DO PRIMEIRO LED AO MODBUS</span></h1>
+					<p class="lead">Um datalogger usado por anos em campo voltou à bancada como plataforma para aprender firmware, barramentos e comunicação industrial.</p>
+					<div class="tags">{article.areas.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+					<div class="article-status"><StatusGrid items={status} /></div>
+					<EditorialImage src="/images/artigos/ubox/ubox-exterior.jpg" alt="Gabinete preto do datalogger SolarView uBox" caption="O SolarView uBox em seu gabinete original, antes de voltar à bancada como plataforma de experimentação." fit="contain" eager />
+				</div>
+			</header>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 01 / PRIMEIRO CONTATO ]</div>
+					<div class="section-body prose">
+						<h2>De equipamento de campo a objeto de estudo.</h2>
+						<p>Em 2020, quando comecei minha jornada no mercado de energia solar, conheci o uBox. Ele era utilizado como datalogger de inversores fotovoltaicos, coletando informações — especialmente de equipamentos trifásicos — e enviando os dados para uma plataforma online de monitoramento.</p>
+						<p>Durante sua função original, esse fluxo permitia acompanhar o funcionamento das usinas sem depender de uma visita ao local para cada verificação. Anos depois, uma unidade já fora de uso, após trabalhar em campo, voltou à bancada com outra finalidade.</p>
+						<div class="pullquote">Um equipamento que cumpriu sua função original por anos renasceu como plataforma de aprendizado.</div>
+						<p>Demandas envolvendo programação de injeção de potência por horário — ou <em>scheduling</em> — ajudaram a despertar a ideia de reaproveitar o hardware. O caminho, porém, começou muito antes de controlar potência: começou por descobrir como gravar um programa e acender um único LED.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 02 / ABRINDO O EQUIPAMENTO ]</div>
+					<div class="section-body wide prose">
+						<h2>AWC03 por fora. ESP8266 por baixo.</h2>
+						<p>O uBox documentado é um datalogger da <strong>AWC Tecnologia Ltda.</strong>, comercializado sob a marca <strong>SolarView</strong>. SolarView é a identidade comercial utilizada pela AWC; não se trata, aqui, de apresentar duas fabricantes concorrentes.</p>
+						<p>O gabinete traz a marca SolarView. No módulo Wi-Fi interno, a etiqueta informa <code>MODEL AWC03</code> e <code>VENDOR AWC</code>. Sob ela está identificado o ESP8266. A configuração foi reconhecida como ESP-07 pelo formato, pela pinagem e pela presença do conector para antena externa — não porque “ESP-07” estivesse impresso no módulo.</p>
+						<EditorialImage src="/images/artigos/ubox/ubox-aberto-awc03.jpeg" alt="Placa aberta do uBox mostrando o módulo AWC03, bateria e componentes internos" caption="Placa do uBox com o módulo identificado externamente como AWC03. A configuração ESP-07/ESP8266 foi identificada pela pinagem, pelo formato e pelo conector para antena externa." fit="contain" />
+						<p>Na unidade analisada, também foram identificados uma interface RS485, um relógio de tempo real (RTC) e uma memória EEPROM ligados ao barramento I²C. A antena externa não era utilizada nos primeiros experimentos.</p>
+						<div class="notice">
+							<div class="notice-title">[ ESCOPO DO MAPEAMENTO ]</div>
+							<p>Essas observações correspondem à unidade examinada e podem divergir de outras revisões. A unidade usada nos experimentos passou a executar exclusivamente firmware próprio. Nenhum firmware original é incluído ou distribuído.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 03 / PREPARAÇÃO ]</div>
+					<div class="section-body wide prose">
+						<h2>Entrando no modo de gravação.</h2>
+						<p>A primeira preparação utilizou a Arduino IDE, o pacote <code>esp8266 by ESP8266 Community</code> e o perfil <code>Generic ESP8266 Module</code>. A URL do gerenciador de placas é:</p>
+						<p><a href="https://arduino.esp8266.com/stable/package_esp8266com_index.json">https://arduino.esp8266.com/stable/package_esp8266com_index.json</a></p>
+						<div class="tech-grid">
+							<div class="tech-item"><div class="tech-label">USB–TTL</div><p>Conversor com níveis lógicos de 3,3 V.</p></div>
+							<div class="tech-item"><div class="tech-label">UART CRUZADA</div><p>TX do uBox no RX do conversor; RX do uBox no TX do conversor.</p></div>
+							<div class="tech-item"><div class="tech-label">REFERÊNCIA</div><p>GND do uBox e do conversor em comum.</p></div>
+							<div class="tech-item"><div class="tech-label">BOOTLOADER</div><p>GPIO0/BOOT em nível baixo durante boot ou reset.</p></div>
+						</div>
+						<p>Depois do upload, o GPIO0 é liberado e um novo reset inicia a execução normal. Também é necessário evitar fontes conflitantes: não se deve alimentar a mesma placa simultaneamente por caminhos que não foram verificados como compatíveis.</p>
+						<div class="image-pair">
+							<EditorialImage src="/images/artigos/ubox/ubox-com-pinout.jpg" alt="Pinout anotado na placa uBox com sinais TX, RX, BOOT, GND, 3V3, 5V e GPIO14" caption="TX e RX representam os sinais do uBox. A ligação com o conversor USB–TTL deve ser cruzada." fit="contain" />
+							<EditorialImage src="/images/artigos/ubox/ubox-gravacao-ttl.jpeg" alt="uBox conectado a um conversor USB para TTL durante a gravação" caption="Montagem de bancada usada para preparar e gravar firmware próprio no ESP8266." fit="contain" />
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 04 / PRIMEIRO FIRMWARE ]</div>
+					<div class="section-body prose">
+						<h2>Um Blink simples, mas decisivo.</h2>
+						<p>O LED da placa está ligado ao <code>GPIO2</code> e usa lógica invertida: <code>LOW</code> acende e <code>HIGH</code> apaga. O código não usa <code>LED_BUILTIN</code>, pois o perfil genérico do ESP8266 pode defini-lo para outro pino.</p>
+						<div class="code-block">
+							<div class="code-title">blink-led.ino</div>
+							<pre><code>{blinkCode}</code></pre>
+						</div>
+						<p>O programa é elementar. Sua importância prática estava no que ele validava em conjunto: entrada no bootloader, comunicação com o conversor, compilação para o alvo correto, gravação de firmware próprio, execução do ESP8266 e controle de uma saída física da placa.</p>
+						<EditorialImage src="/images/artigos/ubox/ubox-blink-led.gif" alt="LED do uBox alternando entre aceso e apagado durante a execução do Blink" caption="Primeiro firmware próprio executado no uBox: o LED ligado ao GPIO2 alternando a cada segundo." fit="contain" />
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 05 / TENTATIVA PREVENTIVA ]</div>
+					<div class="section-body prose">
+						<h2>Blindagem não é evidência de melhoria.</h2>
+						<div class="notice warning">
+							<div class="notice-title">TENTATIVA PREVENTIVA / NÃO ENSAIADA</div>
+							<p>Em uma única unidade utilizada como protótipo, apliquei preventivamente uma cobertura externa de fita adesiva de alumínio. A parte interna permaneceu isolada da placa e a cobertura metálica ficou eletricamente flutuante, sem ligação ao GND. A antena externa também não estava sendo utilizada naquele momento. Como não foi realizado um ensaio comparativo antes e depois da modificação, a fotografia documenta uma tentativa experimental de mitigação de interferências, e não uma solução cuja eficácia tenha sido validada.</p>
+						</div>
+						<EditorialImage src="/images/artigos/ubox/ubox-blindagem.jpeg" alt="Gabinete interno do uBox parcialmente coberto externamente por fita de alumínio" caption="Cobertura preventiva aplicada a uma única unidade; tentativa não comparada nem validada por ensaio." fit="contain" />
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 06 / DEPOIS DO BLINK ]</div>
+					<div class="section-body prose">
+						<h2>Do pino isolado aos subsistemas.</h2>
+						<p>Depois do LED, a evolução passou pela comunicação serial, pelo estudo do barramento I²C e pelo acesso ao RTC e à EEPROM. Vieram também conexão Wi-Fi e páginas web locais para observar e comandar o hardware sem depender apenas do monitor serial.</p>
+						<div class="progression" aria-label="Progressão dos experimentos">
+							<span>UART</span><b>→</b><span>I²C</span><b>→</b><span>RTC / EEPROM</span><b>→</b><span>WI-FI</span><b>→</b><span>WEB LOCAL</span>
+						</div>
+						<p>O ESP8266 também impôs limites: com poucas UARTs disponíveis, alguns experimentos exigiram decidir quais interfaces seriam físicas, quais poderiam usar <code>SoftwareSerial</code> e como evitar que depuração e comunicação industrial disputassem o mesmo recurso. Os sketches intermediários não são detalhados nesta primeira publicação.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 07 / SALTO PARA MODBUS ]</div>
+					<div class="section-body wide prose">
+						<h2>Quando o LED virou barramento.</h2>
+						<p>A etapa seguinte exigiu estudar o meio físico RS485 e o protocolo Modbus RTU: papéis de master e slave, IDs, baud rate, paridade, stop bits, CRC e leitura de registradores de inversores fotovoltaicos.</p>
+						<p>O hardware serviu como base experimental para leitura e escrita manual de registradores, sniffers, transceptores, <code>SoftwareSerial</code>, WebSockets, mDNS, scanner Modbus, gateway Modbus, Modbus TCP, túnel RTU/TCP e, mais tarde, uma biblioteca para inversores e medidores.</p>
+						<p>Houve experiências com equipamentos WEG, Huawei, GoodWe e FoxESS, além de DTSU666 e MMW03. Isso registra o contexto dos testes; não declara compatibilidade universal nem publica mapas proprietários.</p>
+						<div class="image-pair">
+							<EditorialImage src="/images/artigos/ubox/ubox-teste-osciloscopio.jpeg" alt="Ponta de osciloscópio observando sinais seriais durante um teste de bancada" caption="Observação de sinais seriais durante os testes de bancada. O osciloscópio passou a mostrar o que o firmware sozinho não revelava." fit="contain" variant="portrait" />
+							<EditorialImage src="/images/artigos/ubox/ubox-leitura-modbus.jpeg" alt="Interface web local com dados de sincronização e mensagem de timeout Modbus" caption="Interface local durante testes de leitura e sincronização via Modbus. O timeout visível na tela também faz parte do processo documentado." fit="contain" variant="portrait" />
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 08 / ANTES DO ED100 ]</div>
+					<div class="section-body prose">
+						<h2>Uma base anterior, não uma versão anterior.</h2>
+						<p>Os experimentos com o uBox antecederam os trabalhos documentados com o ED100. Eles ajudaram a formar uma base prática em ESP8266 e ESP32, RS485, Modbus, interfaces web embarcadas, gateways e ferramentas de diagnóstico.</p>
+						<p>A relação é histórica e técnica. O ED100 não é apresentado como uma continuação direta do uBox, nem o uBox como protótipo daquele equipamento. São plataformas diferentes que participaram de uma mesma sequência de aprendizado.</p>
+						<a class="continue-link" href="/artigos/ed100-hardware-rs485/"><span>CONTINUAR PARA O ED100 — HARDWARE E RS485</span><span>→</span></a>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 09 / ESTADO ATUAL ]</div>
+					<div class="section-body wide prose">
+						<h2>Uma referência que ainda pode crescer.</h2>
+						<p>O uBox não é apresentado como produto pronto. É uma plataforma reaproveitada para aprendizado e prototipagem. O primeiro repositório público preserva o experimento mínimo do LED; os trabalhos Modbus serão documentados gradualmente.</p>
+						<p>O mapeamento completo e os esquemáticos não são publicados nesta etapa. Este artigo poderá receber novas seções à medida que evidências, código e contexto forem organizados.</p>
+						<div class="action-grid">
+							<a class="action-link" href="https://github.com/akioShaolin/blink-led" target="_blank" rel="noopener noreferrer"><span>SKETCH BLINK E DOCUMENTAÇÃO</span><span>↗</span></a>
+							<a class="action-link" href="https://github.com/akioShaolin/galeria-2048" target="_blank" rel="noopener noreferrer"><span>REPOSITÓRIO DA GALERIA -2048</span><span>↗</span></a>
+						</div>
+
+						<div class="notice">
+							<div class="notice-title">[ INDEPENDÊNCIA ]</div>
+							<p>Este é um trabalho independente de documentação, reaproveitamento e experimentação. Não possui vínculo, aprovação ou suporte da AWC Tecnologia Ltda. ou da SolarView. As marcas e nomes de produtos citados pertencem aos seus respectivos titulares. Os resultados se referem exclusivamente às unidades analisadas. Nenhum firmware original, credencial, dado de cliente ou conteúdo da plataforma de monitoramento é distribuído.</p>
+						</div>
+
+						<h3>Referências comerciais oficiais</h3>
+						<div class="reference-list">
+							<div class="reference-item"><div class="reference-label">SOLARVIEW / TERMOS</div><a href="https://my.solarview.com.br/termos" target="_blank" rel="noopener noreferrer">my.solarview.com.br/termos ↗</a></div>
+							<div class="reference-item"><div class="reference-label">SOLARVIEW / CENTRAL DE AJUDA</div><a href="https://solarview.com.br/centraldeajuda/datalogger/inversor-integrado-datalogger-solarview/" target="_blank" rel="noopener noreferrer">Datalogger SolarView ↗</a></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="closing">
+				<div class="container"><p>Primeiro, <span>um LED</span>. Depois, um barramento inteiro para compreender.</p></div>
+			</section>
+		</article>
+	</main>
+	<SiteFooter rightText="ARTIGO / UBOX / ESP8266 / MODBUS" />
+	<ImageLightbox />
+</BaseLayout>

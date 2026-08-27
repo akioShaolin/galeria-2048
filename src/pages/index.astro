@@ -670,6 +670,10 @@ import { areas, getAreaPath } from "../data/areas";
 				transition: border-color .2s ease, transform .2s ease;
 			}
 
+			.article-card + .article-card {
+				margin-top: 24px;
+			}
+
 			.article-card:hover {
 				transform: translateY(-3px);
 				border-color: var(--programacao);
@@ -997,7 +1001,7 @@ import { areas, getAreaPath } from "../data/areas";
 					{articles.map((article) => (
 						<article class="article-card">
 							<a class="article-image" href={article.path} aria-label={`Abrir ${article.title}`}>
-								<img src={article.image} alt="Hardware ED100 utilizado como plataforma RS485" />
+								<img src={article.image} alt={article.title} />
 							</a>
 							<div class="article-card-content">
 								<div class="article-label">{article.label}</div>

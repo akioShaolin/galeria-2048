@@ -29,4 +29,21 @@ export const articles: Article[] = [
 		],
 		keywords: ["ED100", "ESP32", "RS485", "bridge", "sniffer", "JBD", "BMS", "datalogger", "engenharia reversa"],
 	},
+	{
+		id: "solarview-ubox",
+		type: "ARTIGO / REFERÊNCIA TÉCNICA",
+		code: "UBOX",
+		label: "ARTIGO / REFERÊNCIA TÉCNICA",
+		title: "SOLARVIEW UBOX — DO PRIMEIRO LED AO MODBUS",
+		description: "Mapeamento independente e reaproveitamento experimental de um datalogger baseado em ESP-07/ESP8266, do primeiro firmware próprio às ferramentas Modbus.",
+		image: "/images/artigos/ubox/ubox-exterior.jpg",
+		path: "/artigos/solarview-ubox/",
+		areas: [
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "AUTOMAÇÃO", tone: "automacao" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["SolarView", "uBox", "AWC", "AWC03", "ESP8266", "ESP-07", "datalogger", "Arduino", "GPIO2", "RS485", "Modbus", "firmware", "engenharia reversa", "mapeamento de hardware", "reaproveitamento"],
+	},
 ];
