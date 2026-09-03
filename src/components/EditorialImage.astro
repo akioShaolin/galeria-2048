@@ -79,6 +79,15 @@ const {
 		height: clamp(280px, 36vw, 460px);
 	}
 
+	/* Em conjuntos lado a lado, a caixa visual deve ter uma altura comum,
+	   independentemente da variante editorial usada por cada imagem. */
+	:global(.media-pair) .editorial-image__trigger img,
+	:global(.image-pair) .editorial-image__trigger img,
+	:global(.documentation-images.pair) .editorial-image__trigger img,
+	:global(.current-placeholders) .editorial-image__trigger img {
+		height: clamp(300px, 43vw, 560px);
+	}
+
 	.editorial-image__trigger:hover img {
 		transform: scale(1.012);
 	}

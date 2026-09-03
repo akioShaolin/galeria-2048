@@ -1,5 +1,6 @@
 import { articles } from "./articles";
 import { projects } from "./projects";
+import { workshop } from "./workshop";
 
 export type ArchiveArea = {
 	label: string;
@@ -40,6 +41,17 @@ export const archive: ArchiveItem[] = [
 		keywords: article.keywords,
 		url: article.path,
 		image: article.image,
+	})),
+	...workshop.map((entry) => ({
+		id: entry.id,
+		type: `${entry.type} / ${entry.subtype}`,
+		code: entry.code,
+		title: entry.title,
+		description: entry.description,
+		areas: entry.areas,
+		keywords: entry.keywords,
+		url: entry.path,
+		image: entry.image,
 	})),
 ];
 

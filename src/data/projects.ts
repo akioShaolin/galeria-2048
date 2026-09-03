@@ -54,7 +54,7 @@ export const projects: Project[] = [
 			{ label: "AUTOMAÇÃO", tone: "automacao" },
 			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
 		],
-		keywords: ["Infinity Light", "iluminação de bancada", "ESP8266", "NodeMCU", "PWM", "MOSFET", "IRFZ44N", "fita de LED", "WebSocket", "Wi-Fi Manager", "mDNS", "EEPROM", "curva gamma", "controle por áudio", "placa ilhada", "Fritzing", "12 V"],
+		keywords: ["Infinity Light", "iluminação de bancada", "ESP8266", "NodeMCU", "PWM", "MOSFET", "IRFZ44N", "fita de LED", "WebSocket", "Wi-Fi Manager", "mDNS", "EEPROM", "curva gamma", "placa ilhada", "Fritzing", "12 V"],
 		page: {
 			code: "INFINITY LIGHT",
 			subtitle: "Um projeto de iluminação pensado para o quarto, interrompido por falta de planejamento e retomado três anos depois como uma ferramenta real de bancada.",
@@ -62,19 +62,22 @@ export const projects: Project[] = [
 				{ label: "STATUS", value: "● EM DESENVOLVIMENTO", tone: "programacao" },
 				{ label: "ORIGEM", value: "2023 / INFINITY LIGHT" },
 				{ label: "RETOMADA", value: "2026 / BANCADA" },
-				{ label: "MÍDIA ATUAL", value: "BANCADA DOCUMENTADA" },
+				{ label: "DRIVER", value: "REVISÃO 2.0 DOCUMENTADA" },
 			],
 			timeline: [
 				{ year: "2023", title: "Infinity Light", text: "A ideia de iluminar o quarto combinava fitas de LED, ESP8266, PWM e controle pelo celular." },
 				{ year: "2023", title: "Primeira execução", text: "Cerca de 13 metros de fita funcionaram, mas a instalação com fontes e fiação expostas não era segura nem definitiva." },
 				{ year: "2023", title: "Documentação interrompida", text: "Testes, placa e planejamento avançaram, mas a execução era mais natural do que transformar o processo em um registro consistente." },
 				{ year: "2026", title: "Do quarto à bancada", text: "O escopo mudou para uma iluminação PWM útil na bancada construída com materiais reaproveitados." },
+				{ year: "2026", title: "Revisão do driver", text: "Medições levaram ao ajuste dos pull-ups, à troca do regulador linear por buck, à simplificação do circuito e à substituição de um IRFZ44N danificado." },
 				{ year: "AGORA", title: "Controle unificado", text: "Interface web, WebSocket e automações experimentais compartilham comandos SET:0 a SET:100." },
 			],
 			specifications: [
 				{ name: "Controlador", value: "ESP8266 / NodeMCU" },
 				{ name: "Potência", value: "Driver de MOSFET / IRFZ44N" },
 				{ name: "Iluminação", value: "Fita de LED 12 V" },
+				{ name: "PWM", value: "D2 / GPIO4 · 14 bits · 1 kHz" },
+				{ name: "Correção de brilho", value: "Gamma 2,2" },
 				{ name: "Interface", value: "Web + WebSocket" },
 				{ name: "Comando lógico", value: "SET:0 a SET:100" },
 				{ name: "Estado", value: "Último percentual em EEPROM" },
@@ -87,7 +90,7 @@ export const projects: Project[] = [
 		number: "001",
 		title: "GUITARRA",
 		description: "Instrumentos, elétrica, modificações e restauração.",
-		image: "/images/gtr-01.jpeg",
+		image: "/images/gtr-01/guitarra-estado-atual.webp",
 		path: "/projetos/gtr-01/",
 		categories: [
 			{ label: "LUTHIERIA", tone: "luthieria" },
@@ -122,7 +125,7 @@ export const projects: Project[] = [
 				{
 					year: "2026",
 					title: "Peças e acabamento",
-					text: "Desenvolvimento de novas molduras, tampa traseira, knobs e outros detalhes mecânicos e estéticos.",
+					text: "Molduras de bambu cortadas e instaladas em caráter experimental; colagem, parafusos, correção do buraco no corpo e acabamentos finais continuam pendentes.",
 				},
 				{
 					year: "AGORA",

@@ -20,6 +20,8 @@ const page = project.page;
 <BaseLayout
 	title={`${page.code} — Galeria -2048`}
 	description="GTR-01 — uma guitarra em constante reconstrução, documentada como projeto aberto de luthieria, eletrônica e áudio."
+	image={project.image}
+	keywords={project.keywords}
 >
 	<style is:global>
 		body {
@@ -344,7 +346,7 @@ const page = project.page;
 			<figure class="hero-image">
 				<img
 					src={project.image}
-					alt="Guitarra GTR-01 em seu estado atual"
+					alt="Guitarra GTR-01 montada e pendurada na parede, com molduras de bambu nos captadores"
 				/>
 			</figure>
 
@@ -492,8 +494,11 @@ const page = project.page;
 								<h3>Molduras de bambu</h3>
 								<p>A ideia de trabalhar com bambu surgiu ainda durante a confecção do jack plate, mas eu não sabia ao certo como executar peças mais elaboradas tendo à disposição basicamente um pedaço grande de bambu, serrote e lixa.</p>
 								<p>A sugestão do método de fabricação das molduras surgiu durante uma conversa com IA.</p>
-								<p>A proposta atual é produzir as molduras a partir de <strong>duas lâminas de bambu laminadas entre si, com as fibras orientadas aproximadamente a 90°</strong>, aumentando a resistência da peça, e depois realizar o corte a laser.</p>
-								<EditorialImage src="/images/gtr-01/desenho-molduras-bambu.png" alt="Desenho técnico de quatro formatos de molduras para captadores" caption="Estudo das geometrias das molduras que serão produzidas em bambu laminado." variant="detail" position="center" />
+								<p>A proposta foi produzir as molduras a partir de <strong>duas lâminas de bambu laminadas entre si, com as fibras orientadas aproximadamente a 90°</strong>, aumentando a resistência da peça, e depois realizar o corte a laser.</p>
+								<EditorialImage src="/images/gtr-01/desenho-molduras-bambu.png" alt="Desenho técnico de quatro formatos de molduras para captadores" caption="Estudo das geometrias usadas na fabricação das molduras em bambu laminado." variant="detail" position="center" />
+								<EditorialImage src="/images/gtr-01/molduras-bambu-cortadas.webp" alt="Quatro molduras de bambu cortadas para os captadores da guitarra" caption="Quatro peças cortadas em bambu: duas alternativas para o captador do braço e duas para o humbucker da ponte, antes da montagem definitiva." variant="detail" fit="contain" />
+								<p>Depois do corte, as peças passaram por experimentação e ajustes, e uma moldura foi instalada em cada captador. A fotografia atual da guitarra, usada como capa desta página, registra esse estágio avançado — não o encerramento da transformação.</p>
+								<p>A meta continua ativa: ainda é necessário finalizar a colagem e o acabamento das peças de bambu, resolver a fixação por parafusos, corrigir e acabar o buraco que permaneceu no corpo e realizar os acabamentos finais. As soluções para essas etapas ainda não estão definidas.</p>
 							</article>
 
 							<article class="event">

@@ -7,6 +7,7 @@ import Tag from "../components/Tag.astro";
 import { projects } from "../data/projects";
 import { articles } from "../data/articles";
 import { areas, getAreaPath } from "../data/areas";
+import { workshop } from "../data/workshop";
 ---
 
 <BaseLayout
@@ -662,6 +663,10 @@ import { areas, getAreaPath } from "../data/areas";
 				border-top: 1px solid var(--line);
 			}
 
+			.workshop { padding: 28px 0 36px; border-top: 1px solid var(--line); }
+			.workshop .article-label, .workshop .see-all { color: var(--automacao); }
+			.workshop .article-card:hover { border-color: var(--automacao); }
+
 			.article-card {
 				display: grid;
 				grid-template-columns: minmax(280px, .85fr) 1.4fr;
@@ -886,6 +891,8 @@ import { areas, getAreaPath } from "../data/areas";
 						ARTIGOS
 					</a>
 
+					<a href="#oficina">OFICINA</a>
+
 					<a href="/pesquisa/">
 						PESQUISA
 					</a>
@@ -1010,6 +1017,24 @@ import { areas, getAreaPath } from "../data/areas";
 								<div class="article-areas">
 									{article.areas.map(({ label, tone }) => <Tag label={label} tone={tone} compact />)}
 								</div>
+							</div>
+						</article>
+					))}
+				</section>
+
+				<section class="workshop" id="oficina">
+					<div class="projects-header">
+						<div class="section-code">[ OFICINA / REPAROS E INVESTIGAÇÕES ]</div>
+						<span class="see-all">REGISTRO DE BANCADA</span>
+					</div>
+					{workshop.map((entry) => (
+						<article class="article-card">
+							<a class="article-image" href={entry.path} aria-label={`Abrir ${entry.title}`}><img src={entry.image} alt="" /></a>
+							<div class="article-card-content">
+								<div class="article-label">{entry.type} / {entry.subtype}</div>
+								<h2><a href={entry.path}>{entry.title}</a></h2>
+								<div class="article-description">{entry.description}</div>
+								<div class="article-areas">{entry.areas.map(({ label, tone }) => <Tag label={label} tone={tone} compact />)}</div>
 							</div>
 						</article>
 					))}

@@ -1,0 +1,151 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { workshop } from "../../data/workshop";
+
+const entry = workshop.find(({ id }) => id === "dolce-gusto-pj2401b1");
+if (!entry) throw new Error("Registro da Oficina não encontrado.");
+const imageRoot = "/images/oficina/dolce-gusto-pj2401b1";
+const status = [
+	{ label: "CAUSA", value: "CONFIRMADA" },
+	{ label: "LÓGICA", value: "FUNCIONAL" },
+	{ label: "PCB", value: "RECUPERADA" },
+	{ label: "RESULTADO", value: "● REPARO BEM-SUCEDIDO", tone: "eletronica" },
+];
+const measurements = [
+	["Bomba", "45 Ω"], ["Termobloco", "12 Ω"], ["Varistor original", "14K271"],
+	["BTA316 MT1–MT2 defeituoso", "~227 Ω"], ["BTA316 MT1–Gate", "curto"],
+	["BTA204 MT1–MT2", "aberto"], ["BTA204 MT2–Gate", "curto nos dois sentidos"],
+	["Resistor próximo ao gate BTA316", "~47 Ω"], ["Outro resistor do canal BTA316", "~27 Ω"],
+	["Resistor do acionamento BTA204", "~390 Ω"], ["Resistor próximo ao gate BTA204", "~120 Ω"],
+	["C18", "10 nF"], ["Capacitor usado em C17", "~9,25 nF medidos"],
+];
+const timeline = [
+	["FALHA", "Ligação em 220 V"], ["DESMONTAGEM", "Dano concentrado na etapa de potência"],
+	["MEDIÇÕES", "Bomba, termobloco e triacs"], ["INVESTIGAÇÃO", "Gate, C17, C18 e redes resistivas"],
+	["RECUPERAÇÃO", "F1, F2, trilhas e componentes"], ["TESTE DA LÓGICA", "Painel inicializa"],
+	["LÂMPADA SÉRIE", "Comandos coerentes com a limitação"], ["127 V", "Bomba e termobloco funcionam"],
+	["TESTE FINAL", "Nescau preparado"],
+];
+---
+
+<BaseLayout title="Dolce Gusto PJ2401B1 — recuperação de placa — Galeria -2048" description={entry.description} image={entry.image} type="article" keywords={entry.keywords}>
+	<style is:global>
+		body { background: radial-gradient(circle at 82% 8%, rgba(255,138,0,.045), transparent 540px), linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px), var(--bg); background-size: auto, 42px 42px, 42px 42px, auto; font-family: Arial, Helvetica, sans-serif; }
+		.hero { padding: 90px 0 70px; border-bottom: 1px solid var(--line); }
+		.code, .section-label, .note-label { color: var(--automacao); font-family: monospace; font-size: .875rem; line-height: 1.5; letter-spacing: .08em; }
+		h1 { max-width: 1120px; margin: 25px 0 0; font-size: clamp(3.2rem, 8vw, 7rem); line-height: .88; letter-spacing: -.065em; }
+		.subtitle { max-width: 850px; margin-top: 35px; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.2rem, 2vw, 1.55rem); line-height: 1.65; }
+		.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+		.status { margin-top: 50px; } .status .status-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+		.content { padding: 85px 0; border-bottom: 1px solid var(--line); }
+		.section-grid { display: grid; grid-template-columns: 225px minmax(0, 1fr); gap: 70px; }
+		h2 { max-width: 900px; margin: 0 0 32px; font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: .96; letter-spacing: -.05em; }
+		h3 { margin: 38px 0 16px; font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.15; }
+		.prose { max-width: 790px; } .prose p, .prose li { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.125rem; line-height: 1.8; } .prose p { margin: 0 0 22px; } .prose strong { color: var(--text); } .prose ul { padding-left: 24px; }
+		.callout { margin: 34px 0; padding: 28px; border: 1px solid var(--line); border-left: 2px solid var(--automacao); background: rgba(255,138,0,.025); } .callout p:last-child { margin-bottom: 0; }
+		.cause { display: inline-block; margin: 16px 0 28px; padding: 14px 18px; border: 1px solid var(--automacao); color: var(--text); font: bold .9375rem/1.5 monospace; }
+		.media-pair { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; } .media-pair .editorial-image { margin: 20px 0 35px; }
+		.data-table { width: 100%; margin: 34px 0; border-collapse: collapse; font-family: monospace; font-size: .9375rem; line-height: 1.5; } .data-table th, .data-table td { padding: 15px 16px; border: 1px solid var(--line); text-align: left; } .data-table th { color: var(--automacao); background: var(--surface); } .data-table td:last-child { color: var(--text); font-weight: bold; }
+		.channels { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1px; margin: 35px 0; border: 1px solid var(--line); background: var(--line); } .channel { padding: 28px; background: var(--surface); } .channel h3 { margin: 0 0 20px; font-family: monospace; font-size: 1rem; color: var(--automacao); } .flow { margin: 0; color: var(--muted); font: .9375rem/1.9 monospace; white-space: pre-line; }
+		.timeline { margin-top: 35px; border-top: 1px solid var(--line); } .event { display: grid; grid-template-columns: 180px 1fr; gap: 25px; padding: 20px 0; border-bottom: 1px solid var(--line); } .event dt { color: var(--automacao); font: bold .875rem/1.5 monospace; } .event dd { margin: 0; color: var(--muted); font: .9375rem/1.6 monospace; }
+		.final { font-size: clamp(1.6rem, 3vw, 2.5rem) !important; color: var(--text) !important; line-height: 1.45 !important; }
+		@media (max-width: 800px) { .hero { padding: 65px 0 55px; } .content { padding: 65px 0; } .section-grid, .media-pair, .channels { grid-template-columns: 1fr; } .section-grid { gap: 26px; } .status .status-grid { grid-template-columns: 1fr; } .event { grid-template-columns: 1fr; gap: 5px; } .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; } .data-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } .data-table tr { margin-bottom: 12px; border: 1px solid var(--line); background: var(--surface); } .data-table td { border: 0; } .data-table td:first-child { padding-bottom: 4px; color: var(--muted); } .data-table td:last-child { padding-top: 4px; } }
+	</style>
+
+	<SiteHeader accent="var(--automacao)" />
+	<main>
+		<section class="hero"><div class="container">
+			<p class="code">[ OFICINA / REPARO / {entry.code} ]</p>
+			<h1>DOLCE GUSTO PJ2401B1 — RECUPERAÇÃO DE PLACA</h1>
+			<p class="subtitle">{entry.description}</p>
+			<div class="tags"><Tag label="REPARO" tone="automacao" /><Tag label="DIAGNÓSTICO" tone="programacao" /><Tag label="INVESTIGAÇÃO" tone="experimentacao" /><Tag label="ELETRÔNICA DE POTÊNCIA" tone="eletronica" /><Tag label="ELETRODOMÉSTICOS" tone="luthieria" /></div>
+			<div class="status"><StatusGrid items={status} /></div>
+			<EditorialImage src={`${imageRoot}/hero.webp`} alt="Cafeteira Nescafé Dolce Gusto branca remontada sobre uma bancada de cozinha" caption="A cafeteira depois do reparo, novamente em operação." eager fit="contain" />
+		</div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">01 / O QUE ACONTECEU</p><div class="prose">
+			<h2>127 V LIGADA EM 220 V.</h2><p>A cafeteira era uma Dolce Gusto PJ2401B1 projetada para 127 V. Ela permaneceu ligada a uma alimentação de 220 V tempo suficiente para ocorrer uma falha destrutiva na placa.</p>
+			<div class="cause">CAUSA PRIMÁRIA CONFIRMADA<br />127 V → LIGADA EM 220 V</div>
+			<p>A primeira saída seria trocar toda a eletrônica. Uma placa de reposição havia sido encontrada por aproximadamente <strong>R$ 250</strong>; uma unidade nova equivalente estava na faixa de aproximadamente <strong>R$ 420</strong> quando este artigo foi preparado. Antes de condenar o conjunto, valia descobrir o que realmente havia sido destruído.</p>
+			<div class="callout"><p class="note-label">[ REPARAR OU SUBSTITUIR? ]</p><p>Os valores são referências aproximadas, não preços oficiais. A comparação explica por que investigar a placa original fazia sentido neste caso.</p></div>
+			<EditorialImage src={`${imageRoot}/placa-reposicao-referencia.webp`} alt="Imagem de referência de uma placa eletrônica de reposição para a cafeteira" caption="Placa de reposição consultada como referência econômica e visual; não é a placa reparada neste registro." fit="contain" />
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">02 / ESTADO INICIAL</p><div class="prose">
+			<h2>DANO FORTE, MAS CONCENTRADO.</h2><p>Na desmontagem foram observados o varistor estourado, F1 e F2 abertos, aquecimento no conector J1, danos nas regiões do BTA316 e do BTA204S, C17 danificado, trilhas rompidas e carbonização localizada na etapa de potência. Visualmente, a lógica não apresentava destruição equivalente.</p>
+			<EditorialImage src={`${imageRoot}/placa-instalada.webp`} alt="Placa eletrônica ainda instalada no interior da cafeteira aberta" caption="A placa ainda instalada durante a desmontagem, situando a eletrônica de potência dentro do equipamento." fit="contain" />
+			<div class="media-pair"><EditorialImage src={`${imageRoot}/placa-danificada.webp`} alt="Face inferior da placa com sinais de carbonização e dano na região de potência" caption="Visão geral da região danificada: o impacto se concentrou na etapa de potência." fit="contain" /><EditorialImage src={`${imageRoot}/identificacao-placa.webp`} alt="Placa montada com identificação visível no dissipador metálico" caption="Registro da identificação e do conjunto físico antes da remoção completa da placa." fit="contain" /></div>
+			<div class="callout"><p class="note-label">NÃO CONDENAR PELA APARÊNCIA</p><p>Apesar do aspecto da área de potência, a placa não foi condenada imediatamente. O dano parecia concentrado, e a parte lógica não apresentava sinais equivalentes de destruição.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">03 / PROTEÇÕES E CARGAS</p><div class="prose">
+			<h2>O QUE ABRIU PRIMEIRO.</h2><p>F1 e F2 não eram fusíveis convencionais substituíveis, mas <strong>trechos de trilha com função fusível/protetiva</strong>. Ambos estavam abertos. Em uma reconstrução tecnicamente controlada, seria necessário preservar essa intenção de proteção e evitar pontes com capacidade de corrente desconhecida.</p>
+			<p>O varistor original era um <strong>14K271</strong> e foi destruído pela sobretensão. Foram avaliadas alternativas das classes 201, 241 e 361, com diferentes diâmetros. Houve preferência pela classe 241 para a rede de aproximadamente 127 V, mas a referência exata da unidade instalada no reparo final ainda precisa ser confirmada.</p>
+			<table class="data-table"><thead><tr><th>MEDIÇÕES / CARGAS</th><th>RESULTADO</th></tr></thead><tbody><tr><td>Bomba</td><td>45 Ω</td></tr><tr><td>Termobloco / resistência</td><td>12 Ω</td></tr></tbody></table>
+			<p>Nenhuma carga apresentava curto praticamente franco. Os 12 Ω do termobloco são coerentes com uma carga de alta potência em 127 V.</p>
+			<EditorialImage src={`${imageRoot}/conexao-termobloco.webp`} alt="Registro da conexão elétrica do termobloco antes da desmontagem" caption="Referência feita antes da desmontagem para preservar a posição da conexão do termobloco; não é uma foto de diagnóstico de defeito." variant="portrait" fit="contain" />
+			<div class="callout"><p class="note-label">LIMITAÇÃO DO REPARO</p><p>No reparo realizado, esse cuidado não foi atendido: F1 e F2 foram reconstruídos com um pedaço de cabo estanhado, sem conhecimento da corrente necessária para que essa nova ligação se rompa. Portanto, a função protetiva original dessas trilhas não pode ser considerada preservada. Se o equipamento voltar a ser ligado em 220 V, não há garantia de uma segunda chance para a placa — nem de que a falha ficará restrita à mesma região.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">04 / HIPÓTESES</p><div class="prose">
+			<h2>A MEDIÇÃO VENCEU A EXPECTATIVA.</h2><h3>Bomba</h3><p>A hipótese inicial era encontrar algo próximo de 330 Ω. A medição real foi <strong>45 Ω</strong>.</p><h3>Termobloco</h3><p>A expectativa genérica estava entre 40 e 70 Ω. A medição real foi <strong>12 Ω</strong>.</p><div class="callout"><p>Neste caso, a medição do equipamento real venceu a expectativa baseada em topologias genéricas.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">05 / TRIACS</p><div class="prose">
+			<h2>O COMPONENTE INTEIRO TAMBÉM PODE ESTAR DEFEITUOSO.</h2><h3>BTA316</h3><p>Foram medidos aproximadamente <strong>227 Ω entre MT1 e MT2</strong> e curto entre MT1 e Gate. Embora parecesse visualmente menos destruído, a medição confirmou o defeito interno.</p><h3>BTA204</h3><p>Havia circuito aberto entre MT1 e MT2 e <strong>curto entre MT2 e Gate nos dois sentidos</strong>. Também era um defeito confirmado.</p>
+			<p>Os substitutos selecionados foram o <strong>BTA316-800B</strong>, 16 A / 800 V em TO-220 isolado, e o <strong>BTA204S-800E</strong>, em TO-252/SMD. A compatibilidade de gate importava tanto quanto tensão e corrente. Um TIC246B disponível chegou a ser cogitado, mas foi descartado: peça disponível não significa peça compatível.</p>
+			<p>O BTA316 substituto foi fixado ao dissipador com <strong>rebite pop, como no componente original</strong>. Essa fixação mecânica robusta é especialmente importante porque a cafeteira utiliza uma bomba vibratória.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">06 / ACIONAMENTO</p><div class="prose">
+			<h2>LEVANTAMENTO PARCIAL DO CIRCUITO DE DISPARO.</h2><p>A comparação dos dois canais ajudou a interpretar a região, sem pressupor que fossem eletricamente idênticos.</p>
+			<div class="channels"><article class="channel"><h3>CANAL BTA316</h3><p class="flow">lógica<br />↓<br />rede de acionamento<br />↓<br />~27 Ω<br />↓<br />C17 / rede<br />↓<br />~47 Ω<br />↓<br />gate BTA316<br />↓<br />carga</p></article><article class="channel"><h3>CANAL BTA204</h3><p class="flow">lógica<br />↓<br />rede de acionamento<br />↓<br />~390 Ω<br />↓<br />C18 / rede<br />↓<br />~120 Ω<br />↓<br />gate BTA204<br />↓<br />carga</p></article></div>
+			<div class="callout"><p class="note-label">[ CONFIRMADO ]</p><p><strong>C18 = 10 nF</strong></p><p class="note-label">[ INFERIDO / NÃO CONFIRMADO ]</p><p>C17 provavelmente era da mesma ordem de grandeza.</p><p class="note-label">[ UTILIZADO NO REPARO ]</p><p>Um capacitor 0805 medido em aproximadamente <strong>9,25 nF</strong>. Esse valor funcionou em C17, mas não prova que fosse o valor original.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">07 / RECUPERAÇÃO</p><div class="prose">
+			<h2>A PLACA ORIGINAL VOLTOU A CONDUZIR.</h2><p>Foram recuperados F1, F2, a trilha na região do BTA204 e danos locais deixados pela carbonização e pelo aquecimento. A soldagem nessa área foi uma das mais difíceis que já realizei; a aparência artesanal faz parte do registro.</p>
+			<EditorialImage src={`${imageRoot}/placa-limpa.webp`} alt="Placa removida e limpa com a região afetada exposta" caption="PCB depois da limpeza: remover a carbonização permitiu avaliar melhor trilhas, ilhas e componentes afetados." fit="contain" />
+			<EditorialImage src={`${imageRoot}/reparo-fusiveis-c17.webp`} alt="Visão geral da placa reparada mostrando as regiões de F1, F2 e C17" caption="Regiões de F1 e F2 reconstruídas e área de C17 após a recuperação da placa. As pontes foram feitas com cabo estanhado e não preservam uma corrente de ruptura conhecida." fit="contain" />
+			<div class="media-pair"><EditorialImage src={`${imageRoot}/pcb-reparada.webp`} alt="Placa eletrônica depois dos reparos, sem anotações" caption="Registro fotográfico limpo da PCB reparada." fit="contain" /><EditorialImage src={`${imageRoot}/pcb-reparada-destaques.webp`} alt="Fotografia anotada pelo autor indicando reparo de trilha, triacs, F1, F2, C17, varistor e terminal" caption="Anotação original do reparo, preservada como foi produzida pelo autor: F1, F2, C17, varistor, triacs, terminal e reparo de trilha." fit="contain" /></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">08 / LÓGICA</p><div class="prose">
+			<h2>ANTES DA POTÊNCIA, A LÓGICA.</h2><p>Antes da troca dos triacs, a placa foi energizada para verificar separadamente a parte lógica. O painel acendeu, os LEDs responderam, a fonte de baixa tensão operou, o microcontrolador inicializou e o firmware executou. Isso reduziu o risco de comprar componentes de potência para uma placa cujo controlador pudesse estar destruído.</p>
+			<EditorialImage src={`${imageRoot}/logica-funcional.webp`} alt="Cafeteira aberta e energizada com o painel frontal aceso" caption="Antes da troca dos triacs, a placa voltou a inicializar a lógica. Fonte de baixa tensão, microcontrolador e painel haviam sobrevivido." fit="contain" />
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">09 / PRIMEIRA POTÊNCIA</p><div class="prose">
+			<h2>CORRENTE LIMITADA PRIMEIRO.</h2><p>A primeira energização de potência usou uma lâmpada em série. Quando a resistência ou a bomba eram comandadas, a lâmpada acendia, as cargas não operavam normalmente e havia acionamentos pulsados. Esse comportamento era coerente com a limitação de corrente e indicava que os triacs recebiam comandos.</p>
+			<p>Sem osciloscópio, não foi determinado se o firmware trabalha com burst de ciclos, semiciclos, liga/desliga ou ângulo de fase. O que foi observado aqui é apenas o <strong>chaveamento eletrônico das cargas</strong>.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">10 / 127 V</p><div class="prose">
+			<h2>DE VOLTA À REDE CORRETA.</h2><p>Depois do comportamento coerente com a lâmpada série, a máquina foi ligada diretamente em 127 V. A bomba funcionou, o aquecimento funcionou, a lógica permaneceu operando e nenhuma nova falha ocorreu.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">11 / O TESTE QUE IMPORTAVA</p><div class="prose">
+			<h2>A CAFETEIRA VOLTOU A SER CAFETEIRA.</h2><p>Depois dos testes elétricos, faltava verificar aquilo que encerraria o caso. Coloquei uma cápsula de Nescau. A cafeteira preparou a bebida normalmente. E estava muito boa.</p><div class="cause">RESULTADO<br />REPARO BEM-SUCEDIDO</div><p>O teste funcional confirmou, em conjunto, bomba, termobloco, controle, triacs e reparos de PCB.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">MEDIÇÕES / REGISTRO</p><div class="prose">
+			<h2>VALORES QUE ORIENTARAM O REPARO.</h2><table class="data-table"><thead><tr><th>ITEM</th><th>RESULTADO</th></tr></thead><tbody>{measurements.map(([item,result]) => <tr><td>{item}</td><td>{result}</td></tr>)}</tbody></table>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">LINHA DO TEMPO</p><div class="prose"><h2>DA FALHA AO TESTE REAL.</h2><dl class="timeline">{timeline.map(([stage,result]) => <div class="event"><dt>{stage}</dt><dd>{result}</dd></div>)}</dl></div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">12 / O QUE FICOU</p><div class="prose">
+			<h2>A PLACA PARECIA CONDENADA. NÃO ESTAVA.</h2><ul><li>MOV e trechos de trilha com função fusível/protetiva receberam a maior parte do dano.</li><li>Dano visual forte não significou perda total da placa.</li><li>Medições corrigiram suposições sobre as cargas.</li><li>Triacs precisam ser medidos, não julgados apenas pela aparência.</li><li>Equivalência exige analisar gate, não apenas corrente e tensão.</li><li>Comparar canais ajudou na engenharia reversa parcial.</li><li>Separar os testes de lógica e potência reduziu o risco.</li><li>A lâmpada série foi útil na primeira energização.</li></ul>
+			<p class="final">O reparo terminou quando a eletrônica deixou de ser o assunto principal e a cafeteira voltou a ser apenas uma cafeteira.</p>
+			<div class="callout"><p class="note-label">SEGURANÇA</p><p>Este registro documenta um reparo específico. O equipamento opera diretamente ligado à rede elétrica e envolve risco de choque, queimadura e incêndio. Não é um procedimento passo a passo para execução sem experiência adequada.</p></div>
+		</div></div></section>
+	</main>
+	<SiteFooter rightText="OFICINA / REPARO" />
+	<ImageLightbox />
+</BaseLayout>
