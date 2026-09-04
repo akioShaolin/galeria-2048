@@ -125,7 +125,7 @@ export const projects: Project[] = [
 				{
 					year: "2026",
 					title: "Peças e acabamento",
-					text: "Molduras de bambu cortadas e instaladas em caráter experimental; colagem, parafusos, correção do buraco no corpo e acabamentos finais continuam pendentes.",
+					text: "Quatro peças de bambu foram cortadas para formar duas molduras finais e instaladas em caráter experimental; colagem em pares, parafusos, correção do buraco no corpo e acabamentos finais continuam pendentes.",
 				},
 				{
 					year: "AGORA",
@@ -160,16 +160,16 @@ export const projects: Project[] = [
 			code: "555 DISCRETO",
 			subtitle: "Uma tentativa de reconstruir o temporizador 555 em escala visível para entender a roda por dentro — inclusive onde ela deixou de girar.",
 			status: [
-				{ label: "STATUS", value: "● PAUSADO", tone: "experimentacao" },
+				{ label: "STATUS", value: "● EM RECUPERAÇÃO", tone: "experimentacao" },
 				{ label: "INÍCIO", value: "2020" },
-				{ label: "RESULTADO", value: "PROTÓTIPO NÃO VALIDADO" },
+				{ label: "RESULTADO", value: "REV. 1 EM DIAGNÓSTICO" },
 			],
 			timeline: [
 				{ year: "2020", title: "Redesenho", text: "O circuito de referência foi refeito no Fritzing e organizado como uma placa didática de componentes PTH." },
 				{ year: "2020", title: "Fabricação", text: "Dez placas foram fabricadas no exterior depois que o orçamento nacional se mostrou incompatível com o caráter de protótipo do projeto." },
 				{ year: "MONTAGEM", title: "Estrutura em escala", text: "Bornes banana e pernas impressas em 3D aproximaram visualmente a placa de um circuito integrado de oito pinos." },
 				{ year: "TESTE", title: "Um pulso e travamento", text: "Na configuração astável, o circuito produziu um único acionamento próximo ao intervalo RC esperado e depois permaneceu travado." },
-				{ year: "PRÓXIMA ETAPA", title: "Diagnóstico por blocos", text: "A retomada depende de revisar esquema, pinagens, limiares, latch, descarga e continuidade antes de uma nova revisão de placa." },
+				{ year: "RECUPERAÇÃO", title: "Diagnóstico por blocos", text: "A Rev. 1 será preservada e investigada por blocos antes da migração para KiCad ou de qualquer nova fabricação." },
 			],
 			specifications: [
 				{ name: "Arquitetura", value: "555 com componentes discretos" },

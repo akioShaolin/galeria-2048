@@ -64,11 +64,15 @@ const nationalQuotes = [
 		.event p { margin: 0; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.0625rem; line-height: 1.7; }
 		.references a { color: var(--programacao); overflow-wrap: anywhere; }
 		.references a:hover { color: var(--text); }
+		.repository-link { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 34px 0; padding: 24px 26px; border: 1px solid var(--programacao); background: rgba(0,217,255,.025); color: var(--text); font-family: monospace; font-size: .9375rem; line-height: 1.5; text-decoration: none; overflow-wrap: anywhere; }
+		.repository-link::after { content: "ABRIR GITHUB ↗"; flex: 0 0 auto; color: var(--programacao); font-size: .875rem; }
+		.repository-link:hover, .repository-link:focus-visible { background: rgba(0,217,255,.075); outline: 2px solid var(--programacao); outline-offset: 4px; }
 		@media (max-width: 800px) {
 			.hero { padding: 70px 0 55px; }
 			.content { padding: 70px 0; }
 			.section-grid { grid-template-columns: 1fr; gap: 28px; }
 			.block-grid, .media-pair { grid-template-columns: 1fr; }
+			.repository-link { align-items: flex-start; flex-direction: column; }
 			.budget-head { display: none; }
 			.budget-row { grid-template-columns: 1fr; padding: 16px 18px; border-bottom: 1px solid var(--line); }
 			.budget-row:last-child { border-bottom: 0; }
@@ -160,10 +164,11 @@ const nationalQuotes = [
 				<div class="section-label">[ MONTAGEM ]</div>
 				<div>
 					<div class="prose">
-						<h2>A FORMA FUNCIONOU MELHOR QUE O CIRCUITO.</h2>
-						<p>Para completar a analogia com um circuito integrado, foram impressas em 3D peças que funcionariam como grandes pernas do encapsulamento. A solução ficou visualmente clara e tornou a placa fácil de apoiar e apresentar.</p>
-						<p>Na prática, a mecânica também expôs erros: algumas pernas quebraram, houve problemas de alinhamento e os parafusos escolhidos não combinaram bem com os furos e as peças impressas.</p>
+						<h2>O 555 GIGANTE.</h2>
+						<p>Além da eletrônica, o projeto também teve uma parte mecânica. Foram desenhados suportes impressos em 3D para simular as pernas de um encapsulamento DIP, fazendo a placa lembrar um circuito integrado 555 em escala ampliada. A ideia era misturar bancada didática com objeto visual: um circuito que não apenas funcionasse, mas também explicasse sua própria forma.</p>
+						<p>A execução mecânica também teve falhas. Algumas peças se partiram, alguns furos não ficaram tão alinhados quanto o planejado e os parafusos escolhidos não combinaram bem com os furos e os suportes impressos. Mesmo assim, essa parte deu ao projeto uma identidade própria.</p>
 					</div>
+					<EditorialImage src="/images/555-discreto/circuito-montado-desenho-tecnico.webp" alt="Desenho técnico com vistas do conjunto da PCB e dos oito suportes que simulam pernas de um circuito integrado" caption="Desenho do conjunto montado com suportes impressos em 3D, simulando o formato de um CI DIP gigante." variant="detail" fit="contain" />
 					<div class="media-pair">
 						<EditorialImage src="/images/555-discreto/comparacao-ci-e-pernas-3d.jpg" alt="Circuito integrado de oito pinos diante da placa com pernas impressas em 3D" caption="A escala do CI original comparada à estrutura mecânica da placa." variant="portrait" />
 						<EditorialImage src="/images/555-discreto/pernas-3d-vista-lateral.jpg" alt="Vista lateral das pernas impressas em 3D montadas sob a PCB" caption="Vista lateral da tentativa de reproduzir as pernas de um encapsulamento DIP." variant="detail" />
@@ -202,18 +207,32 @@ const nationalQuotes = [
 			<div class="container section-grid">
 				<div class="section-label">[ RETOMADA ]</div>
 				<div class="prose">
-					<h2>AINDA EXISTEM PLACAS PARA INVESTIGAR.</h2>
-					<p>As unidades não montadas preservam a possibilidade de retomar o projeto sem esconder a primeira revisão. O caminho mais seguro agora é voltar do sistema completo para os blocos.</p>
+					<h2>A REV. 1 ENTROU EM RECUPERAÇÃO.</h2>
+					<p>O projeto ficou parado por anos, mas não morreu. As unidades não montadas preservam a possibilidade de retomar o trabalho sem esconder a primeira revisão. Agora ele entra em fase de recuperação: primeiro entender a Rev. 1, depois corrigir o circuito e só então pensar em uma nova placa no KiCad.</p>
 					<ol>
-						<li>localizar e documentar a unidade que apresentou o pulso inicial;</li>
-						<li>comparar novamente o esquema redesenhado com as fontes de referência;</li>
-						<li>confirmar footprints, pinagens e continuidade da placa;</li>
-						<li>medir os limiares próximos de 1/3 e 2/3 de VCC;</li>
-						<li>isolar latch, descarga e curva do capacitor durante o teste;</li>
-						<li>corrigir a primeira revisão com jumpers, fios inferiores ou patches claros antes de fabricar outra placa;</li>
-						<li>revisar furos, parafusos e pernas impressas em 3D.</li>
+						<li>organizar melhor o repositório técnico e separar os arquivos por revisão;</li>
+						<li>preservar a Rev. 1 como registro histórico;</li>
+						<li>localizar e confirmar a unidade que chegou a funcionar parcialmente;</li>
+						<li>diagnosticar o travamento no modo astável;</li>
+						<li>revisar a pinagem dos transistores e a continuidade da placa;</li>
+						<li>testar divisor, comparadores, latch e descarga separadamente;</li>
+						<li>migrar o projeto para KiCad e validar o circuito antes de fabricar uma nova PCB;</li>
+						<li>somente depois definir uma Rev. 2 fabricável.</li>
 					</ol>
-					<p>O projeto permanece pausado. Seu resultado atual não é um substituto funcional para o NE555, mas um registro útil de como uma boa intenção didática pode falhar quando o protótipo mecânico e a fabricação avançam mais rápido que a validação elétrica.</p>
+					<p>O estado atual é <strong>Rev. 1 em diagnóstico</strong>. Ela não é um substituto funcional para o NE555, e nenhuma revisão posterior deve ser tratada como montada ou validada.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="content references">
+			<div class="container section-grid">
+				<div class="section-label">[ REPOSITÓRIO TÉCNICO ]</div>
+				<div class="prose">
+					<h2>A GALERIA MOSTRA A HISTÓRIA; O GITHUB PRESERVA A OFICINA.</h2>
+					<p>Os arquivos técnicos do projeto foram preservados em um repositório próprio. A Galeria apresenta a história, o contexto e as imagens principais; o repositório funciona como oficina aberta, reunindo arquivos do Fritzing, versões da PCB, BOM, Gerbers, desenhos mecânicos e modelos 3D usados na tentativa de transformar a placa em um CI 555 gigante.</p>
+					<a class="repository-link" href="https://github.com/akioShaolin/555-discreto" target="_blank" rel="external noreferrer"><span><strong>akioShaolin/555-discreto</strong><br />Acervo técnico para diagnóstico e futura migração para KiCad.</span></a>
+					<p>Nem todo arquivo técnico precisa aparecer no artigo, mas cada um ajuda a reconstruir o caminho que levou da ideia inicial à placa fabricada — e, depois, ao diagnóstico daquilo que não funcionou.</p>
+					<div class="callout"><div class="note-label">MODELOS MECÂNICOS</div><p>Os modelos STL das pernas do CI estão disponíveis no repositório técnico e poderão ser incorporados futuramente em um visualizador 3D na própria página.</p></div>
 				</div>
 			</div>
 		</section>
