@@ -1,0 +1,65 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import LineageGraph from "../../components/LineageGraph.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("modbus-rtu-slave-sim");
+if (!project?.page) throw new Error("Dados do Modbus RTU Slave Simulator não encontrados.");
+const page = project.page;
+
+const tests = [
+	["01", "FC03 — Holding 0xF800", "01 03 F8 00 00 01 B5 6A", "01 03 02 08 00 BF 84", "Leitura válida: 0x0800 (2048)."],
+	["02", "FC03 — faixa parcialmente ausente", "01 03 20 48 00 02 4F DD", "01 83 02 C0 F1", "Exceção 02: endereço ilegal."],
+	["03", "FC03 — Holding 0x2048", "01 03 20 48 00 01 0F DC", "01 03 02 00 25 79 9F", "Leitura válida: 37."],
+	["04", "FC04 — Input 0x56AC", "01 04 56 AC 00 01 E0 63", "01 04 02 52 08 85 96", "Leitura válida: 21000."],
+	["05", "FC03 — dois Holdings", "01 03 00 01 00 02 95 CB", "01 03 04 00 00 00 00 FA 33", "Estado inicial: 0 e 0."],
+	["06", "FC10 — escrita múltipla", "01 10 00 01 00 02 04 D4 60 00 00 0B 8D", "01 10 00 01 00 02 10 08", "Escrita aceita: 54368 e 0."],
+	["07", "FC03 — confirmação", "01 03 00 01 00 02 95 CB", "01 03 04 D4 60 00 00 C3 DD", "Releitura confirma a escrita."],
+];
+---
+
+<BaseLayout title="Modbus RTU Slave Simulator — Galeria -2048" description={page.subtitle} image={project.image} keywords={project.keywords}>
+	<SiteHeader accent="var(--programacao)" />
+	<main>
+		<div class="container">
+			<section class="hero">
+				<div class="code">{project.type} / {project.number} / {page.code}</div>
+				<h1>MODBUS RTU<br />SLAVE SIM</h1>
+				<p class="subtitle">{page.subtitle}</p>
+				<div class="tags">{project.categories.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+				<div class="status"><StatusGrid items={page.status} /></div>
+			</section>
+
+			<EditorialImage src={project.image} alt="Placa uBox 2.0 aberta, hardware usado no simulador Modbus RTU" caption="uBox 2.0 com ESP-07: a plataforma física reaproveitada para o slave configurável de bancada." fit="contain" eager />
+
+			<section class="content"><div class="section-grid"><div class="section-label">01 / MOTIVAÇÃO</div><div class="prose"><h2>Testar um cliente sem depender de um inversor.</h2><p>O simulador nasceu para colocar valores conhecidos no barramento e reproduzir respostas, escritas, exceções e atrasos durante o desenvolvimento de clientes Modbus RTU. Em vez de aguardar um equipamento real, o mapa pode ser configurado pelo navegador e exercitado diretamente na bancada.</p><p>O hardware reaproveita o <strong>uBox 2.0 com ESP-07</strong>. O firmware foi desenvolvido na Arduino IDE e publicado sob licença MIT.</p></div></div></section>
+
+			<section class="content"><div class="section-grid"><div class="section-label">02 / FUNCIONAMENTO</div><div><h2>Um mapa ajustável no próprio dispositivo.</h2><div class="cards"><article><b>ATÉ 50 REGISTRADORES</b><p>Holding Registers para FC03, FC06 e FC10; Input Registers para FC04. Cada entrada armazena um valor de 16 bits.</p></article><article><b>CONFIGURAÇÃO RTU</b><p>Baud rate, ID do slave, bits de dados, paridade, stop bits e atraso de resposta.</p></article><article><b>VALORES LEGÍVEIS</b><p>Endereços em decimal ou hexadecimal e valores exibidos no formato escolhido, com rejeição de endereços duplicados.</p></article><article><b>PERSISTÊNCIA</b><p>Configuração em EEPROM emulada, protegida por CRC32. Escritas Modbus são gravadas após cerca de cinco segundos sem novas alterações.</p></article></div><div class="prose"><p>O dispositivo cria o ponto de acesso <code>ESP07-Modbus-Sim</code>. A interface fica em <code>http://192.168.4.1/</code> e a atualização do firmware em <code>/update</code>. Esta versão não depende de roteador, WiFiManager ou mDNS.</p></div></div></div></section>
+
+			<section class="content"><div class="section-grid"><div class="section-label">03 / INTERFACE</div><div><h2>Configurar, salvar e voltar ao teste.</h2><div class="media-pair"><EditorialImage src="/images/modbus-rtu-slave-sim/interface-configuracao-rtu.webp" alt="Campos de configuração serial e botão para adicionar registrador" caption="Parâmetros do slave e criação do mapa. Captura da versão 1.0.0." fit="contain" variant="portrait" /><EditorialImage src="/images/modbus-rtu-slave-sim/interface-registradores-enderecos.webp" alt="Lista de registradores Holding e Input com endereços hexadecimais" caption="Tipos e endereços podem ser combinados em um mapa de até 50 entradas." fit="contain" variant="portrait" /></div><EditorialImage src="/images/modbus-rtu-slave-sim/interface-registradores-valores.webp" alt="Valores decimais dos registradores e controles de persistência do simulador" caption="Valores, exclusão de entradas, salvamento e atualização de firmware no navegador." fit="contain" variant="portrait" /></div></div></section>
+
+			<section class="content"><div class="section-grid"><div class="section-label">04 / HARDWARE</div><div><h2>RS485 no uBox 2.0.</h2><div class="specs">{page.specifications.map(({ name, value }) => <div><span>{name}</span><strong>{value}</strong></div>)}</div><div class="prose"><p>A UART0 usa <code>GPIO1 / TX</code> e <code>GPIO3 / RX</code>. O controle de direção <code>DE/RE</code> fica no <code>GPIO12</code>. No uBox, o <code>GPIO13</code> aciona o HC4066 da interface serial; esse detalhe pertence ao hardware específico e não deve ser copiado cegamente para outro conversor RS485.</p><p>O atraso configurável é implementado de forma <strong>bloqueante</strong>. Ele é útil para provocar respostas tardias, mas pausa o processamento durante esse intervalo.</p></div></div></div></section>
+
+			<section class="content"><div class="section-grid"><div class="section-label">05 / TESTE DE BANCADA</div><div><h2>Sete quadros, do valor conhecido à escrita confirmada.</h2><div class="tests">{tests.map(([n, title, request, response, result]) => <details><summary><span>{n}</span>{title}</summary><div><p><b>REQUISIÇÃO</b><code>{request}</code></p><p><b>RESPOSTA</b><code>{response}</code></p><p class="result">{result}</p></div></details>)}</div><div class="callout"><b>TIMEOUT</b><p>O atraso de resposta também foi testado separadamente para provocar timeout no cliente. O ensaio confirmou o comportamento, mas não há registro de latência detalhado suficiente para publicar um valor específico.</p></div></div></div></section>
+
+			<section class="content"><div class="section-grid"><div class="section-label">06 / INTERPRETAÇÃO</div><div class="prose"><h2>Exceção não é silêncio.</h2><p>O segundo quadro devolve <code>01 83 02</code>: o slave respondeu e informou endereço ilegal. Isso é diferente de um timeout, no qual o cliente não recebe uma resposta válida dentro do prazo.</p><p>Os registradores do simulador são palavras independentes de 16 bits. Quando um cliente combina duas palavras em um valor de 32 bits, ordem de words, sinal e escala continuam sendo decisões do mapa do equipamento que está sendo simulado.</p></div></div></section>
+
+			<section class="content"><div class="section-grid"><div class="section-label">07 / LIMITES</div><div class="prose"><h2>Uma ferramenta de bancada, não um inversor universal.</h2><ul><li>O mapa é configurável, mas não reproduz automaticamente regras proprietárias de todos os equipamentos.</li><li>O atraso bloqueante serve ao ensaio de timeout e não representa uma arquitetura assíncrona.</li><li>A persistência reduz escritas repetidas na EEPROM, porém não substitui uma análise de endurance para outro uso.</li><li>As capturas mostram a interface 1.0.0; o firmware público 1.0.1 acrescenta diagnóstico e é a referência atual do código.</li></ul></div></div></section>
+
+			<section class="content"><div class="section-grid"><div class="section-label">08 / CONTEXTO E CÓDIGO</div><div><h2>Uma peça da bancada Modbus.</h2><div class="links"><a href="/artigos/solarview-ubox/">SOLARVIEW / UBOX ↗</a><a href="/projetos/inverter-modbus-lib/">INVERTERMODBUSLIB ↗</a><a href="https://github.com/akioShaolin/modbus-rtu-slave-sim" target="_blank" rel="noreferrer">CÓDIGO NO GITHUB ↗</a></div><div class="timeline">{page.timeline.map((entry) => <article><span>{entry.year}</span><h3>{entry.title}</h3><p>{entry.text}</p></article>)}</div></div></div></section>
+		</div>
+		<LineageGraph currentId={project.id} />
+	</main>
+	<ImageLightbox />
+	<SiteFooter rightText={`${project.type} / ${project.number}`} />
+</BaseLayout>
+
+<style>
+	:global(body){background:radial-gradient(circle at 78% 8%,rgba(0,217,255,.055),transparent 520px),linear-gradient(rgba(255,255,255,.014) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px),var(--bg);background-size:auto,42px 42px,42px 42px,auto}.hero{padding:100px 0 55px}.code,.section-label{color:var(--programacao);font:.875rem/1.5 monospace;letter-spacing:.08em}h1{margin:25px 0 0;font:700 clamp(3.2rem,9vw,7.8rem)/.84 Arial,sans-serif;letter-spacing:-.07em}.subtitle{max-width:850px;margin:38px 0 0;color:var(--muted);font:clamp(1.15rem,2vw,1.55rem)/1.55 Arial,sans-serif}.tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}.status{margin-top:50px}.content{padding:100px 0;border-bottom:1px solid var(--line)}.section-grid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:70px}h2{max-width:900px;margin:0 0 35px;font:700 clamp(2.2rem,5vw,4.2rem)/.96 Arial,sans-serif;letter-spacing:-.05em}.prose{max-width:780px}.prose p,.prose li{color:var(--muted);font:1.125rem/1.8 Georgia,serif}.prose p{margin:0 0 22px}.prose code,.tests code{overflow-wrap:anywhere;color:var(--text)}.cards,.specs{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin:35px 0;background:var(--line);border:1px solid var(--line)}.cards article,.specs div{padding:22px;background:var(--surface)}.cards b,.specs span{display:block;color:var(--programacao);font:.875rem/1.5 monospace}.cards p{margin:10px 0 0;color:var(--muted);font:1rem/1.65 Georgia,serif}.specs strong{display:block;margin-top:9px;font:1rem/1.5 monospace}.media-pair{display:grid;grid-template-columns:1fr 1fr;gap:24px}.tests{max-width:900px;border:1px solid var(--line)}.tests details+details{border-top:1px solid var(--line)}.tests summary{display:flex;gap:16px;padding:18px;background:var(--surface);cursor:pointer;font:700 .95rem/1.5 monospace}.tests summary span{color:var(--programacao)}.tests details>div{padding:5px 22px 20px}.tests p{margin:15px 0;color:var(--muted);font:.875rem/1.6 monospace}.tests b,.tests code{display:block}.tests .result{color:var(--eletronica)}.callout{max-width:780px;margin-top:35px;padding:24px;border:1px solid var(--line);border-left:2px solid var(--automacao);background:rgba(255,138,0,.035)}.callout b{font:.875rem/1.5 monospace}.callout p{margin:8px 0 0;color:var(--muted);font:1.05rem/1.7 Georgia,serif}.links{display:flex;flex-wrap:wrap;gap:12px}.links a{padding:13px 15px;border:1px solid var(--line);color:var(--text);font:700 .875rem/1.4 monospace;text-decoration:none}.links a:hover,.links a:focus-visible{border-color:var(--programacao);color:var(--programacao)}.timeline{margin-top:55px;border-left:1px solid var(--line)}.timeline article{position:relative;padding:0 0 38px 35px}.timeline article::before{content:"";position:absolute;left:-5px;top:5px;width:9px;height:9px;border-radius:50%;background:var(--programacao)}.timeline span{color:var(--programacao);font:.875rem/1.5 monospace}.timeline h3{margin:8px 0;font:700 1.35rem/1.3 Arial,sans-serif}.timeline p{max-width:700px;margin:0;color:var(--muted);font:1.05rem/1.7 Georgia,serif}@media(max-width:800px){.hero{padding:70px 0 45px}.content{padding:75px 0}.section-grid{grid-template-columns:1fr;gap:28px}.media-pair{grid-template-columns:1fr}}@media(max-width:600px){.cards,.specs{grid-template-columns:1fr}h1{font-size:clamp(2.8rem,15vw,4.8rem)}.content{padding:60px 0}}
+</style>

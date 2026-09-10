@@ -4,6 +4,7 @@ import SiteHeader from "../../components/SiteHeader.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import StatusGrid from "../../components/StatusGrid.astro";
 import Tag from "../../components/Tag.astro";
+import LineageGraph from "../../components/LineageGraph.astro";
 import { getProject } from "../../data/projects";
 
 const project = getProject("inverter-modbus-lib");
@@ -45,6 +46,6 @@ const currentStatus = [
 		<section class="content"><div class="section-grid"><div class="section-label">10 / PRÓXIMOS PASSOS</div><div><h2>Transformar abstração em controle.</h2><div class="prose"><ol><li>Finalizar a validação de <code>setPowerLimit()</code> e <code>setPowerLimitPercent()</code>.</li><li>Ampliar maps e descriptors e validar mais modelos em hardware.</li><li>Aprimorar diagnóstico e recuperação após timeout ou falha.</li><li>Portar, compilar e validar a arquitetura no ESP32.</li><li>Desenvolver o controlador de export limit multi-inversor.</li><li>Estudar distribuição proporcional, prioridades e estabilidade.</li><li>Manter exemplos e documentação por modelo.</li></ol></div><div class="timeline">{page.timeline.map((entry)=><article class="event"><div class="event-year">{entry.year}</div><h3>{entry.title}</h3><p>{entry.text}</p></article>)}</div></div></div></section>
 		<section class="content"><div class="section-grid"><div class="section-label">11 / CUIDADOS E LIMITAÇÕES</div><div class="prose"><h2>Projeto aberto.</h2><ul><li>A biblioteca está em fase alpha e não é um produto certificado.</li><li>Mapas podem variar por fabricante, modelo, firmware, região e permissões.</li><li>Funções de escrita devem ser validadas cuidadosamente em bancada.</li><li>Controle de potência interfere na operação real do sistema.</li><li>Teste de bancada não equivale a validação completa em campo.</li><li>Não existe garantia universal de compatibilidade.</li></ul><div class="callout warning"><strong>ESCRITAS MODBUS</strong><p><code>setPowerLimit()</code> e <code>setPowerLimitPercent()</code> permanecem em desenvolvimento e validação. Não são apresentadas como prontas para uso irrestrito em campo.</p></div></div></div></section>
 		<section class="project-open"><div>[ PROJETO ABERTO ]</div><h2>O objetivo não é esconder as diferenças entre os inversores. É organizá-las para que não precisem ser resolvidas novamente em cada projeto.</h2><a class="project-link" href="https://github.com/akioShaolin/InverterModbusLib/tree/refactor/nonblocking-modbus" target="_blank" rel="noreferrer">VER BRANCH NO GITHUB ↗</a></section>
-	</div></main>
+	</div><LineageGraph currentId={project.id} /></main>
 	<SiteFooter rightText={`${project.type} / ${project.number}`} />
 </BaseLayout>

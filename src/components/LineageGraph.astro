@@ -1,0 +1,71 @@
+---
+import {
+	getAncestorRelations,
+	getDescendantRelations,
+	getInfluenceRelations,
+	getParallelRelations,
+	getRelatedArchiveItem,
+	relationships,
+	type ContentRelationship,
+} from "../data/relationships";
+
+interface Props { currentId: string; }
+const { currentId } = Astro.props;
+const current = getRelatedArchiveItem(currentId);
+const ancestors = getAncestorRelations(currentId);
+const descendants = getDescendantRelations(currentId);
+const influences = getInfluenceRelations(currentId);
+const parallel = getParallelRelations(currentId);
+const hasRelations = Boolean(current && (ancestors.length || descendants.length || parallel.length || influences.length));
+
+if (import.meta.env.DEV) {
+	for (const relation of relationships) {
+		if (!getRelatedArchiveItem(relation.from) || !getRelatedArchiveItem(relation.to)) {
+			console.warn(`[linhagem] Relação ignorada por referenciar conteúdo não publicado: ${relation.from} → ${relation.to}`);
+		}
+	}
+}
+
+const relationItem = (relation: ContentRelationship, side: "from" | "to") =>
+	getRelatedArchiveItem(relation[side]);
+const parallelItem = (relation: ContentRelationship) =>
+	getRelatedArchiveItem(relation.from === currentId ? relation.to : relation.from);
+const influenceLabel = (relation: ContentRelationship) =>
+	relation.from === currentId ? "INFLUENCIOU" : "INFLUÊNCIA RECEBIDA";
+---
+
+{hasRelations && current && (
+	<section class="lineage" aria-labelledby={`lineage-${currentId}`}>
+		<div class="container">
+		<div class="lineage-label">[ LINHAGEM / RAMIFICAÇÕES ]</div>
+		<h2 id={`lineage-${currentId}`}>CAMINHOS RELACIONADOS</h2>
+		<div class="lineage-sections">
+			{ancestors.length > 0 && <div class="lineage-group"><h3>ASCENDENTES</h3><ul>{ancestors.map((relation) => { const item = relationItem(relation, "from"); return item && <li><a class="lineage-node" href={item.url}><span>{item.type}</span><strong>{item.title}</strong>{item.code && <small>{item.code}</small>}<em>ASCENDENTE</em></a></li>; })}</ul></div>}
+			{parallel.length > 0 && <div class="lineage-group"><h3>PARALELOS</h3><ul>{parallel.map((relation) => { const item = parallelItem(relation); return item && <li><a class="lineage-node" href={item.url}><span>{item.type}</span><strong>{item.title}</strong>{item.code && <small>{item.code}</small>}<em>PARALELO</em></a></li>; })}</ul></div>}
+			{influences.length > 0 && <div class="lineage-group influence-group"><h3>INFLUÊNCIAS</h3><ul>{influences.map((relation) => { const item = parallelItem(relation); return item && <li><a class="lineage-node" href={item.url}><span>{item.type}</span><strong>{item.title}</strong>{item.code && <small>{item.code}</small>}<em>{relation.label ?? influenceLabel(relation)}</em></a></li>; })}</ul></div>}
+			{descendants.length > 0 && <div class="lineage-group"><h3>DESCENDENTES</h3><ul>{descendants.map((relation) => { const item = relationItem(relation, "to"); return item && <li><a class="lineage-node" href={item.url}><span>{item.type}</span><strong>{item.title}</strong>{item.code && <small>{item.code}</small>}<em>DESCENDENTE</em></a></li>; })}</ul></div>}
+		</div>
+		</div>
+	</section>
+)}
+
+<style>
+	.lineage { padding: 70px 0; border-top: 1px solid var(--line); }
+	.lineage-label, .lineage h3, .lineage-node span, .lineage-node small, .lineage-node em { font-family: monospace; font-size: .875rem; line-height: 1.5; }
+	.lineage-label { color: var(--programacao); letter-spacing: .07em; }
+	.lineage h2 { margin: 18px 0 34px; font-family: Arial, Helvetica, sans-serif; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1; letter-spacing: -.045em; }
+	.lineage-sections { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+	.lineage-group { min-width: 0; }
+	.lineage-group h3 { margin: 0 0 10px; color: var(--muted); }
+	.lineage-group ul { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+	.lineage-node { display: grid; gap: 6px; min-height: 112px; padding: 18px; border: 1px solid var(--line); background: var(--surface); color: var(--text); text-decoration: none; }
+	a.lineage-node:hover, a.lineage-node:focus-visible { border-color: var(--programacao); background: var(--surface-hover); outline: 2px solid var(--programacao); outline-offset: 3px; }
+	.lineage-node.current { border-color: var(--eletronica); box-shadow: inset 3px 0 var(--eletronica), 0 0 14px rgba(207,255,0,.07); }
+	.lineage-node span, .lineage-node small { color: var(--muted); }
+	.lineage-node em { align-self: end; color: var(--programacao); font-style: normal; letter-spacing: .06em; }
+	.lineage-node strong { font-family: Arial, Helvetica, sans-serif; font-size: 1rem; line-height: 1.25; }
+	@media (max-width: 800px) {
+		.lineage { padding: 55px 0; }
+		.lineage-sections { grid-template-columns: 1fr; }
+	}
+</style>

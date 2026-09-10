@@ -6,6 +6,7 @@ import Tag from "../../components/Tag.astro";
 import StatusGrid from "../../components/StatusGrid.astro";
 import EditorialImage from "../../components/EditorialImage.astro";
 import ImageLightbox from "../../components/ImageLightbox.astro";
+import LineageGraph from "../../components/LineageGraph.astro";
 import { articles } from "../../data/articles";
 
 const article = articles.find(({ id }) => id === "solarview-ubox");
@@ -323,6 +324,7 @@ const status = [
 			<section class="closing">
 				<div class="container"><p>Primeiro, <span>um LED</span>. Depois, um barramento inteiro para compreender.</p></div>
 			</section>
+			<LineageGraph currentId={article.id} />
 		</article>
 	</main>
 	<SiteFooter rightText="ARTIGO / UBOX / ESP8266 / MODBUS" />

@@ -41,6 +41,47 @@ export type Project = {
 
 export const projects: Project[] = [
 	{
+		id: "modbus-rtu-slave-sim",
+		type: "PROJETO",
+		number: "009",
+		title: "MODBUS RTU SLAVE SIMULATOR",
+		description: "Simulador Modbus RTU no uBox 2.0, com registradores configuráveis pelo navegador, persistência e atraso de resposta para testar clientes e timeouts.",
+		image: "/images/modbus-rtu-slave-sim/capa-ubox-2.webp",
+		path: "/projetos/modbus-rtu-slave-sim/",
+		categories: [
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "AUTOMAÇÃO", tone: "automacao" },
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+		],
+		keywords: ["Modbus RTU Slave Simulator", "Modbus RTU", "slave", "simulador", "uBox 2.0", "ESP-07", "ESP8266", "RS485", "InverterModbusLib", "FC03", "FC04", "FC06", "FC10", "Holding Register", "Input Register", "timeout", "EEPROM", "CRC32", "Arduino IDE"],
+		page: {
+			code: "MODBUS RTU SLAVE SIM",
+			subtitle: "Um mapa Modbus controlável no uBox 2.0 para desenvolver clientes, conferir interpretações e provocar condições de erro sem depender de um inversor real.",
+			status: [
+				{ label: "STATUS", value: "● EM TESTE", tone: "programacao" },
+				{ label: "HARDWARE", value: "UBOX 2.0 / ESP-07" },
+				{ label: "FIRMWARE ATUAL", value: "1.0.1" },
+				{ label: "LICENÇA", value: "MIT" },
+			],
+			timeline: [
+				{ year: "ORIGEM", title: "Teste sem inversor", text: "A necessidade de validar clientes e mapas Modbus motivou um slave configurável com valores conhecidos." },
+				{ year: "EVOLUÇÃO", title: "AP próprio", text: "A configuração por WiFiManager e rede externa foi substituída por um ponto de acesso local direto, mais simples para a bancada." },
+				{ year: "BANCADA", title: "Leitura, exceção e escrita", text: "Sete cenários demonstraram FC03, FC04, FC10, exceção por endereço ausente e confirmação dos valores por releitura." },
+				{ year: "ATUAL", title: "Firmware 1.0.1", text: "O código público acrescenta diagnóstico; as capturas preservadas documentam a interface da etapa 1.0.0." },
+			],
+			specifications: [
+				{ name: "Plataforma", value: "uBox 2.0 / ESP-07 (ESP8266)" },
+				{ name: "Protocolo", value: "Modbus RTU slave" },
+				{ name: "Mapa", value: "Até 50 registradores de 16 bits" },
+				{ name: "Funções", value: "FC03 · FC04 · FC06 · FC10" },
+				{ name: "Configuração", value: "AP local + interface web" },
+				{ name: "Persistência", value: "EEPROM emulada + CRC32" },
+				{ name: "Desenvolvimento", value: "Arduino IDE" },
+				{ name: "Rede local", value: "ESP07-Modbus-Sim · 192.168.4.1" },
+			],
+		},
+	},
+	{
 		id: "controle-iluminacao-bancada",
 		type: "PROJETO",
 		number: "008",
