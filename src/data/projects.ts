@@ -416,7 +416,7 @@ export const projects: Project[] = [
 		type: "PROJETO",
 		number: "003",
 		title: "OPTIMUS SUN",
-		description: "Ferramenta de apoio para analisar combinações entre módulos e inversores fotovoltaicos.",
+		description: "Suíte para pesquisar equipamentos, calcular arranjos e comparar combinações entre módulos e inversores fotovoltaicos.",
 		image: "/images/optimus-sun/identidade.png",
 		path: "/projetos/optimus-sun/",
 		categories: [
@@ -431,12 +431,14 @@ export const projects: Project[] = [
 			status: [
 				{ label: "STATUS", value: "● EM DESENVOLVIMENTO", tone: "programacao" },
 				{ label: "INÍCIO", value: "2022" },
-				{ label: "VERSÃO ATUAL", value: "v2.3.8" },
+				{ label: "VERSÃO ATUAL", value: "v2.6.0" },
 			],
 			timeline: [
 				{ year: "2022", title: "Excel", text: "Primeira versão criada para agilizar verificações recorrentes entre módulos e inversores." },
 				{ year: "POSTERIORMENTE", title: "VBA", text: "Automações foram adicionadas conforme a necessidade de repetir e organizar os cálculos aumentou." },
 				{ year: "DEPOIS", title: "Python", text: "Novas formas de organizar e executar os cálculos passaram a ser experimentadas em Python." },
+				{ year: "v2.5.0", title: "Motor reutilizável e matriz", text: "O cálculo de compatibilidade ganhou um motor reutilizável, e a comparação de várias combinações passou a ter um aplicativo próprio." },
+				{ year: "11 SET 2026", title: "Versão 2.6.0", text: "A suíte passou a reunir pesquisa avançada, cadastros unificados e uma interface revisada nos três aplicativos para Windows." },
 			],
 			specifications: [],
 		},

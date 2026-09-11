@@ -244,6 +244,41 @@ const page = project.page;
 		.screen-item strong { font-family: monospace; font-size: .875rem; line-height: 1.5; }
 		.screen-item span { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.0625rem; line-height: 1.7; }
 
+		.media-grid,
+		.app-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 24px;
+			margin-top: 40px;
+		}
+
+		.media-grid > *,
+		.app-grid > * { min-width: 0; margin: 0; }
+
+		.app-card {
+			padding: 24px;
+			border: 1px solid var(--line);
+			background: var(--surface);
+		}
+
+		.app-card h3 { margin: 0 0 12px; font-size: 1.35rem; }
+		.app-card p { margin: 0; color: var(--muted); font: 1.0625rem/1.7 Georgia, "Times New Roman", serif; }
+
+		.link-group {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 12px;
+			margin-top: 35px;
+		}
+
+		.link-group .project-link { margin-top: 0; }
+
+		.download-copy {
+			margin: 30px auto 0;
+			text-align: left;
+		}
+
 		.project-link {
 			display: inline-block;
 			margin-top: 35px;
@@ -314,6 +349,8 @@ const page = project.page;
 			.event { padding-left: 28px; }
 			.workflow { grid-template-columns: 1fr 1fr; }
 			.screen-item { grid-template-columns: 1fr; gap: 10px; }
+			.media-grid,
+			.app-grid { grid-template-columns: 1fr; }
 		}
 
 		@media (max-width: 600px) { .workflow { grid-template-columns: 1fr; } }
@@ -331,7 +368,7 @@ const page = project.page;
 				<div class="status"><StatusGrid items={page.status} /></div>
 			</section>
 
-			<EditorialImage src={project.image} alt="Identidade visual do Optimus Sun com módulo fotovoltaico, inversor e sol" caption="Identidade visual atual do Optimus Sun." eager={true} />
+			<EditorialImage src={project.image} alt="Identidade visual do Optimus Sun com módulo fotovoltaico, inversor e sol" caption="Identidade visual do Optimus Sun, preservada desde as primeiras versões do projeto." eager={true} />
 
 			<section class="content">
 				<div class="section-grid">
@@ -357,15 +394,15 @@ const page = project.page;
 					<div>
 						<h2>Compatibilidade transformada em limites legíveis</h2>
 						<div class="prose">
-							<p>Na versão 2.3.8, o Optimus Sun relaciona modelos de inversores e módulos cadastrados em um banco SQLite e compara seus parâmetros elétricos. A interface calcula quantidades mínimas e máximas de módulos por string, número de strings por MPPT, potência e limite global do inversor.</p>
-							<p>Os resultados separam faixa de operação, condição de carga máxima e valores fora dos limites. Gráficos adicionais mostram qual critério restringiu cada resultado.</p>
+							<p>Na versão 2.6.0, o Optimus Sun tornou-se uma suíte de três aplicativos para Windows. A aplicação principal pesquisa equipamentos no banco SQLite, calcula quantidades de módulos por string, strings por MPPT e o resumo do inversor; os outros dois aplicativos cuidam dos cadastros e da comparação em matriz.</p>
+							<p>Nos resultados horizontais, vermelho indica valores fora da faixa, amarelo representa a faixa de operação e verde destaca a faixa de carga máxima. Nos gráficos comparativos, a barra vermelha identifica o critério que limita o resultado — não uma garantia isolada de segurança ou compatibilidade.</p>
 						</div>
 						<div class="distinctions">
 							<div class="distinction"><strong>POR STRING</strong><span>Compara tensão de circuito aberto, faixa de operação e faixa de carga máxima para estabelecer os intervalos admitidos.</span></div>
 							<div class="distinction"><strong>POR MPPT</strong><span>Compara corrente de curto-circuito, corrente de operação e quantidade física de entradas para limitar o número de strings.</span></div>
 							<div class="distinction"><strong>POR INVERSOR</strong><span>Consolida os grupos de MPPT e confronta circuito aberto, operação, sobrecarga e carga máxima para indicar o limite global.</span></div>
 						</div>
-						<EditorialImage src="/images/optimus-sun/interface-1.png" alt="Tela principal do Optimus Sun com seleção de inversor e módulo e limites calculados" caption="Tela principal: seleção dos equipamentos, potência máxima e faixa de módulos por string." />
+						<EditorialImage src="/images/optimus-sun/v2.6.0/scrsht-1.png" alt="Tela principal do Optimus Sun 2.6.0 com equipamentos selecionados e resultados do cálculo" caption="Aplicação principal após um cálculo válido: a pesquisa é recolhida e permanecem os equipamentos escolhidos, as opções e os resultados." />
 					</div>
 				</div>
 			</section>
@@ -376,30 +413,70 @@ const page = project.page;
 					<div>
 						<h2>Da seleção ao resumo do arranjo</h2>
 						<div class="prose">
-							<p>O cálculo é atualizado quando um inversor e um módulo são selecionados. Antes de interpretar o resultado, o usuário pode abrir as fichas técnicas e conferir se o cadastro corresponde aos datasheets vigentes.</p>
+							<p>Inversor e módulo são pesquisados de forma independente por ID, modelo ou fabricante — informar o fabricante não é obrigatório. Há filtros básicos e avançados, incluindo parâmetros CA e CC para inversores, potência para módulos e a situação ativa ou inativa.</p>
+							<p>Digitar ou filtrar apenas atualiza a lista: a escolha é explícita, por clique ou teclado. Uma nova busca limpa somente a seleção daquele equipamento. Quando a combinação é válida e o cálculo acontece, a área de pesquisa recolhe por completo; ao reabri-la, abas largas e painéis recolhíveis preservam os filtros. Cartões mantêm visíveis os itens escolhidos e dão acesso aos detalhes.</p>
 						</div>
 						<div class="workflow">
-							<div class="workflow-step"><strong>01 / SELECIONAR</strong><span>Fabricante e modelo do inversor e do módulo.</span></div>
+							<div class="workflow-step"><strong>01 / PESQUISAR</strong><span>Por ID, modelo ou fabricante, com filtros próprios para cada equipamento.</span></div>
 							<div class="workflow-step"><strong>02 / CONFERIR</strong><span>Dados técnicos e parâmetros cadastrados.</span></div>
 							<div class="workflow-step"><strong>03 / ANALISAR</strong><span>Limites por string e por grupo de MPPT.</span></div>
 							<div class="workflow-step"><strong>04 / CONSOLIDAR</strong><span>Quantidade e potência no inversor completo.</span></div>
 						</div>
 						<div class="screen-list">
 							<div class="screen-item"><strong>FICHAS TÉCNICAS</strong><span>Apresentam sistema, propriedades elétricas e MPPTs do inversor; tecnologia, grandezas elétricas e coeficientes de temperatura do módulo.</span></div>
-							<div class="screen-item"><strong>LIMITES POR MPPT</strong><span>As barras comparam restrições simultâneas. Vermelho identifica o valor limitante; verde, condições que ainda permitem valor maior.</span></div>
+							<div class="screen-item"><strong>LIMITES POR MPPT</strong><span>As barras comparam restrições simultâneas. Nos gráficos, vermelho identifica o menor valor que limita a configuração; verde mostra os demais limites válidos para a comparação.</span></div>
 							<div class="screen-item"><strong>RESUMO GLOBAL</strong><span>Confronta os limites do inversor inteiro e detalha quantidade e potência por grupo de MPPTs.</span></div>
 						</div>
-						<EditorialImage src="/images/optimus-sun/interface-2.png" alt="Janelas de detalhes técnicos do inversor e do módulo no Optimus Sun" caption="Fichas técnicas usadas para revisar os dados que alimentam o cálculo." />
-						<EditorialImage src="/images/optimus-sun/interface-3.png" alt="Gráficos do Optimus Sun comparando limites de strings e módulos por MPPT" caption="Detalhes dos limites por MPPT: cada conjunto mostra qual condição restringe o resultado." />
-						<EditorialImage src="/images/optimus-sun/interface-4.png" alt="Resumo geral do Optimus Sun com limite de módulos no inversor e distribuição por MPPT" caption="Resumo do inversor: limite global e distribuição calculada por grupos de MPPT." />
-						<div class="pending"><div class="pending-label">OPÇÕES AVANÇADAS</div><p>“Ignorar corrente de operação” e “Ignorar faixa de carga máxima” removem critérios do cálculo. Devem ser usadas somente com justificativa técnica e conferência nos documentos dos fabricantes.</p></div>
+						<div class="media-grid">
+							<EditorialImage src="/images/optimus-sun/v2.6.0/scrsht-2.png" alt="Fichas de detalhes de um inversor e um módulo no Optimus Sun 2.6.0" caption="Fichas técnicas para conferir os dados usados no cálculo." />
+							<EditorialImage src="/images/optimus-sun/v2.6.0/scrsht-3.png" alt="Gráficos de limites por MPPT e por string no Optimus Sun 2.6.0" caption="Gráficos por MPPT: a barra vermelha evidencia o critério limitante." />
+							<EditorialImage src="/images/optimus-sun/v2.6.0/scrsht-4.png" alt="Resumo geral do inversor no Optimus Sun 2.6.0" caption="Resumo global do inversor e distribuição calculada por grupo de MPPT." />
+						</div>
+						<div class="pending"><div class="pending-label">CONTROLES DE CÁLCULO</div><p>A sobrecarga pode vir do cadastro ou ser personalizada apenas para a sessão, sem modificar o banco. “Ignorar corrente de operação” e “Ignorar faixa de carga máxima” retiram critérios do cálculo e exigem justificativa técnica e conferência nos documentos dos fabricantes.</p></div>
 					</div>
 				</div>
 			</section>
 
 			<section class="content">
 				<div class="section-grid">
-					<div class="section-label">[ 04 / EVOLUÇÃO ]</div>
+					<div class="section-label">[ 04 / TRÊS APLICATIVOS ]</div>
+					<div>
+						<h2>Uma suíte, três tarefas separadas</h2>
+						<div class="app-grid">
+							<article class="app-card"><h3>Optimus Sun</h3><p>Pesquisa inversores e módulos, mantém a escolha explícita, apresenta detalhes e calcula uma combinação por vez.</p></article>
+							<article class="app-card"><h3>Optimus Sun Cadastros</h3><p>Visualiza e edita fabricantes, módulos, inversores e seus grupos de MPPT em uma interface própria.</p></article>
+							<article class="app-card"><h3>Matriz de Compatibilidade</h3><p>Compara vários inversores e módulos simultaneamente e organiza quantidade, potência e sobrecarga em uma matriz.</p></article>
+						</div>
+						<div class="prose">
+							<p>O cadastro unificado permite visualizar dados em modo somente leitura, editar ou duplicar um item como rascunho. Inversor e grupos de MPPT são salvos como um conjunto; posições físicas, quantidade de entradas e parâmetros passam por validação, e características podem ser copiadas para acelerar cadastros semelhantes. A captura abaixo registra um rascunho ainda incompleto, não um equipamento pronto para uso.</p>
+						</div>
+						<div class="media-grid">
+							<EditorialImage src="/images/optimus-sun/v2.6.0/scrsht-5.png" alt="Lista de fabricantes no aplicativo Optimus Sun Cadastros" caption="Cadastros: consulta, edição e criação de rascunhos para fabricantes e equipamentos." />
+							<EditorialImage src="/images/optimus-sun/v2.6.0/scrsht-6.png" alt="Rascunho incompleto de inversor e editor de grupo de MPPT" caption="Edição conjunta de inversor e grupos de MPPT; a imagem mostra deliberadamente um rascunho incompleto." />
+							<EditorialImage src="/images/optimus-sun/v2.6.0/scrsht-7.png" alt="Visualização somente leitura de um módulo no Optimus Sun Cadastros" caption="Modo de visualização: os dados podem ser conferidos sem entrar em edição." />
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">[ 05 / MATRIZ ]</div>
+					<div>
+						<h2>Muitas combinações em uma leitura</h2>
+						<div class="prose">
+							<p>A Matriz de Compatibilidade é um aplicativo separado. Seus seletores mostram equipamentos ativos e permitem associar vários inversores a vários módulos. Cada célula apresenta quantidade, potência, sobrecarga e, quando necessário, uma ocorrência textual. A sobrecarga também pode ser personalizada por inversor.</p>
+							<p>O modo que ignora corrente de operação pode produzir ganho de quantidade e o sinaliza no resultado. “Não suporta” significa que nenhuma configuração válida foi encontrada; “N/D” indica dados insuficientes para calcular — situações diferentes que não devem ser confundidas.</p>
+							<p>A matriz importa e exporta CSV. Após importar, os valores permanecem como registro até que um novo cálculo seja solicitado. No arquivo, uma sobrecarga de 50% é gravada como <strong>0,50</strong>, e não como razão total 1,50; arquivos antigos ambíguos exigem que o usuário escolha explicitamente como interpretar o valor.</p>
+						</div>
+						<EditorialImage src="/images/optimus-sun/v2.6.0/scrsht-8.png" alt="Matriz de Compatibilidade do Optimus Sun comparando três inversores e três módulos" caption="Aplicativo independente de matriz: múltiplas combinações, resultados por célula e indicação de ganhos quando a corrente de operação é ignorada." />
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">[ 06 / EVOLUÇÃO ]</div>
 					<div>
 						<h2>Da planilha ao software</h2>
 						<div class="timeline">
@@ -417,9 +494,11 @@ const page = project.page;
 
 			<section class="content">
 				<div class="section-grid">
-					<div class="section-label">[ 05 / ONDE APLICAR ]</div>
+					<div class="section-label">[ 07 / TECNOLOGIA E USO ]</div>
 					<div class="prose">
 						<h2>Apoio para verificações recorrentes</h2>
+						<p>A versão atual é construída em <strong>Python</strong>, com interfaces em <strong>Tkinter</strong>, banco <strong>SQLite</strong>, gráficos em <strong>Matplotlib</strong>, imagens tratadas com <strong>Pillow</strong> e distribuição Windows por <strong>PyInstaller</strong>. Excel e VBA pertencem à história do projeto, não à arquitetura atual.</p>
+						<p>A aplicação principal utiliza funções compartilhadas de <strong>optimus_lib.py</strong>. A matriz tem seu próprio conjunto de módulos em <strong>src/compatibility</strong>; isso não significa que toda a aplicação principal tenha migrado para essa arquitetura.</p>
 						<p>O Optimus Sun é útil como ferramenta de apoio em situações nas quais muitas combinações entre módulos e inversores precisam ser verificadas. Essa necessidade apareceu no acompanhamento remoto de obras e na orientação técnica a instaladores.</p>
 						<p>A ferramenta busca organizar e automatizar parte dessas verificações. Ela não substitui datasheets e documentação oficial dos fabricantes, critérios de engenharia e projeto, normas técnicas aplicáveis ou a análise das condições ambientais e elétricas reais da instalação.</p>
 						<p>A proposta é auxiliar a análise, não emitir uma garantia universal de compatibilidade ou desempenho.</p>
@@ -429,7 +508,7 @@ const page = project.page;
 
 			<section class="content">
 				<div class="section-grid">
-					<div class="section-label">[ 06 / O FUTURO ]</div>
+					<div class="section-label">[ 08 / O FUTURO ]</div>
 					<div class="prose">
 						<h2>O projeto continua aberto</h2>
 						<p>O Optimus Sun nasceu para resolver uma necessidade específica, mas a própria evolução de planilha para outras implementações mostrou que o problema comporta ferramentas melhores. O projeto permanece aberto a novas formas de organizar os dados, automatizar verificações e tornar os resultados mais fáceis de interpretar.</p>
@@ -441,7 +520,14 @@ const page = project.page;
 			<section class="project-open">
 				<div>[ PROJETO ABERTO ]</div>
 				<h2>Esta página continuará mudando junto com a ferramenta.</h2>
-				<a class="project-link" href="https://github.com/akioShaolin/optimussun/" target="_blank" rel="noreferrer">CÓDIGO, GUIA E RELEASES NO GITHUB ↗</a>
+				<div class="prose download-copy">
+					<p>Para usar no Windows, extraia o pacote completo e mantenha juntos os três executáveis, o arquivo <strong>optimus_sun.db</strong> e a pasta <strong>_internal</strong>. O banco e os binários não são incorporados à Galeria.</p>
+				</div>
+				<div class="link-group">
+					<a class="project-link" href="https://github.com/akioShaolin/optimussun/releases/download/v2.6.0/Optimus-Sun-v2.6.0-Windows.zip">BAIXAR v2.6.0 PARA WINDOWS ↓</a>
+					<a class="project-link" href="https://github.com/akioShaolin/optimussun/releases/tag/v2.6.0" target="_blank" rel="noreferrer">NOTAS DA VERSÃO ↗</a>
+					<a class="project-link" href="https://github.com/akioShaolin/optimussun" target="_blank" rel="noreferrer">REPOSITÓRIO ↗</a>
+				</div>
 			</section>
 		</div>
 	</main>
