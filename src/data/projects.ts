@@ -41,6 +41,34 @@ export type Project = {
 
 export const projects: Project[] = [
 	{
+		id: "bridge-ttl-rs485",
+		type: "PROJETO",
+		number: "010",
+		title: "BRIDGE TTL/RS485",
+		description: "Bridge binária desenvolvida sobre uma placa ED100 reaproveitada para interligar UART TTL e RS485 e apoiar diagnóstico de bancada.",
+		image: "/images/bridge-ttl-rs485/esp-rs485-bridge-hardware.webp",
+		path: "/projetos/bridge-ttl-rs485/",
+		categories: [
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "AUTOMAÇÃO", tone: "automacao" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["Bridge TTL/RS485", "ESP RS485 Bridge", "ED100", "ESP32", "ST485E", "UART", "RS485", "sniffer", "JBD", "BMS", "diagnóstico"],
+		page: {
+			code: "BRIDGE TTL/RS485",
+			subtitle: "Uma aplicação binária transparente entre UART TTL e RS485, construída e validada sobre o hardware reaproveitado de uma unidade ED100.",
+			status: [
+				{ label: "STATUS", value: "● EM TESTE", tone: "programacao" },
+				{ label: "PLATAFORMA", value: "ED100 / ESP32-WROOM-32E" },
+				{ label: "INTERFACES", value: "UART0 TTL / UART2 RS485" },
+				{ label: "VALIDAÇÃO", value: "BMS JBD / 9600 8N1" },
+			],
+			timeline: [],
+			specifications: [],
+		},
+	},
+	{
 		id: "modbus-rtu-slave-sim",
 		type: "PROJETO",
 		number: "009",

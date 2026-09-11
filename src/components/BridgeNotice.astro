@@ -1,0 +1,5 @@
+---
+interface Props { title: string; warning?: boolean; }
+const { title, warning = false } = Astro.props;
+---
+<div class:list={["notice", { warning }]}><div class="notice-title">[ {title} ]</div><div><slot /></div></div>

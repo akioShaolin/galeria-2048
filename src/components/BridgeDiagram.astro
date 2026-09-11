@@ -1,0 +1,5 @@
+---
+interface Props { label: string; nodes: string[]; bidirectional?: boolean; }
+const { label, nodes, bidirectional = false } = Astro.props;
+---
+<div class="diagram"><div class="diagram-label">[ {label} ]</div><div class="diagram-flow">{nodes.map((node, index) => <><div class="node">{node}</div>{index < nodes.length - 1 && <div class="arrow">{bidirectional ? "↔" : "→"}</div>}</>)}</div></div>

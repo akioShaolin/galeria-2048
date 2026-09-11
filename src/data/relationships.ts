@@ -31,6 +31,7 @@ export const influenceRelationshipTypes: RelationshipType[] = ["base_tecnica", "
 // Cada ligação é cadastrada uma única vez. O sentido inverso é derivado pelos helpers.
 // Relações somente devem entrar aqui depois de confirmação factual do autor.
 export const relationships: ContentRelationship[] = [
+	{ from: "solarview-ubox", to: "ed100-hardware-rs485", type: "contribuiu_para" },
 	{ from: "solarview-ubox", to: "modbus-rtu-slave-sim", type: "base_tecnica" },
 	{ from: "modbus-rtu-slave-sim", to: "inverter-modbus-lib", type: "usado_em_conjunto" },
 ];
