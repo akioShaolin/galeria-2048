@@ -41,6 +41,49 @@ export type Project = {
 
 export const projects: Project[] = [
 	{
+		id: "6ear",
+		type: "PROJETO",
+		number: "011",
+		title: "6ear",
+		description: "Um problema de engrenagens em duas fresadoras virou uma experiência com Python — do Tkinter ao Android, passando por combinatória, threads e Buildozer.",
+		image: "/images/6ear/marca-6ear.svg",
+		path: "/projetos/6ear/",
+		categories: [
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["6ear", "GearSix", "Python", "Tkinter", "Kivy", "Android", "Buildozer", "python-for-android", "engrenagens", "fresadora", "Sanches Blanes", "Victória", "análise combinatória", "permutations", "threads", "Clock.schedule_once", "PyInstaller", "Google Colab"],
+		page: {
+			code: "6ear",
+			subtitle: "Um problema real de oficina que começou com combinações de engrenagens e terminou como aplicativo para Windows e Android.",
+			status: [
+				{ label: "STATUS", value: "● FUNCIONAL / HISTÓRICO", tone: "programacao" },
+				{ label: "ORIGEM", value: "MAIO DE 2025 / CURSO DE MECÂNICA" },
+				{ label: "PLATAFORMAS", value: "WINDOWS / ANDROID" },
+				{ label: "LICENÇA", value: "MIT" },
+			],
+			timeline: [
+				{ year: "06/05/2025", title: "A pergunta inicial", text: "Uma dúvida de análise combinatória sobre doze tipos de engrenagens deu início ao programa." },
+				{ year: "07/05/2025", title: "Desktop e mobile", text: "A implementação em Tkinter já resolvia relações, enquanto começava a discussão sobre levar a ferramenta para o celular." },
+				{ year: "12/05/2025", title: "O desafio do APK", text: "Buildozer, python-for-android e a toolchain Android exigiram várias tentativas até a compilação prática no Google Colab." },
+				{ year: "13/05/2025", title: "Versão 2.0 e threads", text: "Estoque físico, permutações e processamento em uma worker passaram a aproximar o resultado da oficina sem congelar a interface." },
+				{ year: "14/05/2025", title: "Interface Kivy amadurecida", text: "A navegação, os controles de toque e a apresentação tabular consolidaram a versão mobile preservada." },
+				{ year: "2026", title: "Recuperação do acervo", text: "Quatro variantes históricas foram reunidas e publicadas sem inventar um histórico Git para o desenvolvimento original." },
+			],
+			specifications: [
+				{ name: "Linguagem", value: "Python" },
+				{ name: "Desktop", value: "Tkinter / PyInstaller" },
+				{ name: "Mobile", value: "Kivy" },
+				{ name: "Android build", value: "Buildozer / python-for-android" },
+				{ name: "Cálculo", value: "1, 2 ou 3 pares de engrenagens" },
+				{ name: "Máquinas", value: "Sanches Blanes / Victória" },
+				{ name: "Critério", value: "Relação alvo + tolerância" },
+				{ name: "Processamento mobile", value: "Worker thread + Kivy Clock" },
+				{ name: "Licença", value: "MIT" },
+			],
+		},
+	},
+	{
 		id: "bridge-ttl-rs485",
 		type: "PROJETO",
 		number: "010",
