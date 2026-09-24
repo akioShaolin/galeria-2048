@@ -53,29 +53,51 @@ O servidor de desenvolvimento do Astro fica disponível normalmente em `http://l
 
 ```text
 public/                 Recursos estáticos e imagens
+public/downloads/       Arquivos reproduzíveis disponibilizados ao visitante
+public/previews/        Apresentações autônomas mantidas fora das rotas Astro
 src/components/         Componentes Astro reutilizáveis
-src/data/projects.ts    Fonte central dos dados dos projetos
+src/data/               Projetos, artigos, oficina, acervo, áreas e relações
 src/layouts/            Layout base do site
 src/pages/              Rotas e páginas
 src/styles/global.css   Tokens e estilos globais
 AGENTS.md               Referência visual, editorial e técnica
+CLAUDE.md               Espelho das instruções para outros agentes
 ```
 
-## Conteúdo dos projetos
+## Organização do acervo
 
-Os resumos, categorias, estados, históricos e especificações ficam centralizados em `src/data/projects.ts`.
+O conteúdo público está dividido em:
 
-Cards com páginas publicadas funcionam como links. Projetos futuros são apresentados como artigos marcados `EM DESENVOLVIMENTO`, sem links provisórios.
+- projetos, em `src/data/projects.ts` e `src/pages/projetos/`;
+- artigos e referências técnicas, em `src/data/articles.ts` e `src/pages/artigos/`;
+- casos de oficina, em `src/data/workshop.ts` e `src/pages/oficina/`;
+- índice pesquisável unificado, montado por `src/data/archive.ts`;
+- áreas temáticas, definidas em `src/data/areas.ts`;
+- linhagem, paralelos e influências, cadastrados em `src/data/relationships.ts`.
+
+Os dados compartilhados — título, resumo, categorias, imagem, status e histórico estruturado — devem permanecer nas fontes centrais sempre que o modelo comportar a informação. As páginas guardam a narrativa e os estilos específicos de cada conteúdo.
+
+Cards com páginas publicadas funcionam como links. Projetos futuros são apresentados como cards marcados `EM DESENVOLVIMENTO`, sem links provisórios.
+
+Imagens ampliáveis usam `EditorialImage.astro` junto de `ImageLightbox.astro`. Relações entre conteúdos são apresentadas por `LineageGraph.astro` sem duplicar relações direcionais no cadastro.
 
 ## Publicação
 
-O destino planejado é o GitHub Pages com domínio próprio:
+A publicação é automatizada no GitHub Pages pela workflow `.github/workflows/astro.yml`, executada em alterações na branch `main`. O domínio próprio configurado é:
 
 ```text
 https://galeria-2048.com.br
 ```
 
-A publicação deve usar GitHub Actions a partir da branch `main`, gerando o conteúdo estático de `dist/`.
+O workflow instala as dependências com `npm ci`, executa `npm run build` e publica o conteúdo estático de `dist/`. O arquivo `public/CNAME` deve ser preservado.
+
+## Validação antes de publicar
+
+1. executar `npm run build`;
+2. conferir as rotas alteradas em desktop e mobile;
+3. verificar imagens, textos alternativos e lightbox;
+4. confirmar que não existem links-placeholder ou arquivos públicos sem finalidade;
+5. revisar o diff para não incluir dados pessoais, segredos ou artefatos gerados.
 
 ## Identidade pública
 

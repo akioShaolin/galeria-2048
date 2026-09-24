@@ -13,13 +13,28 @@ export type Article = {
 
 export const articles: Article[] = [
 	{
+		id: "sniffing-usb-wireshark",
+		type: "ARTIGO / REFERÊNCIA TÉCNICA",
+		code: "USB / HID",
+		label: "ARTIGO / INVESTIGAÇÃO DE PROTOCOLO",
+		title: "DO MOVIMENTO AOS BYTES — EXPLORANDO USB HID COM WIRESHARK",
+		description: "Um experimento com Wireshark e USBPcap que transformou movimentos do mouse, teclas e modificadores em bytes observáveis — e mostrou quanto trabalho existe entre capturar e compreender.",
+		image: "/images/artigos/sniffing-usb-wireshark/wireshark-usb-hid-cover.png",
+		path: "/artigos/sniffing-usb-wireshark/",
+		areas: [
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["Wireshark", "USBPcap", "USB", "HID", "sniffer", "engenharia reversa", "protocolos", "mouse", "teclado", "URB_INTERRUPT", "PCAPNG", "diagnóstico"],
+	},
+	{
 		id: "sk1-project",
 		type: "ARTIGO / REFERÊNCIA TÉCNICA",
 		code: "SK1",
 		label: "ARTIGO / EXPERIÊNCIA OPEN SOURCE",
 		title: "sK1 Project",
 		description: "Uma ferramenta que entrou no meu trabalho em 2020 e, anos depois, tornou-se também uma comunidade open source para a qual comecei a contribuir.",
-		image: "/images/artigos/sk1-project/comando-eletrico.webp",
+		image: "/images/artigos/sk1-project/sk1-project-logo.png",
 		path: "/artigos/sk1-project/",
 		areas: [
 			{ label: "PROGRAMAÇÃO", tone: "programacao" },

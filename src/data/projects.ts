@@ -421,7 +421,7 @@ export const projects: Project[] = [
 		number: "007",
 		title: "INVERTER MODBUS LIB",
 		description: "Uma camada comum para ler e controlar inversores fotovoltaicos via Modbus RTU.",
-		image: "/images/inverter-modbus-lib.svg",
+		image: "/images/inverter-modbus-lib-arquitetura.png",
 		path: "/projetos/inverter-modbus-lib/",
 		categories: [
 			{ label: "PROGRAMAÇÃO", tone: "programacao" },

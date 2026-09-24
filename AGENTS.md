@@ -265,10 +265,17 @@ Componentes existentes:
 - `Tag.astro`: categoria com cor temática;
 - `StatusGrid.astro`: painel de status e metadados;
 - `NeonSign.astro`: letreiro interativo da página inicial.
+- `EditorialImage.astro`: imagem editorial responsiva com acionamento do lightbox;
+- `ImageLightbox.astro`: ampliação compartilhada de imagens e respectivas legendas;
+- `LineageGraph.astro`: apresentação das relações públicas de linhagem, paralelos e influências;
+- `ArchiveCard.astro`: card usado nas visões unificadas do acervo;
+- `BridgeDiagram.astro`, `BridgeFact.astro` e `BridgeNotice.astro`: blocos específicos reutilizados pelo projeto Bridge TTL/RS485.
 
 Reutilizar esses componentes antes de copiar marcação. Manter estilos específicos junto da página quando eles só fizerem sentido naquele contexto.
 
-Os dados dos projetos ficam em `src/data/projects.ts`. Evitar duplicar títulos, números, categorias, imagens, status, histórico ou especificações nas páginas.
+As fontes centrais ficam em `src/data/`: `projects.ts` para projetos, `articles.ts` para artigos, `workshop.ts` para oficina, `archive.ts` para o índice unificado, `areas.ts` para áreas temáticas e `relationships.ts` para relações entre conteúdos. Evitar duplicar títulos, números, categorias, imagens, status, histórico ou especificações nas páginas.
+
+Relações direcionais são cadastradas uma única vez. A interface deriva as perspectivas públicas `ASCENDENTE` e `DESCENDENTE`; `PARALELO` permanece não direcional e `INFLUÊNCIA` fica fora do eixo genealógico principal. Não criar relações factuais sem confirmação do autor.
 
 Quando o acervo crescer de forma significativa, avaliar a migração para Astro Content Collections, preservando o modelo editorial existente.
 
@@ -306,6 +313,13 @@ Rotas de projetos devem ficar preferencialmente em:
 
 ```text
 src/pages/projetos/<id>.astro
+```
+
+Artigos e casos de oficina usam, respectivamente:
+
+```text
+src/pages/artigos/<id>.astro
+src/pages/oficina/<id>.astro
 ```
 
 ---
@@ -356,6 +370,8 @@ Arquivos estáticos ficam em `public/`. Imagens de projetos devem ficar preferen
 ```text
 public/images/<projeto>/
 ```
+
+Downloads técnicos publicáveis ficam em `public/downloads/`. Páginas HTML autônomas, quando solicitadas como artefato de compartilhamento, ficam em `public/previews/` e não substituem a rota editorial Astro.
 
 Projetos pequenos ou já existentes podem manter arquivos diretamente em `public/images/` até que a reorganização seja justificada.
 

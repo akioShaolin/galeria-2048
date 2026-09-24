@@ -13,11 +13,11 @@ const coverStyle = containedCover ? "width:100%;height:100%;object-fit:contain;"
 
 <article class:list={["card", { future: !project.path }]}>
 	{project.path ? (
-		<a class:list={["card-image", { "card-image--contained": containedCover, "card-image--6ear": project.id === "6ear" }]} href={project.path} aria-label={`Abrir ${project.title}`}>
+		<a class:list={["card-image", { "card-image--contained": containedCover }]} href={project.path} aria-label={`Abrir ${project.title}`}>
 			<img src={project.image} alt={project.title} style={coverStyle} />
 		</a>
 	) : (
-		<div class:list={["card-image", { "card-image--contained": containedCover, "card-image--6ear": project.id === "6ear" }]}><img src={project.image} alt={project.title} style={coverStyle} /></div>
+		<div class:list={["card-image", { "card-image--contained": containedCover }]}><img src={project.image} alt={project.title} style={coverStyle} /></div>
 	)}
 
 	<div class="card-content">
@@ -67,10 +67,6 @@ const coverStyle = containedCover ? "width:100%;height:100%;object-fit:contain;"
 	.card-image--contained {
 		padding: 18px;
 		background: var(--surface);
-	}
-
-	.card-image--6ear {
-		background: #898827;
 	}
 
 	h2 a:focus-visible,

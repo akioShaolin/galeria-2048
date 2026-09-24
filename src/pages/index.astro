@@ -693,6 +693,11 @@ import { workshop } from "../data/workshop";
 				filter: saturate(.82) contrast(1.04) brightness(.82);
 			}
 
+			.article-image--contained img {
+				object-fit: contain;
+				object-position: center;
+			}
+
 			.article-image { display: block; overflow: hidden; }
 
 			.article-card h2 a:focus-visible,
@@ -1007,7 +1012,7 @@ import { workshop } from "../data/workshop";
 
 					{articles.map((article) => (
 						<article class="article-card">
-							<a class="article-image" href={article.path} aria-label={`Abrir ${article.title}`}>
+							<a class:list={["article-image", { "article-image--contained": article.id === "sniffing-usb-wireshark" || article.id === "sk1-project" }]} href={article.path} aria-label={`Abrir ${article.title}`}>
 								<img src={article.image} alt={article.title} />
 							</a>
 							<div class="article-card-content">
