@@ -1,0 +1,172 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { workshop } from "../../data/workshop";
+
+const entry = workshop.find(({ id }) => id === "caso-1-weg-siw400-st075");
+if (!entry) throw new Error("Registro da Oficina não encontrado.");
+
+const imageRoot = "/images/oficina/caso-1-weg-siw400-st075";
+const status = [
+	{ label: "REGISTRO", value: "CASO 1" },
+	{ label: "EQUIPAMENTO", value: "WEG SIW400 ST075" },
+	{ label: "POTÊNCIA NOMINAL", value: "75 kW" },
+	{ label: "DESTINO", value: "● ESTUDO + DOADOR", tone: "eletronica" },
+];
+---
+
+<BaseLayout title="WEG SIW400 ST075: investigação de bancada — Galeria -2048" description={entry.description} image={entry.image} type="article" keywords={entry.keywords}>
+	<style is:global>
+		body { background: radial-gradient(circle at 82% 8%, rgba(207,255,0,.045), transparent 540px), linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px), var(--bg); background-size: auto, 42px 42px, 42px 42px, auto; font-family: Arial, Helvetica, sans-serif; }
+		.hero { padding: 90px 0 70px; border-bottom: 1px solid var(--line); }
+		.code, .section-label, .note-label { color: var(--eletronica); font-family: monospace; font-size: .875rem; line-height: 1.5; letter-spacing: .08em; }
+		h1 { max-width: 1130px; margin: 25px 0 0; font-size: clamp(3rem, 7vw, 6.5rem); line-height: .9; letter-spacing: -.06em; }
+		.subtitle { max-width: 880px; margin-top: 35px; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.2rem, 2vw, 1.55rem); line-height: 1.65; }
+		.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+		.status { margin-top: 50px; } .status .status-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+		.content { padding: 85px 0; border-bottom: 1px solid var(--line); }
+		.section-grid { display: grid; grid-template-columns: 225px minmax(0, 1fr); gap: 70px; }
+		h2 { max-width: 930px; margin: 0 0 32px; font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: .96; letter-spacing: -.05em; }
+		h3 { margin: 42px 0 16px; font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.15; }
+		.prose { max-width: 850px; }
+		.prose p, .prose li { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.125rem; line-height: 1.8; }
+		.prose p { margin: 0 0 22px; } .prose strong { color: var(--text); } .prose ul { padding-left: 24px; }
+		.callout { margin: 34px 0; padding: 28px; border: 1px solid var(--line); border-left: 2px solid var(--eletronica); background: rgba(207,255,0,.022); }
+		.callout p:last-child { margin-bottom: 0; }
+		.safety { border-color: var(--automacao); border-left-width: 5px; background: rgba(255,138,0,.055); }
+		.safety .note-label { color: var(--automacao); font-weight: bold; }
+		.evidence { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1px; margin: 38px 0; border: 1px solid var(--line); background: var(--line); }
+		.evidence-item { padding: 25px; background: var(--surface); }
+		.evidence-item span { display: block; margin-bottom: 12px; color: var(--eletronica); font: bold .8125rem/1.45 monospace; }
+		.evidence-item p { margin: 0; font-size: 1rem; line-height: 1.65; }
+		.flow { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); align-items: stretch; gap: 22px; margin: 38px 0; }
+		.flow-step { position: relative; min-height: 130px; padding: 22px; border: 1px solid var(--line); background: var(--surface); }
+		.flow-step:not(:last-child)::after { content: "→"; position: absolute; top: 50%; right: -19px; color: var(--eletronica); font: bold 1.2rem monospace; transform: translateY(-50%); }
+		.flow-step strong { display: block; margin-bottom: 10px; font: bold .9rem/1.4 monospace; }
+		.flow-step p { margin: 0; font-size: .95rem; line-height: 1.55; }
+		.media-pair { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+		.media-pair .editorial-image { margin: 20px 0 35px; }
+		.source-link, .case-link { display: inline-flex; align-items: center; gap: 10px; margin: 8px 0 20px; padding: 11px 14px; border: 1px solid var(--line); color: var(--text); font: bold .875rem/1.4 monospace; }
+		.source-link:hover, .source-link:focus-visible, .case-link:hover, .case-link:focus-visible { border-color: var(--eletronica); color: var(--eletronica); outline: none; }
+		.final { font-size: clamp(1.6rem, 3vw, 2.5rem) !important; color: var(--text) !important; line-height: 1.45 !important; }
+		@media (max-width: 800px) {
+			.hero { padding: 65px 0 55px; } .content { padding: 65px 0; }
+			.section-grid, .media-pair, .evidence, .flow { grid-template-columns: 1fr; }
+			.section-grid { gap: 26px; } .status .status-grid { grid-template-columns: 1fr; }
+			.flow-step:not(:last-child)::after { top: auto; right: 50%; bottom: -23px; transform: translateX(50%) rotate(90deg); }
+		}
+	</style>
+
+	<SiteHeader accent="var(--eletronica)" />
+	<main>
+		<section class="hero"><div class="container">
+			<p class="code">[ OFICINA / DIAGNÓSTICO / {entry.code} ]</p>
+			<h1>POR DENTRO DE UM INVERSOR TRIFÁSICO DE 75 kW.</h1>
+			<p class="subtitle">{entry.description}</p>
+			<div class="tags">{entry.areas.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+			<div class="status"><StatusGrid items={status} /></div>
+			<EditorialImage src={`${imageRoot}/hero.webp`} alt="Placas do inversor WEG SIW400 ST075 dispostas sobre uma bancada durante o estudo" caption="O WEG SIW400 ST075 desmontado para estudo. O registro preserva a escala, a densidade e a construção do conjunto sem transformar a investigação em receita de intervenção." eager fit="contain" />
+		</div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">01 / PONTO DE PARTIDA</p><div class="prose">
+			<h2>SEM HISTÓRICO, O DIAGNÓSTICO COMEÇOU DO ZERO.</h2>
+			<p>Encontrei este inversor entre equipamentos sem uso em uma empresa do setor solar. Não havia um histórico confiável de retirada, falha ou tentativas anteriores. Havia apenas o equipamento, com cerca de 70 kg, e a possibilidade de aprender com ele.</p>
+			<p>O peso também definiu o ritmo do trabalho. Esperei até ter ajuda para transportá-lo com segurança. Só então comecei uma investigação que se estenderia por semanas: primeiro tentando compreender o sintoma e, depois, desmontando o conjunto para registrar sua arquitetura.</p>
+			<div class="callout safety"><p class="note-label">ALTA TENSÃO / REGISTRO, NÃO TUTORIAL</p><p>Inversores fotovoltaicos desta classe trabalham com níveis perigosos de energia e podem manter carga armazenada mesmo desligados. Este artigo documenta uma experiência de bancada; ele não fornece um procedimento de energização, desmontagem ou reparo.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">02 / PRIMEIRAS VERIFICAÇÕES</p><div class="prose">
+			<h2>ANTES DE ENERGIZAR, ERA PRECISO PROCURAR O ÓBVIO.</h2>
+			<p>A inspeção inicial procurou sinais visuais de dano, continuidade onde ela era esperada e curtos evidentes nos blocos acessíveis. Dos 16 fusíveis da entrada fotovoltaica, um estava aberto e os outros 15 apresentavam continuidade.</p>
+			<p>Esse achado era um dado de bancada, não uma explicação completa. Um fusível aberto indicava que algo havia acontecido naquele caminho, mas não identificava sozinho a causa nem permitia concluir o estado dos demais estágios.</p>
+			<div class="evidence">
+				<div class="evidence-item"><span>[ OBSERVAÇÃO ]</span><p>Um dos 16 fusíveis de entrada estava aberto.</p></div>
+				<div class="evidence-item"><span>[ LIMITE ]</span><p>Não havia histórico confiável do equipamento.</p></div>
+				<div class="evidence-item"><span>[ DECISÃO ]</span><p>A investigação prosseguiu sem atribuir a falha a um único componente.</p></div>
+			</div>
+			<EditorialImage src={`${imageRoot}/inversor-aberto.webp`} alt="WEG SIW400 ST075 aberto, mostrando a disposição interna de placas, barramentos e conexões" caption="Vista do inversor aberto antes da desmontagem completa. Fotografar o conjunto era parte do processo de registrar conexões e posições que seriam perdidas ao separar as placas." variant="portrait" fit="contain" />
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">03 / SINTOMA</p><div class="prose">
+			<h2>AS VENTOINHAS PARTIAM. A INICIALIZAÇÃO NORMAL, NÃO.</h2>
+			<p>Com uma fonte fotovoltaica controlada aplicada ao equipamento, as ventoinhas permaneciam ligadas continuamente e os indicadores não apresentavam a sequência normal de inicialização. Não havia cheiro de queimado nem evidência visual imediata que explicasse o comportamento.</p>
+			<p>A primeira hipótese foi de uma falha de firmware ou da placa lógica. Era uma hipótese razoável diante do sintoma, mas ainda não era uma conclusão.</p>
+			<div class="callout"><p class="note-label">[ HIPÓTESE INICIAL ]</p><p>O equipamento parecia receber energia auxiliar suficiente para acionar as ventoinhas, mas não avançava até o estado normal. A investigação precisava descobrir se a lógica era a origem da falha ou se outro bloco impedia sua partida.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">04 / ISOLAMENTO</p><div class="prose">
+			<h2>DESCONECTAR OS FLATS MUDOU O COMPORTAMENTO.</h2>
+			<p>Os cabos flat foram isolados progressivamente para observar quais interações alteravam o sintoma. A mudança relevante apareceu quando a placa de potência deixou de participar do conjunto.</p>
+			<p>Isso deslocou a investigação: a hipótese passou a ser que alguma condição na seção de potência impedia a inicialização. O teste não revelou qual sinal, componente ou mecanismo estava envolvido; mostrou apenas uma relação reproduzível entre o bloco conectado e o comportamento observado.</p>
+			<div class="evidence">
+				<div class="evidence-item"><span>[ OBSERVAÇÃO ]</span><p>O estado do equipamento mudou com a placa de potência isolada.</p></div>
+				<div class="evidence-item"><span>[ INTERPRETAÇÃO ]</span><p>A seção de potência provavelmente participava do bloqueio da partida.</p></div>
+				<div class="evidence-item"><span>[ NÃO DETERMINADO ]</span><p>O ensaio não identificou uma linha lógica ou causa única.</p></div>
+			</div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">05 / ARQUITETURA</p><div class="prose">
+			<h2>QUATRO MPPT, UM BARRAMENTO CC E UMA SAÍDA TRIFÁSICA.</h2>
+			<p>A desmontagem revelou os blocos esperados em um inversor string desta classe: entradas fotovoltaicas distribuídas entre rastreadores de máxima potência, estágios elevadores, barramento de corrente contínua, módulos de comutação, filtragem e saída em corrente alternada, além das placas lógica, auxiliar, de sensoriamento e acionamento.</p>
+			<div class="flow" aria-label="Fluxo funcional simplificado do inversor">
+				<div class="flow-step"><strong>ENTRADAS FV</strong><p>Proteção, distribuição e quatro MPPT.</p></div>
+				<div class="flow-step"><strong>BOOST</strong><p>Conversão elevadora para o barramento.</p></div>
+				<div class="flow-step"><strong>BARRAMENTO CC</strong><p>Banco dividido, com ponto intermediário M-BUS.</p></div>
+				<div class="flow-step"><strong>INVERSOR + FILTRO</strong><p>Conversão e entrega trifásica em CA.</p></div>
+			</div>
+			<div class="callout"><p class="note-label">[ DOCUMENTAÇÃO OFICIAL WEG ]</p><p>Para o SIW400 ST075, a documentação informa potência nominal de 75 kW, quatro MPPT, tensão máxima de entrada de 1100 V e massa aproximada de 70 kg.</p></div>
+			<a class="source-link" href="https://www.google.com/goto?url=CAESfgHrOzAVmjqiUllAgGj76MVn-YfibeYW_QyMhwY2ZsD47sNLJrcypto2MeB_FJ4dh4GeHuHykGEdfPD8JJtGqHLJo2E8aKTxlpjxOOA7vs4BrwjJeQ0KoSA2WSrhBs5gbR4YmkzPsTUN7CcjIQZ2k8y5QgK7QD-tK9KR1AihtA" target="_blank" rel="noreferrer">FICHA OFICIAL WEG ↗</a>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">06 / ENTRADA E BARRAMENTO</p><div class="prose">
+			<h2>O QUE A TENSÃO REVELAVA SEM O BOOST COMUTANDO.</h2>
+			<p>Na condição observada, o barramento CC permanecia próximo da tensão fotovoltaica aplicada. Isso era compatível com um caminho passivo até o barramento enquanto o estágio boost não recebia comando de comutação. A leitura ajudava a interpretar o estado do circuito, mas não provava sozinha a integridade de cada componente.</p>
+			<EditorialImage src={`${imageRoot}/entrada-fv.webp`} alt="Detalhe da região de entrada fotovoltaica na placa do inversor" caption="Detalhe da região associada à entrada FV. O registro mostra conexões e sinais de trabalho de bancada; não estabelece, por si só, a origem da falha." variant="portrait" fit="contain" />
+			<h3>M-BUS NÃO ERA UM NEUTRO EXTERNO</h3>
+			<p>A marcação M-BUS correspondia ao ponto intermediário do barramento CC dividido. Essa referência interna participa da topologia multinível; não deve ser confundida com um condutor neutro disponível externamente.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">07 / MÓDULOS DE POTÊNCIA</p><div class="prose">
+			<h2>A FALHA NÃO ESTAVA LIMITADA A UM ÚNICO MÓDULO.</h2>
+			<p>As medições indicaram defeito em múltiplos módulos principais de potência. A substituição dessas peças, por si só, ainda deixaria em aberto o estado dos circuitos de acionamento, resistores de gate, fontes auxiliares e outros elementos que podem ser atingidos quando uma falha de potência se propaga.</p>
+			<p>Os circuitos próximos aos módulos mostravam isolamento óptico, pequenos transformadores ou indutores e redes de diodos, resistores e capacitores. O conjunto era compatível com drivers locais isolados para as chaves, sem que a inspeção visual permitisse atribuir inteligência digital própria a cada driver.</p>
+			<div class="callout"><p class="note-label">[ LEITURA DA PLACA ]</p><p>O roteamento e as grandes áreas condutivas sugeriam uma placa multicamada com planos dedicados. Sem documentação de fabricação ou análise destrutiva controlada, não era possível afirmar a quantidade exata de camadas.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">08 / LIMITE DO RETRABALHO</p><div class="prose">
+			<h2>A MASSA TÉRMICA DA PLACA SUPERAVA AS FERRAMENTAS DISPONÍVEIS.</h2>
+			<p>Remover os módulos expôs um limite prático. Grandes áreas de cobre dissipavam rapidamente o calor, e a solda usada na montagem exigia uma capacidade de aquecimento que a bancada não possuía. A solda superficial podia ser retirada, mas liberar os furos metalizados sem danificar a placa era outra escala de trabalho.</p>
+			<p>A tentativa deixou marcas que também precisam fazer parte do registro: um capacitor eletrolítico rompeu com o calor; capacitores de filme foram atingidos pelo ferro; e a placa sofreu danos mecânicos e térmicos. Esconder essas consequências apagaria justamente a principal conclusão daquela etapa.</p>
+			<EditorialImage src={`${imageRoot}/retrabalho-em-bancada.webp`} alt="Placa de potência e ferramentas dispostas na bancada durante a tentativa de retrabalho" caption="A bancada durante a desmontagem. O tamanho das placas e dos dissipadores ajuda a explicar por que um retrabalho dessa escala exige controle térmico e ferramentas apropriadas." fit="contain" />
+			<div class="callout"><p class="note-label">[ APRENDIZADO ]</p><p>Conhecer o circuito não elimina as limitações do processo físico. Em eletrônica de potência, potência térmica, apoio mecânico, pré-aquecimento e controle do retrabalho também fazem parte da viabilidade do reparo.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">09 / POR DENTRO DO IGBT</p><div class="prose">
+			<h2>O MÓDULO ABERTO TRANSFORMOU A PEÇA EM MATERIAL DE ESTUDO.</h2>
+			<p>Sem perspectiva razoável de restauração, módulos defeituosos foram abertos para observar a construção interna. As imagens mostram substratos compatíveis com tecnologia DBC, áreas de cobre, cerâmica, dies semicondutores e fios de ligação — provavelmente de alumínio — além de regiões carbonizadas.</p>
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/modulo-aberto-1.webp`} alt="Interior de um módulo IGBT aberto, com substratos, dies e fios de ligação expostos" caption="Primeiro módulo aberto. A fotografia permite observar a organização interna, mas não determinar sozinha a composição exata da cerâmica nem a sequência da falha." fit="contain" />
+				<EditorialImage src={`${imageRoot}/modulo-aberto-2.webp`} alt="Dois módulos de potência abertos com diferentes padrões de dano interno" caption="Comparação entre módulos abertos. Carbonização e fios rompidos registram o dano; não bastam para reconstruir sua causa inicial." fit="contain" />
+			</div>
+			<h3>NXH160T120L2Q2F2S1G</h3>
+			<p>A documentação da onsemi descreve o componente encontrado como um módulo Split T-Type NPC: meia ponte com IGBTs de 1200 V, chaves de ponto neutro de 650 V, diodos e sensor térmico NTC integrados. Essa topologia ajuda a relacionar o módulo ao barramento dividido observado no inversor.</p>
+			<a class="source-link" href="https://www.onsemi.com/pdf/datasheet/nxh160t120l2q2f2s1-d.pdf" target="_blank" rel="noreferrer">DATASHEET OFICIAL ONSEMI ↗</a>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">10 / RESULTADO</p><div class="prose">
+			<h2>O INVERSOR NÃO VOLTOU A OPERAR. A INVESTIGAÇÃO, PORÉM, CUMPRIU OUTRA FUNÇÃO.</h2>
+			<p>A combinação de múltiplos módulos defeituosos, incerteza sobre danos associados e limites de retrabalho tornou a restauração inviável naquela bancada. O equipamento passou a servir como referência construtiva, fonte de componentes verificáveis e material para compreender uma arquitetura que, montada, escondia quase tudo.</p>
+			<p>Uma dessas peças reapareceu no <strong>Caso 0</strong>, quando um conector proveniente deste WEG foi avaliado e usado em um reparo específico. A relação entre os dois registros preserva tanto a origem da peça quanto o cuidado de não transformar reaproveitamento em compatibilidade automática.</p>
+			<a class="case-link" href="/oficina/caso-0-inversores-doadores/">LER O CASO 0 — INVERSORES DOADORES →</a>
+			<a class="case-link" href="/oficina/caso-2-transposicao-usb/">LER O CASO 2 — QUANDO A COR DOS FIOS MENTE →</a>
+			<p class="final">Nem toda investigação termina em reparo. Algumas terminam em uma compreensão que não existia antes — e isso também merece ser preservado.</p>
+		</div></div></section>
+	</main>
+	<SiteFooter rightText="OFICINA / CASO 1" />
+	<ImageLightbox />
+</BaseLayout>

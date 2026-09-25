@@ -64,7 +64,7 @@ const timeline = [
 			<p class="code">[ OFICINA / REPARO / {entry.code} ]</p>
 			<h1>DOLCE GUSTO PJ2401B1 — RECUPERAÇÃO DE PLACA</h1>
 			<p class="subtitle">{entry.description}</p>
-			<div class="tags"><Tag label="REPARO" tone="automacao" /><Tag label="DIAGNÓSTICO" tone="programacao" /><Tag label="INVESTIGAÇÃO" tone="experimentacao" /><Tag label="ELETRÔNICA DE POTÊNCIA" tone="eletronica" /><Tag label="ELETRODOMÉSTICOS" tone="experimentacao" /></div>
+			<div class="tags">{entry.areas.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
 			<div class="status"><StatusGrid items={status} /></div>
 			<EditorialImage src={`${imageRoot}/hero.webp`} alt="Cafeteira Nescafé Dolce Gusto branca remontada sobre uma bancada de cozinha" caption="A cafeteira depois do reparo, novamente em operação." eager fit="contain" />
 		</div></section>

@@ -1,0 +1,170 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { workshop } from "../../data/workshop";
+
+const entry = workshop.find(({ id }) => id === "caso-2-transposicao-usb");
+if (!entry) throw new Error("Registro da Oficina não encontrado.");
+
+const imageRoot = "/images/oficina/caso-2-transposicao-usb";
+const status = [
+	{ label: "REGISTRO", value: "CASO 2" },
+	{ label: "EQUIPAMENTO", value: "SIW400G T075 W0" },
+	{ label: "DOADOR", value: "SIW400G T075 W01" },
+	{ label: "RESULTADO", value: "● COMUNICAÇÃO RESTABELECIDA", tone: "eletronica" },
+];
+---
+
+<BaseLayout title="Caso 2 — quando a cor dos fios mente — Galeria -2048" description={entry.description} image={entry.image} type="article" keywords={entry.keywords}>
+	<style is:global>
+		body { background: radial-gradient(circle at 82% 8%, rgba(0,217,255,.045), transparent 540px), linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px), var(--bg); background-size: auto, 42px 42px, 42px 42px, auto; font-family: Arial, Helvetica, sans-serif; }
+		.hero { padding: 90px 0 70px; border-bottom: 1px solid var(--line); }
+		.code, .section-label, .note-label { color: var(--programacao); font-family: monospace; font-size: .875rem; line-height: 1.5; letter-spacing: .08em; }
+		h1 { max-width: 1120px; margin: 25px 0 0; font-size: clamp(3rem, 7.3vw, 6.7rem); line-height: .9; letter-spacing: -.06em; }
+		.subtitle { max-width: 880px; margin-top: 35px; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.2rem, 2vw, 1.55rem); line-height: 1.65; }
+		.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+		.status { margin-top: 50px; } .status .status-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+		.content { padding: 85px 0; border-bottom: 1px solid var(--line); }
+		.section-grid { display: grid; grid-template-columns: 225px minmax(0, 1fr); gap: 70px; }
+		h2 { max-width: 930px; margin: 0 0 32px; font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: .96; letter-spacing: -.05em; }
+		h3 { margin: 42px 0 16px; font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.15; }
+		.prose { max-width: 850px; }
+		.prose p, .prose li { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.125rem; line-height: 1.8; }
+		.prose p { margin: 0 0 22px; } .prose strong { color: var(--text); } .prose ul { padding-left: 24px; }
+		.callout { margin: 34px 0; padding: 28px; border: 1px solid var(--line); border-left: 2px solid var(--programacao); background: rgba(0,217,255,.022); }
+		.callout p:last-child { margin-bottom: 0; }
+		.safety { border-color: var(--automacao); border-left-width: 5px; background: rgba(255,138,0,.055); }
+		.safety .note-label { color: var(--automacao); font-weight: bold; }
+		.media-pair { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+		.media-pair .editorial-image { margin: 20px 0 35px; }
+		.progression { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 1px; margin: 38px 0; border: 1px solid var(--line); background: var(--line); }
+		.progression div { padding: 20px; background: var(--surface); }
+		.progression span { display: block; margin-bottom: 10px; color: var(--programacao); font: bold .8rem/1.4 monospace; }
+		.progression p { margin: 0; font-size: .95rem; line-height: 1.55; }
+		.diagram { margin: 40px 0; }
+		.diagram-visual { padding: 22px; border: 1px solid var(--line); background: #9aa1a4; }
+		.diagram img { display: block; width: 100%; height: auto; }
+		.diagram figcaption { margin-top: 14px; color: var(--muted); font: .875rem/1.55 monospace; }
+		.signal-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1px; margin: 32px 0; border: 1px solid var(--line); background: var(--line); }
+		.signal-grid div { padding: 22px; background: var(--surface); }
+		.signal-grid strong { display: block; margin-bottom: 8px; color: var(--programacao); font: bold .9rem/1.45 monospace; }
+		.signal-grid p { margin: 0; font-size: 1rem; line-height: 1.65; }
+		.case-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+		.case-link { display: inline-flex; padding: 11px 14px; border: 1px solid var(--line); color: var(--text); font: bold .875rem/1.4 monospace; }
+		.case-link:hover, .case-link:focus-visible { border-color: var(--programacao); color: var(--programacao); outline: none; }
+		.final { font-size: clamp(1.6rem, 3vw, 2.5rem) !important; color: var(--text) !important; line-height: 1.45 !important; }
+		@media (max-width: 950px) { .progression { grid-template-columns: 1fr; } }
+		@media (max-width: 800px) {
+			.hero { padding: 65px 0 55px; } .content { padding: 65px 0; }
+			.section-grid, .media-pair, .signal-grid { grid-template-columns: 1fr; }
+			.section-grid { gap: 26px; } .status .status-grid { grid-template-columns: 1fr; }
+			.diagram-visual { padding: 10px; overflow-x: auto; } .diagram img { min-width: 720px; }
+		}
+	</style>
+
+	<SiteHeader accent="var(--programacao)" />
+	<main>
+		<section class="hero"><div class="container">
+			<p class="code">[ OFICINA / REPARO / {entry.code} ]</p>
+			<h1>QUANDO A COR DOS FIOS MENTE.</h1>
+			<p class="subtitle">{entry.description}</p>
+			<div class="tags">{entry.areas.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+			<div class="status"><StatusGrid items={status} /></div>
+			<EditorialImage src={`${imageRoot}/hero.webp`} alt="Porta USB externa quebrada no painel de um inversor WEG" caption="Porta USB externa danificada no equipamento reparado. A falha de comunicação com o stick foi o sintoma que originou a intervenção." eager fit="contain" />
+		</div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">01 / A SOLICITAÇÃO</p><div class="prose">
+			<h2>PARECIA APENAS UMA TROCA DE CONECTOR.</h2>
+			<p>A solicitação inicial era direta: substituir a porta USB usada pelo stick de comunicação de um inversor <strong>WEG SIW400G T075 W0</strong>. O conector externo estava fisicamente danificado e era a principal hipótese para a falha de comunicação.</p>
+			<p>Havia na empresa outro inversor, um <strong>SIW400G T075 W01</strong>, com um conjunto USB fisicamente semelhante. Quando me perguntaram se os dois eram compatíveis, eu disse que eram.</p>
+			<div class="callout"><p class="note-label">[ A HIPÓTESE QUE FALHOU ]</p><p>Pareciam compatíveis. Eu disse que eram. Na bancada descobri que não eram — pelo menos não sem compreender e transpor a pinagem.</p></div>
+			<div class="progression" aria-label="Progressão do diagnóstico">
+				<div><span>01 / HIPÓTESE</span><p>Os conjuntos pareciam equivalentes.</p></div>
+				<div><span>02 / ERRO</span><p>As cores foram tratadas como correspondência.</p></div>
+				<div><span>03 / TESTE</span><p>O stick não ligou.</p></div>
+				<div><span>04 / INVESTIGAÇÃO</span><p>Os sinais foram mapeados.</p></div>
+				<div><span>05 / CORREÇÃO</span><p>A comunicação voltou.</p></div>
+			</div>
+			<div class="callout safety"><p class="note-label">ALTA TENSÃO / REGISTRO, NÃO TUTORIAL</p><p>Embora o defeito estivesse no conjunto de comunicação, o interior desse inversor contém barramento CC, capacitores e partes de potência. O equipamento deve estar isolado, com ausência de tensão e descarga confirmadas, antes de qualquer intervenção. Este relato não é uma instrução de serviço.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">02 / DUAS REVISÕES</p><div class="prose">
+			<h2>A FUNÇÃO ERA PARECIDA. O ROTEAMENTO INTERNO, NÃO.</h2>
+			<p>A desmontagem mostrou que a diferença não estava apenas na porta externa. No W01, o conjunto do USB terminava em um único conector interno de seis vias. No W0, a mesma região funcional chegava à placa por dois conectores: um de quatro vias e outro com quatro sinais alojados em um corpo de cinco posições.</p>
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/inversor-w0-aberto.webp`} alt="Interior do SIW400G T075 W0 com a região dos dois conectores destacada" caption="SIW400G T075 W0: dois conectores internos participavam do conjunto de comunicação." variant="portrait" fit="contain" />
+				<EditorialImage src={`${imageRoot}/inversor-w01-aberto.webp`} alt="Interior do SIW400G T075 W01, mostrando uma arquitetura interna diferente" caption="SIW400G T075 W01: a disposição interna e o caminho do chicote eram diferentes, apesar da semelhança externa do conjunto USB." variant="portrait" fit="contain" />
+			</div>
+			<EditorialImage src={`${imageRoot}/conjunto-usb-w01.webp`} alt="Porta USB e chicote do SIW400G T075 W01 terminando em um conector interno" caption="Conjunto retirado do W01: porta USB, cabo preservado e um único conector interno de seis vias." fit="contain" />
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">03 / PRIMEIRA TENTATIVA</p><div class="prose">
+			<h2>OS FIOS FORAM ASSOCIADOS PELA COR. O STICK NÃO LIGOU.</h2>
+			<p>Na primeira adaptação, os condutores foram reorganizados respeitando as cores que pareciam corresponder entre os dois chicotes. Fios sem equivalência aparente ficaram desconectados. Era uma tradução visual entre duas montagens visualmente relacionadas.</p>
+			<p>Depois da instalação, o stick não ligou. O resultado mostrou que cor, posição e aparência não eram evidência suficiente de função elétrica.</p>
+			<div class="callout"><p class="note-label">COR DE FIO NÃO É PINAGEM</p><p>Dois condutores com a mesma cor podem ocupar funções diferentes. Dois conectores parecidos podem distribuir alimentação, USB, referência e comunicação de maneiras incompatíveis. A falha do primeiro teste impediu que uma suposição visual fosse tratada como fato.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">04 / MAPEAMENTO</p><div class="prose">
+			<h2>QUANDO AS CORES DEIXARAM DE IMPORTAR, OS SINAIS APARECERAM.</h2>
+			<p>A investigação passou para os silk-screens das placas, os nomes disponíveis e a continuidade entre cada terminal e seus pontos correspondentes. Os dois chicotes foram examinados fio por fio com o multímetro.</p>
+			<p>O mapeamento identificou posições associadas à alimentação do módulo, USB D+ e D−, referência isolada, comunicação RS485 e posições sem uso. Nenhuma tensão foi presumida a partir do nome ou da cor.</p>
+			<div class="signal-grid">
+				<div><strong>USB</strong><p>Wifi_Power, D+USB, D−USB e ISOGND.</p></div>
+				<div><strong>COMUNICAÇÃO</strong><p>WIFI485+, WIFI485− e referência correspondente.</p></div>
+				<div><strong>POSIÇÕES LIVRES</strong><p>Contatos marcados como NC permaneceram sem atribuição.</p></div>
+				<div><strong>CRITÉRIO</strong><p>A função confirmada por continuidade substituiu a associação por cor.</p></div>
+			</div>
+			<figure class="diagram">
+				<div class="diagram-visual"><img src={`${imageRoot}/transposicao-w0-w01.svg`} alt="Diagrama vetorial comparando a pinagem dos chicotes SIW400G T075 W0 e W01 e a transposição necessária" loading="lazy" decoding="async" /></div>
+				<figcaption>Diagrama produzido durante a investigação. Esta versão já identifica diretamente SIW400G T075 W0 e SIW400G T075 W01. O mapeamento documenta apenas os dois equipamentos estudados e não deve ser tratado como pinagem universal.</figcaption>
+			</figure>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">05 / TRANSPOSIÇÃO</p><div class="prose">
+			<h2>A CRIMPAGEM ORIGINAL FICOU. AS POSIÇÕES MUDARAM.</h2>
+			<p>A adaptação não exigiu cortar os fios nem refazer suas crimpagens. Os terminais já crimpados foram despinados dos alojamentos plásticos e recolocados nas posições correspondentes aos sinais mapeados.</p>
+			<p>O que mudou foi o critério: a nova disposição passou a seguir a função elétrica, não a cor do isolamento.</p>
+			<EditorialImage src={`${imageRoot}/conector-w01-original.webp`} alt="Conector original de seis vias do chicote W01 com condutores de várias cores" caption="Conector original do W01 antes da redistribuição. A sequência de cores não correspondia diretamente à arquitetura do W0." fit="contain" />
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/conector-w0-transposto-1.webp`} alt="Primeiro conector do W0 montado com terminais transpostos do chicote W01" caption="Primeiro alojamento após a transposição funcional dos terminais." variant="portrait" fit="contain" />
+				<EditorialImage src={`${imageRoot}/conector-w0-transposto-2.webp`} alt="Segundo conector do W0 montado com terminais transpostos do chicote W01" caption="Segundo alojamento após a transposição. Os contatos sem função correspondente permaneceram sem conexão." variant="portrait" fit="contain" />
+			</div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">06 / INSTALAÇÃO</p><div class="prose">
+			<h2>O CHICOTE ADAPTADO VOLTOU AO EQUIPAMENTO.</h2>
+			<p>Com os terminais distribuídos conforme o mapeamento, os dois conectores foram instalados na placa do W0. A compatibilidade alcançada não veio do formato externo do USB nem das cores: veio da correspondência verificada entre os sinais.</p>
+			<EditorialImage src={`${imageRoot}/ligacao-final-na-placa.webp`} alt="Conectores do chicote USB transposto instalados na placa do SIW400G T075 W0" caption="Ligação final na placa do W0. A fotografia registra este equipamento específico, não um padrão genérico para outros inversores." variant="portrait" fit="contain" />
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">07 / VALIDAÇÃO</p><div class="prose">
+			<h2>O STICK LIGOU. A COMUNICAÇÃO FOI RESTABELECIDA.</h2>
+			<p>Depois da transposição correta, o stick passou a ligar. A interface de configuração tornou-se acessível e os testes de comunicação foram concluídos com sucesso. Era a validação que faltava para separar a porta fisicamente semelhante de um conjunto eletricamente compatível.</p>
+			<EditorialImage src={`${imageRoot}/stick-validado.webp`} alt="Stick de comunicação instalado no inversor, com LEDs de estado acesos" caption="Stick energizado e comunicando após a transposição. QR codes e identificadores individuais foram ocultados." fit="contain" />
+			<div class="callout"><p class="note-label">[ RESULTADO OBSERVADO ]</p><p>O conjunto voltou a permitir alimentação do stick, acesso à configuração e comunicação nos testes realizados. O resultado valida a transposição naquele par de equipamentos; não estabelece intercambiabilidade universal entre revisões.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">08 / O QUE FICOU</p><div class="prose">
+			<h2>COMPATIBILIDADE MECÂNICA NÃO SIGNIFICA COMPATIBILIDADE ELÉTRICA.</h2>
+			<ul>
+				<li>Conectores semelhantes podem ter quantidades de vias e distribuições distintas.</li>
+				<li>Equipamentos da mesma potência podem pertencer a revisões com roteamento interno diferente.</li>
+				<li>Cor, posição e aparência ajudam a formular hipóteses, mas não substituem medição.</li>
+				<li>Quando a troca por cores falhou, continuidade e identificação dos sinais produziram a correção.</li>
+			</ul>
+			<p class="final">A troca parecia simples: retirar uma porta danificada e instalar outra aparentemente igual. A solução só apareceu quando cada fio deixou de ser tratado pela cor e passou a ser entendido pelo que realmente carregava.</p>
+			<div class="case-links">
+				<a class="case-link" href="/oficina/caso-0-inversores-doadores/">CASO 0 — INVERSORES DOADORES →</a>
+				<a class="case-link" href="/oficina/caso-1-weg-siw400-st075/">CASO 1 — WEG SIW400 ST075 →</a>
+			</div>
+		</div></div></section>
+	</main>
+	<SiteFooter rightText="OFICINA / CASO 2" />
+	<ImageLightbox />
+</BaseLayout>

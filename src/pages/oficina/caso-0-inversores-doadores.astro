@@ -1,0 +1,171 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { workshop } from "../../data/workshop";
+
+const entry = workshop.find(({ id }) => id === "caso-0-inversores-doadores");
+if (!entry) throw new Error("Registro da Oficina não encontrado.");
+
+const imageRoot = "/images/oficina/caso-0-inversores-doadores";
+const status = [
+	{ label: "REGISTRO", value: "CASO 0" },
+	{ label: "EIXO", value: "DIAGNÓSTICO + REUSO" },
+	{ label: "ESCOPO", value: "INVERSORES FV" },
+	{ label: "ESTADO", value: "● HISTÓRICO DOCUMENTADO", tone: "eletronica" },
+];
+---
+
+<BaseLayout title="Caso 0 — quando um inversor vira doador de peças — Galeria -2048" description={entry.description} image={entry.image} type="article" keywords={entry.keywords}>
+	<style is:global>
+		body { background: radial-gradient(circle at 82% 8%, rgba(255,138,0,.05), transparent 540px), linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px), var(--bg); background-size: auto, 42px 42px, 42px 42px, auto; font-family: Arial, Helvetica, sans-serif; }
+		.hero { padding: 90px 0 70px; border-bottom: 1px solid var(--line); }
+		.code, .section-label, .note-label { color: var(--automacao); font-family: monospace; font-size: .875rem; line-height: 1.5; letter-spacing: .08em; }
+		h1 { max-width: 1130px; margin: 25px 0 0; font-size: clamp(3rem, 7.3vw, 6.7rem); line-height: .9; letter-spacing: -.06em; }
+		.subtitle { max-width: 850px; margin-top: 35px; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.2rem, 2vw, 1.55rem); line-height: 1.65; }
+		.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+		.status { margin-top: 50px; } .status .status-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+		.content { padding: 85px 0; border-bottom: 1px solid var(--line); }
+		.section-grid { display: grid; grid-template-columns: 225px minmax(0, 1fr); gap: 70px; }
+		h2 { max-width: 900px; margin: 0 0 32px; font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: .96; letter-spacing: -.05em; }
+		h3 { margin: 42px 0 16px; font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.15; }
+		.prose { max-width: 810px; }
+		.prose p, .prose li { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.125rem; line-height: 1.8; }
+		.prose p { margin: 0 0 22px; } .prose strong { color: var(--text); } .prose ul { padding-left: 24px; }
+		.callout { margin: 34px 0; padding: 28px; border: 1px solid var(--line); border-left: 2px solid var(--automacao); background: rgba(255,138,0,.025); }
+		.callout p:last-child { margin-bottom: 0; }
+		.safety { border-color: var(--automacao); border-left-width: 5px; background: rgba(255,138,0,.06); }
+		.safety .note-label { color: var(--text); font-weight: bold; }
+		.media-pair { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+		.media-pair .editorial-image { margin: 20px 0 35px; }
+		.sequence { margin: 38px 0; counter-reset: repair-step; }
+		.sequence-step { counter-increment: repair-step; padding: 24px 0; border-top: 1px solid var(--line); }
+		.sequence-step:last-child { border-bottom: 1px solid var(--line); }
+		.sequence-step h3 { margin: 0 0 12px; font: bold 1rem/1.5 monospace; color: var(--automacao); }
+		.sequence-step h3::before { content: "0" counter(repair-step) " / "; color: var(--muted); }
+		.series-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1px; margin-top: 36px; border: 1px solid var(--line); background: var(--line); }
+		.series-card { display: block; min-height: 220px; padding: 28px; background: var(--surface); color: inherit; }
+		.series-card.current { box-shadow: inset 0 3px 0 var(--automacao); }
+		a.series-card:hover, a.series-card:focus-visible { background: var(--surface-hover); outline: 1px solid var(--automacao); outline-offset: -1px; }
+		.series-card p { font-size: 1rem; line-height: 1.65; }
+		.series-code { color: var(--automacao) !important; font: bold .875rem/1.5 monospace !important; }
+		.series-state { color: var(--text) !important; font: .875rem/1.5 monospace !important; }
+		.final { font-size: clamp(1.6rem, 3vw, 2.5rem) !important; color: var(--text) !important; line-height: 1.45 !important; }
+		@media (max-width: 800px) {
+			.hero { padding: 65px 0 55px; } .content { padding: 65px 0; }
+			.section-grid, .media-pair, .series-grid { grid-template-columns: 1fr; }
+			.section-grid { gap: 26px; } .status .status-grid { grid-template-columns: 1fr; }
+		}
+	</style>
+
+	<SiteHeader accent="var(--automacao)" />
+	<main>
+		<section class="hero"><div class="container">
+			<p class="code">[ OFICINA / REPARO / {entry.code} ]</p>
+			<h1>QUANDO UM INVERSOR VIRA DOADOR DE PEÇAS</h1>
+			<p class="subtitle">{entry.description}</p>
+			<div class="tags">{entry.areas.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+			<div class="status"><StatusGrid items={status} /></div>
+			<EditorialImage src={`${imageRoot}/hero.webp`} alt="Inversor fotovoltaico aberto no chão durante uma desmontagem exploratória" caption="No começo, a curiosidade vinha antes do método: abrir um equipamento substituído era uma forma de começar a entender o que existia dentro dele." eager fit="contain" />
+		</div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">01 / ORIGEM</p><div class="prose">
+			<h2>ANTES DO REPARO, VEIO A CURIOSIDADE.</h2>
+			<p>Quando entrei no setor de energia solar, acompanhei muitos inversores substituídos em garantia. Alguns apresentavam falhas localizadas; outros chegavam com danos extensos. Naquele momento eu ainda não tinha repertório para avaliar tudo o que via. A primeira etapa foi observar, desmontar e tentar reconhecer os blocos.</p>
+			<p>Esse contato não começou como uma prática estruturada de manutenção. Começou como aprendizado. Equipamentos que não voltariam ao campo passaram a servir de referência física: conectores, placas, módulos, arranjos mecânicos e soluções construtivas que dificilmente seriam compreendidos apenas por fotografias.</p>
+			<div class="callout"><p class="note-label">[ CONTEXTO DE GARANTIA ]</p><p>Equipamentos em garantia não eram abertos sem autorização. Reparos locais só entravam em consideração quando havia permissão e quando a falha parecia limitada. O fluxo formal de substituição podia levar semanas ou meses; em situações simples e autorizadas, um reparo localizado podia reduzir esse intervalo para poucos dias.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">02 / FALHAS LOCALIZADAS</p><div class="prose">
+			<h2>NEM TODA FALHA EXIGIA TROCAR O EQUIPAMENTO INTEIRO.</h2>
+			<p>Alguns casos se concentravam em elementos acessíveis e delimitados: um conector fotovoltaico, uma conexão de saída em corrente alternada ou o conjunto de display. Isso não tornava o diagnóstico trivial, mas mudava a escala do problema.</p>
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/conector-ca-danificado.webp`} alt="Conector de saída em corrente alternada com sinais de dano térmico" caption="Exemplo de dano localizado na conexão de saída CA. A imagem registra o efeito observado, não determina sozinha a causa." fit="contain" />
+				<EditorialImage src={`${imageRoot}/display-com-defeito.webp`} alt="Display de inversor aceso, mas exibindo caracteres ilegíveis" caption="Exemplo de falha no conjunto de display. O registro visual não é suficiente para atribuir uma causa específica." variant="portrait" fit="contain" />
+			</div>
+			<p>O ponto importante era separar aparência, sintoma e conclusão. Um conector danificado não explica automaticamente por que houve aquecimento; um display ilegível não define, por si só, se a origem está no módulo, na comunicação ou em outra parte do circuito.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">03 / QUANDO O DANO CRESCE</p><div class="prose">
+			<h2>ELETRÔNICA DE POTÊNCIA AUMENTA A INCERTEZA.</h2>
+			<p>Falhas em semicondutores de potência, trilhas e regiões carbonizadas elevavam muito a complexidade. Elas podiam envolver componentes vizinhos, isolamento comprometido e defeitos que não apareciam em uma inspeção superficial. Ainda assim, dano severo não significava automaticamente que todo o inversor era irrecuperável.</p>
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/semicondutores-danificados-1.webp`} alt="Região de uma placa de potência com semicondutores e encapsulamentos carbonizados" caption="Dano térmico concentrado em semicondutores de potência e na região ao redor." fit="contain" />
+				<EditorialImage src={`${imageRoot}/semicondutores-danificados-2.webp`} alt="Placa eletrônica com um semicondutor de potência visivelmente destruído" caption="Outro exemplo de falha em potência: a peça visivelmente atingida pode ser apenas parte do diagnóstico." variant="portrait" fit="contain" />
+			</div>
+			<EditorialImage src={`${imageRoot}/caso-irrecuperavel.webp`} alt="Inversor muito danificado, com carcaça escurecida e cabos atingidos" caption="Um dos casos em que a extensão do dano ultrapassou um reparo razoável. Só a fotografia não permite afirmar a causa do incêndio ou do aquecimento." variant="portrait" fit="contain" />
+			<div class="callout"><p class="note-label">APARÊNCIA NÃO SUBSTITUI DIAGNÓSTICO</p><p>Em outro registro técnico, um equipamento exposto externamente ao fogo ainda preservava parte importante da eletrônica interna. A observação reforçou uma regra: nem uma carcaça muito afetada prova perda total, nem um exterior aparentemente íntegro garante que o interior esteja seguro.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">04 / DOADORES</p><div class="prose">
+			<h2>O VALOR NÃO ESTAVA EM “LUCRAR” COM A SUCATA.</h2>
+			<p>Os inversores sem retorno previsto passaram a cumprir outra função: fornecer peças difíceis de encontrar, permitir comparações e reduzir o descarte de componentes ainda verificáveis. Não havia remuneração adicional por isso. O ganho era operacional e técnico: menos desperdício, possibilidade de reduzir o tempo de indisponibilidade e um laboratório real para aprender.</p>
+			<p>Uma peça retirada de um doador não se torna adequada apenas porque encaixa. Estado físico, características elétricas, pressão de contato, vedação, polaridade, capacidade de corrente e tensão e compatibilidade mecânica precisam ser conferidos antes de qualquer reaproveitamento.</p>
+			<div class="callout"><p class="note-label">[ LIMITE DA IDEIA ]</p><p>“Doador” não é sinônimo de estoque aprovado. Componentes carbonizados, deformados, contaminados, sem rastreabilidade suficiente ou incompatíveis devem ser descartados, mesmo que pareçam disponíveis.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">05 / TRÊS INVERSORES</p><div class="prose">
+			<h2>AS FOTOGRAFIAS REGISTRAM TRÊS HISTÓRIAS DIFERENTES.</h2>
+			<p>As trocas de conectores não pertencem a uma única sequência. São três intervenções feitas em momentos e condições diferentes. Registrá-las é importante para separar as histórias e preservar o que tornou cada experiência de reparo única. Cada caso é um caso, mesmo quando seguimos o mesmo procedimento.</p>
+
+			<h3>INVERSOR 1 — O CHOQUE</h3>
+			<p>Esse inversor estava guardado havia alguns meses. Quando o abri para retirar o conector MC4 danificado, tomei um choque em um dos capacitores de entrada, que ainda conservava carga. Foi uma lição que me ensinou a procurar trabalhar com segurança e a nunca presumir que um equipamento está seguro apenas porque permanece desenergizado há muito tempo.</p>
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/inversor-1-troca-conector.webp`} alt="Intervenção no painel de conectores fotovoltaicos do inversor 1" caption="Inversor 1 durante a intervenção nos conectores. Foi durante a desmontagem deste equipamento que tomei um choque." variant="portrait" fit="contain" />
+				<EditorialImage src={`${imageRoot}/inversor-1-visao-interna.webp`} alt="Vista interna ampla do inversor 1 aberto" caption="Vista interna do mesmo inversor após a troca do conector. A experiência passou a fazer parte do aprendizado sobre descarga, medição e confirmação de ausência de tensão." fit="contain" />
+			</div>
+			<div class="callout"><p class="note-label">[ A LIÇÃO QUE FICOU ]</p><p>O tempo guardado não era garantia de ausência de carga. Desde então, passei a tratar a confirmação da descarga e a medição antes do contato como parte indispensável do trabalho.</p></div>
+
+			<h3>INVERSOR 2 — A MESA DO COMPUTADOR</h3>
+			<p>O segundo inversor foi reparado sobre a mesma mesa em que eu usava o computador, porque naquele período não havia outro lugar disponível. A fotografia preserva essa limitação de infraestrutura. Ela não representa uma bancada recomendada para manutenção de equipamentos de potência.</p>
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/conector-fv-danificado.webp`} alt="Conector fotovoltaico danificado do inversor 2 diante do painel de conexões" caption="Inversor 2: conector FV com dano visível antes da intervenção." variant="portrait" fit="contain" />
+				<EditorialImage src={`${imageRoot}/inversor-2-reparo-na-mesa.webp`} alt="Inversor 2 aberto sobre a mesa onde também ficava o computador" caption="O inversor 2 aberto sobre a mesa do computador, o único espaço disponível para o reparo naquele momento." variant="portrait" fit="contain" />
+			</div>
+			<EditorialImage src={`${imageRoot}/inversor-2-conector-substituido.webp`} alt="Interior do inversor 2 durante a conclusão da troca do conector fotovoltaico" caption="Registro interno do inversor 2 durante a conclusão da troca. QR codes e identificadores individuais foram ocultados pelo autor antes da publicação." variant="portrait" fit="contain" />
+
+			<h3>INVERSOR 3 — O CASO RECENTE</h3>
+			<p>As quatro fotografias seguintes pertencem ao terceiro inversor: o Huawei SUN2000-60KTL-M0, de 60 kW. É nele que aparecem o conector removido, a peça doadora e a solução interna adotada para preservar o chicote existente.</p>
+			<div class="callout safety"><p class="note-label">ALTA TENSÃO / TRABALHO ESPECIALIZADO</p><p>O choque ocorrido no inversor 1 torna o aviso concreto: “desligado” não significa necessariamente desenergizado. Inversores fotovoltaicos podem manter energia armazenada e reunir tensões perigosas em corrente contínua e alternada. Isolamento das fontes, tempo de descarga especificado, confirmação de ausência de tensão, instrumentos e EPIs adequados são indispensáveis. Este registro não é um tutorial nem autoriza atalhos.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">06 / O CASO RECENTE</p><div class="prose">
+			<h2>UM CONECTOR FV EM UM HUAWEI SUN2000-60KTL-M0 DE 60 kW.</h2>
+			<p>Em um reparo recente, a falha estava associada a um conector fotovoltaico. A peça substituta veio de um inversor <strong>WEG SIW400 ST075</strong> destinado ao Caso 1 desta série. Isso não estabelece compatibilidade genérica entre equipamentos Huawei e WEG: descreve somente a peça examinada e aplicada neste reparo específico.</p>
+			<div class="sequence">
+				<div class="sequence-step"><h3>RETIRAR E INSPECIONAR</h3><p>O corpo plástico e o contato apresentavam sinais de dano térmico. A remoção permitiu examinar também o terminal, o condutor e a região que havia trabalhado sob aquecimento.</p><EditorialImage src={`${imageRoot}/conector-fv-removido.webp`} alt="Conector fotovoltaico removido do inversor 3 com pequeno chicote e terminal exposto" caption="Inversor 3: conector FV removido do Huawei recente para inspeção do contato e do trecho de cabo associado." fit="contain" /></div>
+				<div class="sequence-step"><h3>SELECIONAR O DOADOR</h3><p>O conector reaproveitado foi retirado do WEG SIW400 ST075 e avaliado para este caso. A decisão foi específica; não é uma recomendação de intercâmbio entre modelos.</p><EditorialImage src={`${imageRoot}/conector-fv-doador.webp`} alt="Painel de conectores fotovoltaicos do inversor doador, com uma posição destacada" caption="Origem da peça reaproveitada: o inversor doador que será documentado separadamente no Caso 1." fit="contain" /></div>
+				<div class="sequence-step"><h3>PRESERVAR O CHICOTE</h3><p>Para evitar a remoção de várias placas, abraçadeiras e um trecho maior de fiação, o reparo preservou o chicote existente e criou a conexão no interior do inversor. Foi uma solução daquele equipamento específico.</p><EditorialImage src={`${imageRoot}/conector-fv-interno.webp`} alt="Interior do inversor 3 com o cabo do conector fotovoltaico sendo posicionado" caption="Inversor 3: posicionamento interno do novo trecho, mantendo o percurso do chicote sob observação." fit="contain" /></div>
+				<div class="sequence-step"><h3>CONCLUIR A CONEXÃO INTERNA</h3><p>A disposição dos cabos, a firmeza mecânica, o isolamento, as distâncias e as condições térmicas precisavam continuar compatíveis com o interior e o fechamento do equipamento.</p><EditorialImage src={`${imageRoot}/conexao-interna-preservada.webp`} alt="Conexão interna do cabo fotovoltaico instalada no inversor 3" caption="Inversor 3: conexão interna concluída. A solução dependeu da avaliação específica daquele cabo, conector e equipamento." fit="contain" /></div>
+				<div class="sequence-step"><h3>VALIDAR SEM EXTRAPOLAR</h3><p>O equipamento passou por teste controlado e depois por injeção, com acompanhamento de parâmetros e temperatura. Ele <strong>voltou a operar nos testes realizados</strong>; esse resultado não equivale a uma afirmação de confiabilidade permanente.</p></div>
+			</div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">07 / O QUE MUDOU</p><div class="prose">
+			<h2>DA DESMONTAGEM NO CHÃO A UM CRITÉRIO DE BANCADA.</h2>
+			<ul>
+				<li>Falhas localizadas passaram a ser separadas de danos sistêmicos antes de condenar o conjunto.</li>
+				<li>Peças doadoras passaram a ser tratadas como componentes que ainda precisam ser verificadas, não como substitutas automáticas.</li>
+				<li>O resultado de um teste passou a ser registrado dentro de seus limites, sem prometer vida útil futura.</li>
+				<li>Tempo de parada, descarte e aprendizado passaram a fazer parte da mesma decisão técnica.</li>
+			</ul>
+			<p>Anos depois, um inversor que reparei naquele período continua sendo usado na minha própria residência. O fato tem valor pessoal porque fecha um arco: uma curiosidade inicial virou prática, e uma máquina que poderia ter sido descartada voltou a cumprir sua função. Isso não transforma todos os casos em recuperáveis; mostra apenas o que uma análise cuidadosa pode preservar.</p>
+			<p class="final">Um equipamento doador não é o fim de uma história. Às vezes, é onde várias outras começam.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">08 / SÉRIE</p><div class="prose">
+			<h2>TRÊS CASOS, TRÊS ESCALAS DE DECISÃO.</h2>
+			<div class="series-grid">
+				<article class="series-card current"><p class="series-code">CASO 0 / PUBLICADO</p><h3>INVERSORES DOADORES</h3><p>A origem da prática, os limites do reaproveitamento e uma troca localizada de conector FV.</p><p class="series-state">REGISTRO ATUAL</p></article>
+				<a class="series-card" href="/oficina/caso-1-weg-siw400-st075/"><p class="series-code">CASO 1 / PUBLICADO</p><h3>WEG SIW400 ST075</h3><p>O equipamento doador citado neste registro, agora documentado da investigação à desmontagem.</p><p class="series-state">ABRIR CASO 1 →</p></a>
+				<a class="series-card" href="/oficina/caso-2-transposicao-usb/"><p class="series-code">CASO 2 / PUBLICADO</p><h3>QUANDO A COR DOS FIOS MENTE</h3><p>Uma adaptação de chicote que só funcionou quando as cores deram lugar ao mapeamento elétrico.</p><p class="series-state">ABRIR CASO 2 →</p></a>
+			</div>
+		</div></div></section>
+	</main>
+	<SiteFooter rightText="OFICINA / CASO 0" />
+	<ImageLightbox />
+</BaseLayout>

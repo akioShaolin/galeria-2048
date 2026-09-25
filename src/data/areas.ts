@@ -5,6 +5,8 @@ export const areas = [
 	{ label: "ÁUDIO", slug: "audio", tone: "audio" },
 	{ label: "LUTHIERIA", slug: "luthieria", tone: "luthieria" },
 	{ label: "EXPERIMENTAÇÃO", slug: "experimentacao", tone: "experimentacao" },
+	{ label: "REPARO", slug: "reparo", tone: "reparo" },
+	{ label: "DIAGNÓSTICO", slug: "diagnostico", tone: "diagnostico" },
 ] as const;
 
 export type Area = (typeof areas)[number];

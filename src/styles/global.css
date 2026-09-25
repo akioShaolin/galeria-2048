@@ -11,6 +11,8 @@
 	--audio: #ff20c7;
 	--luthieria: #ffe000;
 	--experimentacao: #a95cff;
+	--reparo: #ff5c7a;
+	--diagnostico: #38e6b0;
 	--white-neon: #ffffff;
 }
 
@@ -69,6 +71,14 @@ a {
 
 .experimentacao {
 	color: var(--experimentacao);
+}
+
+.reparo {
+	color: var(--reparo);
+}
+
+.diagnostico {
+	color: var(--diagnostico);
 }
 
 .container {
