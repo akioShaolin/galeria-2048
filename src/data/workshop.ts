@@ -50,7 +50,7 @@ export const workshop: WorkshopEntry[] = [
 		type: "OFICINA",
 		subtype: "DIAGNÓSTICO",
 		code: "CASO 1 / SIW400 ST075",
-		title: "WEG SIW400 ST075 — INVESTIGANDO UM INVERSOR TRIFÁSICO DE 75 kW",
+		title: "CASO 1 — WEG SIW400 ST075 — INVESTIGANDO UM INVERSOR TRIFÁSICO DE 75 kW",
 		description: "Um inversor de 75 kW sem histórico confiável, investigado da energização controlada à desmontagem completa para compreender sua arquitetura, seus módulos de potência e os limites do retrabalho.",
 		image: "/images/oficina/caso-1-weg-siw400-st075/hero.webp",
 		path: "/oficina/caso-1-weg-siw400-st075/",

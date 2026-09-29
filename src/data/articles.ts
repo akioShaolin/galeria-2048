@@ -13,6 +13,23 @@ export type Article = {
 
 export const articles: Article[] = [
 	{
+		id: "greenway-bms-rs485",
+		type: "ARTIGO / REFERÊNCIA TÉCNICA",
+		code: "RS485 / BMS",
+		label: "ARTIGO / ENGENHARIA REVERSA PARCIAL",
+		title: "ENTRE O GREENWAY E O BMS — MAPEAMENTO PARCIAL DE UM PROTOCOLO RS485",
+		description: "Uma solicitação de garantia levou a um conversor USB-RS485 comum, a um sniffer passivo e ao mapeamento experimental de frames, checksum e comandos de uma bateria de motocicleta elétrica.",
+		image: "/images/artigos/greenway-bms-rs485/capa.webp",
+		path: "/artigos/greenway-bms-rs485/",
+		areas: [
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "DIAGNÓSTICO", tone: "diagnostico" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["Greenway", "BMS", "RS485", "engenharia reversa", "protocolo binário", "sniffer", "SUM8", "little-endian", "bateria", "motocicleta elétrica", "diagnóstico", "checksum"],
+	},
+	{
 		id: "sniffing-usb-wireshark",
 		type: "ARTIGO / REFERÊNCIA TÉCNICA",
 		code: "USB / HID",

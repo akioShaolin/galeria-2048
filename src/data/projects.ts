@@ -298,7 +298,7 @@ export const projects: Project[] = [
 		type: "PROJETO",
 		number: "006",
 		title: "DMS PORTABLE LOGGER",
-		description: "Dois ED100 e um gateway read-only registrando o comportamento real de uma bateria DMS em movimento.",
+		description: "Dois ED100 transformando dados reais de uma bateria DMS em diagnóstico, ajustes e ensaios comparáveis.",
 		image: "/images/dms-portable-logger/prototipo-instalado.png",
 		path: "/projetos/dms-portable-logger/",
 		categories: [
@@ -310,7 +310,7 @@ export const projects: Project[] = [
 		keywords: ["DMS Portable Logger", "DMS", "ED100", "ESP32", "JBD", "BMS", "RS485", "UART", "gateway", "logger", "DMS-Link", "LittleFS", "DMSLOG2", "RTC", "read-only", "diagnóstico de bateria", "SOC", "telemetria", "motocicleta elétrica"],
 		page: {
 			code: "DMS PORTABLE LOGGER",
-			subtitle: "Dois ED100, um BMS JBD e um gateway read-only para registrar o comportamento real de uma bateria durante o uso da motocicleta.",
+			subtitle: "Logger portátil com dois ED100 para registrar um BMS JBD em movimento, manter o painel original e transformar dados de campo em diagnóstico e ajustes de bateria.",
 			status: [
 				{ label: "STATUS", value: "● EM DESENVOLVIMENTO", tone: "programacao" },
 				{ label: "FIRMWARE DOCUMENTADO", value: "v0.1.0 PRE-RELEASE" },
@@ -322,6 +322,7 @@ export const projects: Project[] = [
 				{ year: "21/08/2026", title: "v0.1.0 pre-release", text: "A primeira versão documentada do firmware foi publicada para preservar o estado testado." },
 				{ year: "TESTE DE CAMPO", title: "Percurso de aproximadamente 60 km", text: "O ensaio chegou a 0% de carga e revelou perda prolongada de comunicação com o BMS, reinicialização do Master e uma inconsistência na listagem dos logs." },
 				{ year: "PÓS-TESTE", title: "Recuperação e consolidação", text: "Treze DMSLOG2 válidos foram recuperados do LittleFS e os segmentos Master e Slave foram correlacionados." },
+				{ year: "24–25/09/2026", title: "Ensaios após os ajustes", text: "Com capacidade configurada em 48 Ah e limite Sport de 72 A, dois conjuntos de dados chegaram a 0% e 0 Ah sem nova ocorrência de CellUV_P." },
 				{ year: "UNRELEASED", title: "Correções implementadas", text: "Listagem, exclusão, rotação e política de cache foram corrigidas no código; a revalidação física em bancada permanece pendente." },
 			],
 			specifications: [

@@ -1,0 +1,172 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { articles } from "../../data/articles";
+
+const article = articles.find(({ id }) => id === "greenway-bms-rs485");
+if (!article) throw new Error("Dados do artigo Greenway/BMS não encontrados.");
+
+const commands = [
+	["0x0100", "4", "—", "—", "Função ainda não determinada", "Unknown"],
+	["0x0108", "32", "INT8 array", "°C", "Sensores de temperatura; atribuição individual ainda parcial", "Partial"],
+	["0x0109", "4", "UINT32 LE", "mV", "Tensão do pack", "Confirmed"],
+	["0x010A", "4", "INT32 LE", "mA", "Corrente do pack", "Confirmed"],
+	["0x010D", "4", "UINT32 LE", "%", "SOC", "Confirmed"],
+	["0x010E", "4", "UINT32 LE", "%", "SOH", "Confirmed"],
+	["0x010F", "4", "UINT32 LE", "mAh", "Capacidade restante", "Confirmed"],
+	["0x0110", "4", "UINT32 LE", "mAh", "Capacidade completa", "Confirmed"],
+	["0x0114", "4", "2 × UINT16 LE", "mA / ?", "Corrente USB confirmada; segundo campo desconhecido", "Partial"],
+	["0x0115", "128", "mixed struct", "mixed", "Estatísticas e acumuladores de vida útil", "Partial"],
+	["0x0116", "16", "—", "—", "Função ainda não determinada", "Unknown"],
+	["0x0117", "4", "UINT32 LE", "ciclos", "Contador de ciclos", "Confirmed"],
+	["0x0118", "4", "UINT32 LE", "mAh", "Capacidade de projeto", "Confirmed"],
+	["0x0119", "4", "UINT32 LE", "mV", "Tensão de projeto", "Confirmed"],
+	["0x011A", "8", "mixed / ASCII", "—", "Versões de software/hardware e IDX", "Partial"],
+	["0x011B", "4", "date fields", "—", "Data de fabricação: YY MM DD xx", "Confirmed"],
+	["0x011D", "6", "UINT8 array", "—", "RTC: YY MM DD hh mm ss", "Confirmed"],
+	["0x011E", "4", "—", "—", "Função ainda não determinada", "Unknown"],
+	["0x0120", "16", "ASCII", "—", "Fabricante", "Confirmed"],
+	["0x0121", "32", "ASCII", "—", "Nome da bateria", "Confirmed"],
+	["0x0122", "16", "ASCII", "—", "Nome/modelo da célula", "Confirmed"],
+	["0x0123", "32", "ASCII", "—", "Número de série — payload não publicado", "Confirmed"],
+	["0x0124", "32", "UINT16 LE array", "mV", "Tensões das células 1–16", "Confirmed"],
+	["0x0125", "32", "UINT16 LE array", "mV", "Tensões das células 17–32", "Confirmed"],
+	["0x0126", "14", "mixed struct", "mixed", "Limites de corrente, tensão de célula e temperatura", "Confirmed"],
+	["0x0127", "64", "UINT16 LE array", "contagens", "32 contadores de falha", "Partial"],
+	["0x01A3", "—", "—", "—", "Função ainda não determinada", "Unknown"],
+	["0x0077", "variável", "—", "—", "Possível seleção/configuração de objeto ou operação", "Partial"],
+	["0x0178", "variável", "bytes", "—", "Possível leitura associada ao comando 0x0077", "Partial"],
+];
+---
+
+<BaseLayout title="Entre o Greenway e o BMS: engenharia reversa parcial RS485 | Galeria -2048" description={article.description} image={article.image} type="article" keywords={article.keywords}>
+	<SiteHeader accent="var(--programacao)" />
+	<main><article>
+		<div class="container"><header class="hero">
+			<div class="eyebrow">[ {article.label} / {article.code} ]</div>
+			<h1>ENTRE O GREENWAY<br /><span>E O BMS</span></h1>
+			<p class="lead">{article.description}</p>
+			<div class="tags">{article.areas.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+			<div class="meta">
+				<div><span>REGISTRO</span><strong>29 / 09 / 2026</strong></div>
+				<div><span>CAMADA FÍSICA</span><strong>RS485 / 9600 BAUD</strong></div>
+				<div><span>ESTADO</span><strong>MAPEAMENTO PARCIAL</strong></div>
+			</div>
+			<EditorialImage src={article.image} alt="Composição visual sobre engenharia reversa do protocolo Greenway via RS485, com bateria, conversor e interface de diagnóstico" caption="Visão editorial da investigação: comunicação RS485 entre software e BMS, leitura de frames, correlação de parâmetros e validação por checksum." fit="contain" eager />
+		</header></div>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">01 / O PROBLEMA ORIGINAL</div><div class="prose">
+			<h2>Era preciso coletar dados para uma solicitação de garantia.</h2>
+			<p>Recebi uma bateria de motocicleta elétrica com a tarefa de extrair informações que pudessem acompanhar uma análise de garantia. O procedimento do fabricante previa uma ferramenta de comunicação específica, mas nós tínhamos apenas o software de diagnóstico Greenway.</p>
+			<p>O manual e a interface da bateria indicavam RS485. A pergunta inicial era simples: o adaptador oficial fazia apenas a conversão elétrica ou também traduzia mensagens, executava algum handshake ou encapsulava um protocolo intermediário?</p>
+			<div class="callout"><strong>[ TESTE INICIAL ]</strong><p>Um conversor USB-RS485 comum foi conectado ao barramento. No equipamento analisado, o software Greenway comunicou diretamente com o BMS e exibiu seus parâmetros.</p></div>
+			<p>Com isso, o problema prático estava resolvido: tensão, corrente, SOC, SOH, capacidades, células, temperaturas e histórico de falhas puderam ser consultados e encaminhados ao fabricante. O que veio depois já era curiosidade técnica.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">02 / O SNIFFER</div><div class="prose wide">
+			<h2>Um segundo transceptor entrou apenas para observar.</h2>
+			<p>Com o Greenway operando pelo primeiro conversor, um segundo transceptor RS485 foi colocado em paralelo ao barramento e ligado a outra porta USB. Ele não participava da conversa: servia como ponto de observação dos bytes trocados entre computador e BMS.</p>
+			<div class="architecture" aria-label="Arquitetura da captura">
+				<div><strong>GREENWAY</strong><span>consulta e apresenta os dados</span></div><i>↔</i><div><strong>USB-RS485</strong><span>interface ativa</span></div><i>↔</i><div><strong>BMS</strong><span>responde às consultas</span></div>
+				<b>└── RS485 EM PARALELO ──→</b><div class="sniffer"><strong>SNIFFER</strong><span>somente observação</span></div>
+			</div>
+			<div class="method"><span>CAPTURA</span><i>→</i><span>GUI</span><i>→</i><span>ENDIANESS</span><i>→</i><span>CÁLCULO</span><i>→</i><span>CORRELAÇÃO</span></div>
+			<EditorialImage src="/images/artigos/greenway-bms-rs485/captura-frames-crus.webp" alt="Monitor serial em modo hexadecimal exibindo frames crus capturados no barramento RS485" caption="Captura crua usada durante o mapeamento. Entre os frames observados existe uma resposta de identificação em hexadecimal; o payload não é transcrito nem disponibilizado como dump." fit="contain" />
+			<p>A análise não partiu de uma documentação oficial do protocolo. Ela cruzou frames, valores simultâneos da interface, conversões numéricas e repetição de testes. Inteligência artificial foi usada como apoio para procurar padrões, não como substituta da validação experimental.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">03 / FRAMING</div><div class="prose">
+			<h2>Dois marcadores, comandos de 16 bits e um SUM8.</h2>
+			<p>As solicitações observadas começavam em <code>46 16</code>; as respostas, em <code>47 16</code>. Depois vinham o comando de 16 bits, o comprimento, o payload quando existente e um checksum de um byte.</p>
+			<div class="frame-spec"><div><span>REQUEST</span><code>46 16 [CMD_H] [CMD_L] [LEN] [DATA…] [SUM8]</code></div><div><span>RESPONSE</span><code>47 16 [CMD_H] [CMD_L] [LEN] [DATA…] [SUM8]</code></div></div>
+			<h3>O checksum</h3>
+			<p>O valor final corresponde à soma de todos os bytes anteriores, reduzida aos oito bits menos significativos:</p>
+			<pre><code>checksum = sum(bytes) &amp; 0xFF
+
+46 + 16 + 01 + 09 + 04 = 6A
+46 16 01 09 04 6A</code></pre>
+			<div class="callout"><strong>[ CONFIRMADO POR CORRELAÇÃO ]</strong><p>O mesmo cálculo validou frames de comandos diferentes. Mais tarde, ele também revelou que uma ferramenta de captura estava omitindo um byte.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">04 / NÃO É MODBUS</div><div class="prose">
+			<h2>RS485 descrevia a camada física, não o protocolo.</h2>
+			<p>O uso de RS485 não transforma automaticamente uma comunicação em Modbus RTU. O protocolo observado não usava o enquadramento, funções e endereçamento de registradores característicos do Modbus.</p>
+			<div class="compare"><div><strong>PROTOCOLO OBSERVADO</strong><ul><li>Marcadores <code>46 16</code> e <code>47 16</code></li><li>Comandos proprietários de 16 bits</li><li>Comprimento explícito</li><li>Checksum SUM8 de um byte</li></ul></div><div><strong>MODBUS RTU</strong><ul><li>Endereço do slave</li><li>Código de função</li><li>Registradores e quantidade</li><li>CRC-16</li></ul></div></div>
+			<p>O resultado foi uma comunicação binária proprietária transportada por RS485 a 9600 baud.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">05 / LITTLE-ENDIAN</div><div class="prose wide">
+			<h2>Os bytes começaram a coincidir com a tela.</h2>
+			<p>O comando <code>0x0109</code> retornava quatro bytes interpretados como inteiro sem sinal little-endian. O payload <code>12 30 01 00</code> se torna <code>0x00013012</code>, ou <strong>77842 mV</strong>. O mesmo método aplicado a <code>0x010A</code> interpretou <code>EC FF FF FF</code> como inteiro sinalizado de <strong>−20 mA</strong>.</p>
+			<div class="equation"><code>12 30 01 00</code><b>→</b><code>0x00013012</code><b>→</b><strong>77842 mV</strong></div>
+			<EditorialImage src="/images/artigos/greenway-bms-rs485/conversao-little-endian.webp" alt="Conversor hexadecimal mostrando 12 30 01 00 interpretado como UINT32 little-endian igual a 77842" caption="A comparação entre interpretações mostrou que UINT32 little-endian reproduzia a tensão exibida pelo Greenway." fit="contain" />
+			<p>A ferramenta visual usada nessa conferência foi o <a href="https://www.scadacore.com/tools/programming-calculators/online-hex-converter/" target="_blank" rel="noreferrer">Online Hex Converter da SCADACore ↗</a>. Ela auxiliou a leitura, mas a confirmação veio da coincidência repetida entre payload e GUI.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">06 / O BYTE AUSENTE</div><div class="prose">
+			<h2>O checksum encontrou um erro na própria captura.</h2>
+			<p>Um frame aparecia repetidamente como <code>46 16 01 04 6E</code>. Pela estrutura já conhecida, faltava o segundo byte do comando. A soma indicava exatamente qual:</p>
+			<div class="mystery"><div><span>COMO APARECIA</span><code>46 16 01 __ 04 6E</code></div><div><span>BYTE INFERIDO</span><code>46 + 16 + 01 + <mark>0D</mark> + 04 = 6E</code></div><div><span>FRAME RECONSTRUÍDO</span><code>46 16 01 0D 04 6E</code></div></div>
+			<p>A resposta reconstruída era <code>47 16 01 0D 04 4E 00 00 00 BD</code>. O payload little-endian resultava em <strong>78</strong>, exatamente o SOC mostrado na interface.</p>
+			<p>Para testar a hipótese, foi transmitida uma sequência controlada contendo todos os valores de <code>0x00</code> a <code>0xFF</code> entre dois transceptores. O <code>0x0D</code> desapareceu no caminho de visualização. Como esse byte corresponde a <em>Carriage Return</em>, o defeito estava na cadeia de captura, não no protocolo Greenway.</p>
+			<EditorialImage src="/images/artigos/greenway-bms-rs485/hero-teste-0d.webp" alt="Dois monitores seriais comparando a sequência transmitida com os bytes recebidos" caption="Teste controlado entre dois transceptores: a sequência de 0x00 a 0xFF confirmou que o byte 0x0D desaparecia na cadeia de visualização utilizada." fit="contain" />
+			<div class="callout"><strong>[ INVESTIGAÇÃO DENTRO DA INVESTIGAÇÃO ]</strong><p>O checksum deixou de ser apenas um teste de integridade dos frames e se tornou uma ferramenta para diagnosticar o próprio instrumento de observação.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">07 / ARRAYS E ESTRUTURAS</div><div class="prose">
+			<h2>Nem todo comando retornava um único número.</h2>
+			<h3>Células</h3>
+			<p><code>0x0124</code> e <code>0x0125</code> retornavam arrays de 16 palavras little-endian, correspondentes às posições 1–16 e 17–32. A bateria observada usava 20 células em série; as posições posteriores apareciam zeradas.</p>
+			<h3>Limites elétricos e térmicos</h3>
+			<p>O payload de 14 bytes de <code>0x0126</code> pôde ser dividido em duas correntes INT32, duas tensões de célula UINT16 e duas temperaturas INT8. Os valores coincidiram com os limites mostrados na GUI.</p>
+			<h3>Contadores de falha</h3>
+			<p><code>0x0127</code> entregava 32 posições UINT16. A ordem foi comparada com a lista da interface e permitiu correlacionar vários índices, incluindo sobretensão de carga, dois níveis de sobredescarga, falha de soft start e falha do circuito de proteção de descarga. Valores <code>0xFFFF</code> eram exibidos como zero ou campo não utilizado.</p>
+			<div class="callout"><strong>[ LIMITE DA CORRELAÇÃO ]</strong><p>A correspondência de vários índices foi confirmada no caso observado. Isso não substitui documentação oficial nem garante que todas as versões de BMS usem exatamente a mesma tabela.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">08 / BLOCOS PARCIAIS</div><div class="prose">
+			<h2>Alguns campos apareceram; a estrutura completa, não.</h2>
+			<p>O bloco de 128 bytes de <code>0x0115</code> parecia consolidar estatísticas de vida útil. Capacidade, throughput, capacidade restante, ciclos e extremos de corrente, tensão e temperatura reapareciam em posições compatíveis, mas vários trechos continuavam sem interpretação.</p>
+			<p>Os comandos <code>0x0077</code> e <code>0x0178</code> também mostraram uma relação recorrente: o primeiro antecedia o segundo e o comprimento indicado parecia reaparecer na leitura seguinte.</p>
+			<pre><code>46 16 00 77 05 02 A1 68 05 1E 06
+47 16 00 77 00 D4
+
+46 16 01 78 1E F3
+47 16 01 78 1E [30 bytes] ...</code></pre>
+			<div class="hypothesis"><strong>[ FORTE HIPÓTESE ]</strong><p><code>0x0077</code> pode selecionar ou configurar um objeto, endereço ou operação; <code>0x0178</code> parece ler o resultado. As capturas não demonstram que o primeiro comando faça escrita permanente no BMS.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">09 / MAPA DE COMANDOS</div><div class="prose wide">
+			<h2>O que foi confirmado — e o que continua aberto.</h2>
+			<div class="table-wrap"><table>
+				<thead><tr><th>Command</th><th>Length</th><th>Type</th><th>Unit</th><th>Description</th><th>Confidence</th></tr></thead>
+				<tbody>{commands.map(([command, length, type, unit, description, confidence]) => <tr><td><code>{command}</code></td><td>{length}</td><td>{type}</td><td>{unit}</td><td>{description}</td><td><span class:list={["confidence", confidence.toLowerCase()]}>{confidence}</span></td></tr>)}</tbody>
+			</table></div>
+			<p class="table-note">LE = little-endian. “Confirmed” significa correlação repetida com a interface; “Partial”, estrutura ou função reconhecida apenas em parte; “Unknown”, comando observado sem significado atribuído.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">10 / PRIVACIDADE E LIMITES</div><div class="prose">
+			<h2>Capturar o barramento também capturou dados do equipamento.</h2>
+			<ul><li>O número de série real não é reproduzido neste artigo.</li><li>O dump bruto e a planilha de trabalho permanecem privados.</li><li>Capturas que continham o serial diretamente ou no payload ASCII foram excluídas.</li><li>Os significados apresentados são interpretações experimentais do equipamento observado.</li><li>Não houve tentativa de apresentar este mapa como documentação oficial da Greenway.</li></ul>
+			<p>Os testes posteriores também não mostraram comunicação digital entre a bateria e o carregador analisado. Isso separa dois caminhos: Greenway ↔ BMS usava RS485; carregador ↔ bateria não apresentou comunicação digital observável naquele conjunto.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">11 / PRÓXIMA ETAPA</div><div class="prose">
+			<h2>A motocicleta ainda é a parte que falta.</h2>
+			<p>A comunicação entre bateria e motocicleta permanece para uma investigação futura. Ela pode revelar outro protocolo, sinais discretos ou apenas uma lógica de habilitação ainda não observada. Neste ponto, qualquer afirmação seria antecipada.</p>
+			<div class="path"><span>GREENWAY ↔ BMS</span><b>CONFIRMADO / RS485</b><span>CARREGADOR ↔ BATERIA</span><b>SEM COMUNICAÇÃO DIGITAL OBSERVADA</b><span>MOTOCICLETA ↔ BATERIA</span><b>PRÓXIMA INVESTIGAÇÃO</b></div>
+		</div></div></section>
+
+		<section class="closing"><div class="signal">[ CHECKPOINT / MAPEAMENTO PARCIAL ]</div><h2>O protocolo não foi “quebrado”. Ele começou a ser entendido.</h2><p>O trabalho avançou porque cada interpretação permaneceu ligada a uma evidência: um frame, um cálculo, um valor simultâneo na GUI ou um teste controlado. A parte mais valiosa não foi produzir uma tabela pronta, mas registrar o caminho entre hipótese, captura, correlação e validação.</p></section>
+	</article></main>
+	<ImageLightbox />
+	<SiteFooter rightText="ARTIGO / RS485 / BMS" />
+</BaseLayout>
+
+<style>
+	:global(body){background:radial-gradient(circle at 80% 8%,rgba(0,217,255,.055),transparent 520px),linear-gradient(rgba(255,255,255,.014) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px),var(--bg);background-size:auto,42px 42px,42px 42px,auto}.hero{padding:95px 0 70px}.eyebrow,.section-label,.signal{color:var(--programacao);font:.875rem/1.5 monospace;letter-spacing:.08em}.hero h1{margin:24px 0 30px;font:700 clamp(3.4rem,8.5vw,8rem)/.86 Arial,sans-serif;letter-spacing:-.07em}.hero h1 span{color:var(--programacao)}.lead{max-width:900px;color:var(--muted);font:clamp(1.25rem,2.2vw,1.65rem)/1.6 Georgia,serif}.tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}.meta{display:grid;grid-template-columns:repeat(3,1fr);margin-top:50px;border:1px solid var(--line)}.meta div{padding:20px;border-right:1px solid var(--line)}.meta div:last-child{border:0}.meta span,.meta strong{display:block;font:.875rem/1.5 monospace}.meta span{margin-bottom:8px;color:var(--muted)}.content{padding:95px 0;border-top:1px solid var(--line)}.section-grid{display:grid;grid-template-columns:235px minmax(0,1fr);gap:70px}.prose{max-width:790px}.prose.wide{max-width:none}.prose p,.prose li{color:var(--muted);font:1.125rem/1.8 Georgia,serif}.prose strong{color:var(--text)}.prose code{color:var(--programacao)}.prose a{color:var(--programacao)}h2{margin:0 0 32px;font:700 clamp(2.2rem,4.7vw,4.5rem)/.98 Arial,sans-serif;letter-spacing:-.05em}h3{margin:38px 0 14px;font-size:1.4rem}.callout,.hypothesis{margin:34px 0;padding:26px;border:1px solid var(--line);border-left:2px solid var(--programacao);background:rgba(0,217,255,.025)}.callout strong,.hypothesis strong{display:block;margin-bottom:12px;font:.875rem/1.5 monospace}.callout p:last-child,.hypothesis p:last-child{margin-bottom:0}.hypothesis{border-left-color:var(--experimentacao);background:rgba(169,92,255,.035)}.architecture{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:14px;margin:36px 0}.architecture div{padding:22px;border:1px solid var(--line);background:var(--surface);text-align:center}.architecture strong,.architecture span{display:block}.architecture strong{font:.95rem/1.4 monospace}.architecture span{margin-top:8px;color:var(--muted);font:.875rem/1.5 monospace}.architecture i{color:var(--programacao);font-style:normal}.architecture b{grid-column:2/5;color:var(--programacao);font:.8rem/1.4 monospace}.architecture .sniffer{grid-column:5}.method{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:30px 0;padding:20px;border:1px solid var(--line);font:.875rem/1.5 monospace}.method i{color:var(--programacao);font-style:normal}.frame-spec{display:grid;gap:1px;margin:34px 0;border:1px solid var(--line);background:var(--line)}.frame-spec div{padding:22px;background:var(--surface)}.frame-spec span{display:block;margin-bottom:10px;color:var(--programacao);font:.8rem/1.4 monospace}.frame-spec code{overflow-wrap:anywhere}pre{margin:30px 0;padding:22px;overflow:auto;border:1px solid var(--line);background:var(--surface);color:var(--text);font:.9375rem/1.75 monospace}.compare{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:34px 0;border:1px solid var(--line);background:var(--line)}.compare>div{padding:24px;background:var(--surface)}.compare strong{font:.9rem/1.4 monospace}.compare ul{padding-left:20px}.compare li{font-size:1rem;line-height:1.65}.equation{display:flex;align-items:center;gap:18px;margin:34px 0;padding:24px;border:1px solid var(--line);background:var(--surface);font:1rem/1.5 monospace}.equation b{color:var(--programacao)}.mystery{display:grid;gap:1px;margin:34px 0;border:1px solid var(--line);background:var(--line)}.mystery div{padding:22px;background:var(--surface)}.mystery span,.mystery code{display:block}.mystery span{margin-bottom:9px;color:var(--muted);font:.8rem/1.4 monospace}.mystery mark{padding:2px 5px;background:var(--programacao);color:var(--bg)}.table-wrap{overflow-x:auto;border:1px solid var(--line)}table{width:100%;min-width:900px;border-collapse:collapse;background:var(--surface);font:.875rem/1.5 monospace}th,td{padding:13px 14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{position:sticky;top:0;background:#101519;color:var(--text)}td{color:var(--muted)}td code{white-space:nowrap}.confidence{display:inline-block;padding:3px 7px;border:1px solid currentColor}.confirmed{color:var(--eletronica)}.partial{color:var(--experimentacao)}.unknown{color:var(--muted)}.table-note{font:.875rem/1.6 monospace!important}.path{display:grid;grid-template-columns:1fr auto;gap:1px;margin:34px 0;border:1px solid var(--line);background:var(--line)}.path span,.path b{padding:16px;background:var(--surface);font:.875rem/1.5 monospace}.path b{color:var(--programacao)}.closing{padding:120px 24px;text-align:center}.closing h2{margin:18px auto 0}.closing p{max-width:780px;margin:28px auto 0;color:var(--muted);font:1.125rem/1.8 Georgia,serif}@media(max-width:800px){.hero{padding:70px 0 50px}.content{padding:70px 0}.section-grid{grid-template-columns:1fr;gap:28px}.meta,.compare{grid-template-columns:1fr}.meta div{border-right:0;border-bottom:1px solid var(--line)}.architecture{grid-template-columns:1fr}.architecture i{transform:rotate(90deg)}.architecture b,.architecture .sniffer{grid-column:auto}.method{align-items:flex-start;flex-direction:column}.equation{align-items:flex-start;flex-direction:column}.path{grid-template-columns:1fr}}
+</style>
