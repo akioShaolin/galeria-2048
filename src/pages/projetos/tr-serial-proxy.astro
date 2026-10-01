@@ -1,0 +1,170 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import LineageGraph from "../../components/LineageGraph.astro";
+import { projects } from "../../data/projects";
+
+const project = projects.find(({ id }) => id === "tr-serial-proxy");
+if (!project?.page) throw new Error("Dados do projeto tr_serialProxy não encontrados.");
+const page = project.page;
+
+const cliOptions = [
+	["--physical-port", "COM física do equipamento; obrigatório"],
+	["--virtual-port", "ponta aberta pelo proxy; obrigatório"],
+	["--baud", "inteiro positivo; obrigatório"],
+	["--bytesize", "5, 6, 7 ou 8; padrão 8"],
+	["--parity", "N, E, O, M ou S; padrão N"],
+	["--stopbits", "1, 1.5 ou 2; padrão 1"],
+	["--timeout / --write-timeout", "0,01 s / 1 s por padrão"],
+	["--xonxoff / --rtscts / --dsrdtr", "controles de fluxo opcionais"],
+	["--chunk-size", "até 4096 bytes por leitura"],
+	["--log-dir / --log-prefix", "destino e prefixo dos logs"],
+	["--quiet / --ascii / --raw-log", "saída reduzida, visualização ASCII e JSONL"],
+	["--list-ports", "lista as portas sem exigir os demais argumentos"],
+];
+---
+
+<BaseLayout title="tr_serialProxy — Galeria -2048" description={project.description} image={project.image} keywords={project.keywords}>
+	<SiteHeader accent="var(--programacao)" />
+	<main><article>
+		<div class="container"><header class="hero">
+			<div class="eyebrow">[ {project.type} / {project.number} / {page.code} ]</div>
+			<h1>DO WIRESHARK<br /><span>AO PROXY SERIAL</span></h1>
+			<p class="lead">{page.subtitle}</p>
+			<div class="tags">{project.categories.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+			<div class="meta"><div><span>VERSÃO</span><strong>0.1.0 / DESENVOLVIMENTO</strong></div><div><span>PLATAFORMA</span><strong>WINDOWS / PYTHON 3.10+</strong></div><div><span>NÚCLEO</span><strong>PYTHON + PYSERIAL</strong></div></div>
+			<EditorialImage src={project.image} alt="Diagrama do protótipo físico e da arquitetura do tr_serialProxy com um par de portas COM virtuais" caption="Diagrama histórico da evolução: primeiro, a prova com conversores físicos; depois, a arquitetura com COM virtual. A parte inferior ainda mostra COM20/COM21 e chama a solução de desejada, mas ela já foi validada posteriormente com COM13/COM14. O success_count pertence ao material ilustrativo e não existe no proxy 0.1.0 atual." fit="contain" eager />
+		</header></div>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">01 / A ORIGEM</div><div class="prose"><h2>O problema começou no Wireshark.</h2><p>O experimento <a href="/artigos/sniffing-usb-wireshark/">Do movimento aos bytes — explorando USB HID com Wireshark</a> mostrou que informações normalmente invisíveis entre software e hardware podiam ser observadas. Endpoints, relatórios HID e payloads deixaram de ser abstrações e apareceram como bytes.</p><div class="sequence"><span>WIRESHARK</span><i>↓</i><span>TRÁFEGO INVISÍVEL SE TORNA OBSERVÁVEL</span><i>↓</i><span>COMUNICAÇÃO DE EQUIPAMENTOS REAIS</span><i>↓</i><span>tr_serialProxy</span></div><p>A descoberta permaneceu, mas a necessidade seguinte era bem mais estreita: <strong>quais bytes este software envia para esta porta COM e quais bytes o equipamento devolve?</strong></p></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">02 / REDEFINIR O PROBLEMA</div><div class="prose"><h2>Uma ferramenta excelente podia ser grande demais para a tarefa.</h2><p>O Wireshark não foi aprovado para uso normal no computador de trabalho. A preocupação fazia sentido: captura de rede e USB em baixo nível possui alcance amplo, pode envolver drivers próprios e determinadas operações podem exigir privilégios administrativos.</p><p>Uma máquina offline dedicada à análise continuava sendo uma alternativa válida. Mas a restrição ajudou a formular uma pergunta melhor: se o objetivo era observar somente portas COM, por que capturar USB bruto, rede ou protocolos sem relação com o equipamento?</p><div class="callout"><strong>[ ESCOPO COMO DECISÃO DE PROJETO ]</strong><p>A solução não tenta contornar políticas. Ela reduz a ferramenta ao recurso necessário: duas portas seriais explicitamente escolhidas pelo usuário.</p></div></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">03 / O QUE ELE É</div><div class="prose wide"><h2>Python entrou no caminho dos bytes.</h2><div class="architecture" aria-label="Arquitetura do proxy serial"><div><strong>SOFTWARE</strong><span>abre COM virtual A</span></div><i>↔</i><div><strong>COM VIRTUAL</strong><span>A ↔ B</span></div><i>↔</i><div class="active"><strong>tr_serialProxy</strong><span>registra e encaminha</span></div><i>↔</i><div><strong>COM FÍSICA</strong><span>adaptador real</span></div><i>↔</i><div><strong>DISPOSITIVO</strong><span>equipamento</span></div></div><p>O projeto é um <strong>proxy serial transparente</strong>. Ele não captura o barramento USB, a rede ou outras aplicações. Duas threads leem simultaneamente os dois sentidos; cada bloco recebido é registrado e então escrito integralmente no destino.</p><div class="directions"><div><span>TX</span><strong>software → dispositivo</strong></div><div><span>RX</span><strong>dispositivo → software</strong></div></div></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">04 / PRIMEIRA PROVA</div><div class="prose wide"><h2>Antes da porta virtual, havia fios sobre a bancada.</h2><p>Primeiro foi estabelecida uma referência sem o proxy: o software se conectava diretamente à <strong>COM7</strong>, correspondente ao adaptador USB específico da moto elétrica, e comunicava com o controlador VOTOL.</p><div class="flow baseline"><span>SOFTWARE / COM7</span><b>↔</b><span>ADAPTADOR USB DA MOTO</span><b>↔</b><span>CONTROLADOR VOTOL</span></div><p>Para colocar o Python no caminho foram acrescentados dois conversores USB–RS485. A <strong>COM6</strong> e a <strong>COM8</strong> pertenciam a esses conversores e estavam conectadas eletricamente pelo par A/B. Nenhuma delas era o adaptador da moto.</p><div class="flow"><span>SOFTWARE / COM6</span><b>↔</b><span>USB–RS485 / COM6</span><b>↔ A/B ↔</b><span>USB–RS485 / COM8</span><b>↔</b><span>tr_serialProxy</span><b>↔</b><span>COM7 / ADAPTADOR USB / VOTOL</span></div><p>Antes de iniciar o Python, selecionar COM6 no software ainda produzia <em>Communication abnormal, no response</em>: os dois conversores formavam a ligação COM6 ↔ COM8, mas o caminho entre COM8 e o adaptador da moto em COM7 ainda não existia. O proxy completava justamente esse trecho.</p><p>O proxy abriu <strong>COM7 como <code>--physical-port</code></strong> e <strong>COM8 como <code>--virtual-port</code></strong>. Apesar do nome do argumento, COM8 ainda era uma porta física nesse protótipo: “virtual” descrevia o lado voltado ao software. Depois que o Python entrava em execução, o software deixava de usar COM7 e passava a abrir COM6 com comunicação bem-sucedida. Tentar abrir COM8 diretamente no software também não representava a montagem e resultava em ausência de resposta.</p><div class="image-pair"><EditorialImage src="/images/tr-serial-proxy/software-com7-teste-direto.png" alt="Software conectado diretamente à COM7 no teste de referência com o adaptador da moto" caption="Referência sem proxy: o software abre COM7, o adaptador USB ligado ao controlador VOTOL." fit="contain" variant="detail" /><EditorialImage src="/images/tr-serial-proxy/software-com6-antes-do-proxy.png" alt="Software configurado para COM6 antes de o proxy ser iniciado e exibindo ausência de resposta" caption="Antes de abrir o proxy: COM6 já estava selecionada, mas o software ainda não alcançava o controlador pela ponte incompleta." fit="contain" variant="detail" /></div><div class="image-pair"><EditorialImage src="/images/tr-serial-proxy/software-com6-com-proxy.png" alt="Software conectado à COM6 depois da inserção do proxy serial" caption="Depois de iniciar o proxy, o software permanece na COM6 e a comunicação volta a funcionar." fit="contain" variant="detail" /><EditorialImage src="/images/tr-serial-proxy/terminal-com7-com8-sanitizado.png" alt="Terminal do tr_serialProxy destacando COM7 como porta física e COM8 como porta virtual" caption="O Python completa o caminho: abre COM7 no lado do controlador e COM8 no lado do software. O caminho local foi removido da captura." fit="contain" variant="detail" /></div><EditorialImage src="/images/tr-serial-proxy/software-com8-sem-resposta.png" alt="Software configurado incorretamente para COM8 e exibindo ausência de resposta" caption="COM8 não era a porta que o software deveria abrir nessa montagem; ela pertencia ao lado do proxy." fit="contain" variant="detail" /><pre><code>python -m tr_serial_proxy --physical-port COM7 --virtual-port COM8 \
+  --baud 9600 --raw-log</code></pre><p>O Python recebeu, registrou e retransmitiu os bytes; recebeu a resposta, registrou-a e a devolveu ao software. A aplicação e o controlador continuaram se comunicando. Era uma montagem maior do que a solução desejada, mas comprovava o princípio com os recursos disponíveis.</p></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">05 / O PAPEL DO com0com</div><div class="prose"><h2>Substituir dois conversores por um null modem virtual.</h2><p>O com0com cria duas portas COM conectadas entre si. Tudo que é escrito em uma ponta aparece na outra. Na validação, o par foi <code>COM13 ↔ COM14</code>: o software abriu COM13 e o proxy abriu COM14 junto da porta física do equipamento.</p><div class="flow final"><span>SOFTWARE / COM13</span><b>↔</b><span>com0com</span><b>↔</b><span>COM14 / PROXY</span><b>↔</b><span>COM FÍSICA / EQUIPAMENTO</span></div><p>Esses números documentam o teste, não são requisitos. Qualquer par configurado pode ser informado. A instalação do driver é uma operação separada e pode exigir privilégios administrativos; o tr_serialProxy não instala nem configura drivers.</p></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">06 / COMUNICAÇÃO REAL</div><div class="prose wide"><h2>A aplicação continuou funcionando.</h2><p>A captura abaixo mostra a aplicação de telemetria conectada à COM13 em 9600 baud e, ao lado, o terminal registrando TX e RX. Ela demonstra o resultado que importava: inserir o proxy no caminho sem impedir a comunicação real.</p><EditorialImage src="/images/tr-serial-proxy/telemetria-proxy-serial.png" alt="Software de telemetria operando pela COM13 enquanto o terminal registra blocos TX e RX do tr_serialProxy" caption="Validação com aplicação real: o software continua comunicando pela COM virtual enquanto o tr_serialProxy registra e retransmite os blocos TX e RX. A captura foi recortada para omitir uma identificação de hardware sem relevância para o projeto." fit="contain" /><p>Os payloads visíveis permanecem apenas como contexto da captura autorizada. Eles não são transcritos, interpretados nem apresentados como documentação do protocolo.</p></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">07 / SERIAL É FLUXO</div><div class="prose wide"><h2>Uma leitura não é necessariamente uma mensagem.</h2><p>Nos testes, uma sequência podia surgir em blocos de um byte, depois dois, depois vários. Respostas apareceram alternando leituras de 1 e 23 bytes. Isso não significa que cada <code>read()</code> seja um frame, que o equipamento tenha inserido uma quebra ou que os conversores tenham modificado o conteúdo.</p><div class="stream"><code>TX 1 byte</code><code>TX 2 bytes</code><code>RX 1 byte</code><code>RX 23 bytes</code></div><p>Porta serial é fluxo de bytes. A chamada retorna o que estava disponível naquele momento, dentro do limite configurado. Por isso, os contadores do programa medem <strong>blocos registrados</strong>, não mensagens de protocolo nem entregas confirmadas.</p><details class="capture"><summary>VER CAPTURA AUTORIZADA DE BYTES</summary><p>Registro do ensaio com COM7 e COM8. Os bytes são publicados como evidência do encaminhamento, sem interpretação ou descrição do protocolo.</p><pre><code>tr_serialProxy
+
+Physical: COM7
+Virtual:  COM8
+Settings: 9600 8N1
+Flow:     none
+
+[2026-09-30T10:26:38.108685-03:00] [+26.351542] TX  1 bytes
+C9
+[2026-09-30T10:26:38.109822-03:00] [+26.352654] TX  1 bytes
+14
+[2026-09-30T10:26:38.110886-03:00] [+26.353712] TX  1 bytes
+02
+[2026-09-30T10:26:38.111882-03:00] [+26.354707] TX  1 bytes
+4C
+[2026-09-30T10:26:38.112937-03:00] [+26.355763] TX  1 bytes
+44
+[2026-09-30T10:26:38.115728-03:00] [+26.358559] TX  2 bytes
+47 45
+[2026-09-30T10:26:38.116139-03:00] [+26.358976] TX  1 bytes
+54
+[2026-09-30T10:26:38.117854-03:00] [+26.360695] TX  1 bytes
+00
+[2026-09-30T10:26:38.118809-03:00] [+26.361643] TX  1 bytes
+00
+[2026-09-30T10:26:38.119853-03:00] [+26.362682] TX  1 bytes
+00
+[2026-09-30T10:26:38.120893-03:00] [+26.363716] TX  1 bytes
+00
+[2026-09-30T10:26:38.121939-03:00] [+26.364778] TX  1 bytes
+00
+[2026-09-30T10:26:38.123066-03:00] [+26.365975] TX  1 bytes
+00
+[2026-09-30T10:26:38.124065-03:00] [+26.366903] TX  1 bytes
+00
+[2026-09-30T10:26:38.125100-03:00] [+26.367947] TX  1 bytes
+00
+[2026-09-30T10:26:38.126122-03:00] [+26.368970] TX  1 bytes
+00
+[2026-09-30T10:26:38.127150-03:00] [+26.369983] TX  1 bytes
+00
+[2026-09-30T10:26:38.128209-03:00] [+26.371058] TX  1 bytes
+00
+[2026-09-30T10:26:38.129197-03:00] [+26.372028] TX  1 bytes
+00
+[2026-09-30T10:26:38.130332-03:00] [+26.373159] TX  1 bytes
+00
+[2026-09-30T10:26:38.131329-03:00] [+26.374154] TX  1 bytes
+00
+[2026-09-30T10:26:38.132332-03:00] [+26.375165] TX  1 bytes
+81
+[2026-09-30T10:26:38.133395-03:00] [+26.376246] TX  1 bytes
+0D
+
+[2026-09-30T10:26:38.164400-03:00] [+26.407245] RX  1 bytes
+C0
+[2026-09-30T10:26:38.164807-03:00] [+26.407630] RX  23 bytes
+14 05 52 07 39 C7 0D E7 50 78 00 00 00 00 28 02 58 05 C2 00 2C 21 0D
+
+[2026-09-30T10:26:38.236722-03:00] [+26.479569] RX  1 bytes
+C0
+[2026-09-30T10:26:38.237234-03:00] [+26.480067] RX  23 bytes
+14 05 52 06 C0 00 C0 8A C0 00 C0 00 C0 01 C8 10 C0 0F CA 92 2C AD 0D
+
+[2026-09-30T10:26:38.308980-03:00] [+26.551831] RX  1 bytes
+C0
+[2026-09-30T10:26:38.309534-03:00] [+26.552361] RX  23 bytes
+14 05 52 05 C0 00 C0 00 C0 05 C0 09 C0 00 C0 00 C0 07 C1 0E 05 87 0D
+
+[2026-09-30T10:26:38.381296-03:00] [+26.624143] RX  1 bytes
+C0
+[2026-09-30T10:26:38.381777-03:00] [+26.624607] RX  23 bytes
+14 05 52 04 0E 0C CC 01 40 03 B6 4B 64 0E 00 C8 19 64 00 23 03 09 0D
+
+[2026-09-30T10:26:38.453570-03:00] [+26.696412] RX  1 bytes
+C0
+[2026-09-30T10:26:38.453988-03:00] [+26.696822] RX  23 bytes
+14 05 52 03 FF C4 50 64 69 00 7D 00 14 24 D4 0A 00 1E 14 E8 71 E6 0D
+
+[2026-09-30T10:26:38.526253-03:00] [+26.769095] RX  1 bytes
+C0
+[2026-09-30T10:26:38.526663-03:00] [+26.769492] RX  23 bytes
+14 05 52 02 00 64 2D 4B 64 0B B8 23 28 17 70 A4 4B 0C 1E 1E 0F D4 0D
+
+[2026-09-30T10:26:38.598807-03:00] [+26.841654] RX  1 bytes
+C0
+[2026-09-30T10:26:38.599299-03:00] [+26.842133] RX  23 bytes
+14 05 52 01 14 02 03 84 02 76 0A 00 1E 23 28 02 58 05 C2 00 2C C9 0D</code></pre></details></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">08 / NEUTRO POR PROJETO</div><div class="prose"><h2>Primeiro enxergar. Interpretar depois.</h2><p>A versão inicial não tenta decidir se os dados são Modbus, um protocolo proprietário, JBD, VOTOL ou CAN encapsulado. Seu núcleo é deliberadamente menor:</p><div class="principle"><span>BYTE RECEBIDO</span><b>→</b><span>REGISTRAR</span><b>→</b><span>ENCAMINHAR O MESMO BYTE</span></div><p>A análise pode ser feita posteriormente sobre os logs. Essa neutralidade permite usar o proxy com USB-TTL, USB-RS485, CDC/serial e conversores CAN que apareçam no Windows como uma COM. Interfaces CAN que dependam de API própria e não exponham uma porta serial ficam fora do escopo.</p></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">09 / O QUE FICA REGISTRADO</div><div class="prose"><h2>Tempo, direção, tamanho e bytes.</h2><p>Cada execução cria um arquivo textual próprio. O registro inclui horário local com fuso e microssegundos, tempo decorrido medido por contador monotônico, direção, quantidade de bytes e conteúdo hexadecimal.</p><pre><code>[2026-09-30T14:35:22.123456-03:00] [+0.381224] TX  4 bytes
+00 41 7F FF</code></pre><p>Com <code>--raw-log</code>, o mesmo conteúdo também é gravado como JSONL reversível:</p><pre><code>{`{"time":"2026-09-30T14:35:22.123456-03:00","elapsed":0.381224,"direction":"TX","length":4,"data":"00417fff"}`}</code></pre><p>Os valores acima são fictícios e vêm da documentação pública. <code>--ascii</code> acrescenta somente uma visualização dos caracteres imprimíveis; os bytes permanecem representados em hexadecimal.</p></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">10 / CLI REAL</div><div class="prose wide"><h2>As portas e os parâmetros são explícitos.</h2><div class="cli-grid">{cliOptions.map(([option, description]) => <div><code>{option}</code><span>{description}</span></div>)}</div><pre><code>tr-serial-proxy --physical-port COM6 --virtual-port COM14 \
+  --baud 9600 --bytesize 8 --parity N --stopbits 1 --raw-log</code></pre><p>O comando deve ser ajustado às portas e à configuração efetivas. O nome <code>--virtual-port</code> descreve o papel da ponta no fluxo; no primeiro protótipo, esse argumento chegou a apontar para uma COM física.</p></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">11 / SEGURANÇA PELO ESCOPO</div><div class="prose"><h2>Menos capacidade genérica, não risco zero.</h2><p>Em vez de uma ferramenta capaz de observar diversos tipos de tráfego do computador, o proxy acessa apenas as duas portas seriais informadas. Isso torna seu comportamento mais limitado, previsível e auditável.</p><div class="warning"><strong>[ LOGS TAMBÉM SÃO DADOS ]</strong><p>Uma captura serial pode conter comandos, números de série, parâmetros, respostas proprietárias, tokens ou credenciais. Capturar menos não autoriza publicar automaticamente o que foi capturado.</p></div><p>Os logs ficam locais e são ignorados pelo Git do projeto. Ainda assim, qualquer arquivo ou captura precisa ser revisado antes de sair do ambiente em que foi produzido.</p></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">12 / LIMITES</div><div class="prose"><h2>Transparente nos bytes, não no tempo elétrico.</h2><ul><li>Drivers, buffers, terminal e disco acrescentam latência; não há garantia de tempo real.</li><li>RTS, DTR, CTS, DSR, BREAK e outros sinais de controle não são espelhados.</li><li>Mudanças de configuração feitas pelo software na COM virtual não são propagadas automaticamente.</li><li>Não há reconexão automática, reconstrução de frames, reconhecimento de baud ou reenvio após entrega incerta.</li><li>Não é indicado começar por firmware ou bootloader crítico sem validação específica.</li></ul></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">13 / CONEXÕES</div><div class="prose"><h2>A ferramenta ficou entre duas investigações.</h2><p>O artigo do <a href="/artigos/sniffing-usb-wireshark/">Wireshark e USB HID</a> forneceu a origem conceitual: tornar tráfego invisível observável. Já o mapeamento <a href="/artigos/greenway-bms-rs485/">Entre o Greenway e o BMS</a> mostra por que uma captura serial bidirecional pode ser útil antes de qualquer interpretação de protocolo.</p><p>O código e toda a documentação técnica estão no <a href="https://github.com/akioShaolin/tr_serialProxy" target="_blank" rel="noreferrer">repositório público do tr_serialProxy ↗</a>.</p></div></div></section>
+
+		<section class="content"><div class="container section-grid"><div class="section-label">14 / PRÓXIMOS PASSOS</div><div class="prose"><h2>O núcleo continua pequeno.</h2><p>A versão 0.1 entrega bridge bidirecional e logs. O roadmap público reserva filtros de visualização para a 0.2, estatísticas e análise de timing para a 0.3 e, no futuro, replay opcional e decodificadores como plugins.</p><p>Nenhum desses itens é apresentado como concluído. Mesmo quando crescer, a base continua sendo a mesma: capturar, registrar e retransmitir sem modificar os bytes.</p></div></div></section>
+
+		<LineageGraph currentId={project.id} />
+		<section class="closing"><div class="signal">[ CHECKPOINT / tr_serialProxy 0.1.0 ]</div><h2>A melhor ferramenta nem sempre é a mais poderosa.</h2><p>Entender exatamente o que precisava ser observado permitiu trocar uma capacidade ampla por uma solução menor, específica e verificável — e transformar uma restrição real em uma definição melhor do problema.</p></section>
+	</article></main>
+	<ImageLightbox />
+	<SiteFooter rightText={`${project.type} / ${project.number}`} />
+</BaseLayout>
+
+<style>
+	:global(body){background:radial-gradient(circle at 78% 7%,rgba(0,217,255,.055),transparent 520px),linear-gradient(rgba(255,255,255,.014) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px),var(--bg);background-size:auto,42px 42px,42px 42px,auto}.hero{padding:95px 0 70px}.eyebrow,.section-label,.signal{color:var(--programacao);font:.875rem/1.5 monospace;letter-spacing:.08em}.hero h1{margin:24px 0 30px;font:700 clamp(3.2rem,8vw,7.6rem)/.87 Arial,sans-serif;letter-spacing:-.07em}.hero h1 span{color:var(--programacao)}.lead{max-width:900px;color:var(--muted);font:clamp(1.25rem,2.2vw,1.65rem)/1.6 Georgia,serif}.tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}.meta{display:grid;grid-template-columns:repeat(3,1fr);margin-top:50px;border:1px solid var(--line)}.meta div{padding:20px;border-right:1px solid var(--line)}.meta div:last-child{border:0}.meta span,.meta strong{display:block;font:.875rem/1.5 monospace}.meta span{margin-bottom:8px;color:var(--muted)}.content{padding:95px 0;border-top:1px solid var(--line)}.section-grid{display:grid;grid-template-columns:235px minmax(0,1fr);gap:70px}.prose{max-width:790px}.prose.wide{max-width:none}.prose p,.prose li{color:var(--muted);font:1.125rem/1.8 Georgia,serif}.prose strong{color:var(--text)}.prose code,.prose a{color:var(--programacao)}h2{margin:0 0 32px;font:700 clamp(2.2rem,4.7vw,4.5rem)/.98 Arial,sans-serif;letter-spacing:-.05em}.callout,.warning{margin:34px 0;padding:26px;border:1px solid var(--line);border-left:2px solid var(--programacao);background:rgba(0,217,255,.025)}.callout strong,.warning strong{display:block;margin-bottom:12px;font:.875rem/1.5 monospace}.callout p:last-child,.warning p:last-child{margin-bottom:0}.warning{border-left-color:var(--automacao);background:rgba(255,138,0,.03)}.sequence{display:grid;gap:8px;margin:34px 0;padding:24px;border:1px solid var(--line);background:var(--surface);text-align:center;font:.875rem/1.5 monospace}.sequence i{color:var(--programacao);font-style:normal}.architecture{display:flex;align-items:stretch;gap:9px;margin:38px 0}.architecture div{flex:1;padding:20px 12px;border:1px solid var(--line);background:var(--surface);text-align:center}.architecture .active{border-color:var(--programacao);box-shadow:inset 0 3px var(--programacao)}.architecture strong,.architecture span{display:block}.architecture strong{font:.875rem/1.4 monospace}.architecture span{margin-top:8px;color:var(--muted);font:.75rem/1.45 monospace}.architecture i{align-self:center;color:var(--programacao);font-style:normal}.directions{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:30px 0;border:1px solid var(--line);background:var(--line)}.directions div{padding:22px;background:var(--surface)}.directions span,.directions strong{display:block;font:.875rem/1.5 monospace}.directions span{color:var(--programacao)}.flow,.principle{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:34px 0;padding:22px;border:1px solid var(--line);background:var(--surface);font:.82rem/1.5 monospace}.flow b,.principle b{color:var(--programacao)}.flow.final{border-color:rgba(0,217,255,.45)}.flow.baseline{border-color:rgba(169,92,255,.45)}.image-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.stream{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin:30px 0;border:1px solid var(--line);background:var(--line)}.stream code{padding:18px;background:var(--surface);text-align:center}pre{margin:30px 0;padding:22px;overflow:auto;border:1px solid var(--line);background:var(--surface);color:var(--text);font:.9375rem/1.75 monospace}.capture{margin:34px 0;border:1px solid var(--line);background:var(--surface)}.capture summary{padding:18px;color:var(--programacao);font:.875rem/1.5 monospace;cursor:pointer}.capture>p{padding:0 20px}.capture pre{max-height:560px;margin:0;border:0;border-top:1px solid var(--line)}.cli-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:34px 0;border:1px solid var(--line);background:var(--line)}.cli-grid div{display:grid;gap:7px;padding:18px;background:var(--surface)}.cli-grid code{font:.875rem/1.5 monospace}.cli-grid span{color:var(--muted);font:.875rem/1.5 monospace}.closing{padding:120px 24px;text-align:center}.closing h2{margin:18px auto 0}.closing p{max-width:780px;margin:28px auto 0;color:var(--muted);font:1.125rem/1.8 Georgia,serif}@media(max-width:950px){.architecture{display:grid;grid-template-columns:1fr}.architecture i{transform:rotate(90deg)}}@media(max-width:800px){.hero{padding:70px 0 50px}.content{padding:70px 0}.section-grid{grid-template-columns:1fr;gap:28px}.meta,.directions,.cli-grid,.stream,.image-pair{grid-template-columns:1fr}.meta div{border-right:0;border-bottom:1px solid var(--line)}.flow,.principle{align-items:flex-start;flex-direction:column}}
+</style>

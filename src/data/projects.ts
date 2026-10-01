@@ -41,6 +41,77 @@ export type Project = {
 
 export const projects: Project[] = [
 	{
+		id: "tr-serial-proxy",
+		type: "PROJETO",
+		number: "013",
+		title: "tr_serialProxy",
+		description: "Um proxy serial transparente que registra e retransmite os bytes entre um software e um equipamento, observando somente as portas COM necessárias.",
+		image: "/images/tr-serial-proxy/serial-proxy-concept.png",
+		path: "/projetos/tr-serial-proxy/",
+		categories: [
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "DIAGNÓSTICO", tone: "diagnostico" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["tr_serialProxy", "proxy serial", "bridge serial", "logger bidirecional", "Python", "pySerial", "com0com", "porta COM", "RS485", "USB-TTL", "JSONL", "engenharia reversa", "diagnóstico"],
+		page: {
+			code: "tr_serialProxy",
+			subtitle: "Do Wireshark a uma ferramenta menor: um proxy serial transparente para registrar e retransmitir somente o tráfego das portas COM escolhidas.",
+			status: [
+				{ label: "STATUS", value: "● EM DESENVOLVIMENTO", tone: "programacao" },
+				{ label: "VERSÃO", value: "0.1.0" },
+				{ label: "PLATAFORMA", value: "WINDOWS / PYTHON 3.10+" },
+				{ label: "NÚCLEO", value: "PYTHON / PYSERIAL" },
+			],
+			timeline: [],
+			specifications: [
+				{ name: "Função", value: "Proxy serial bidirecional" },
+				{ name: "Logs", value: "Texto / JSONL reversível" },
+				{ name: "Portas", value: "COM virtual + COM física" },
+				{ name: "Par virtual validado", value: "COM13 ↔ COM14" },
+			],
+		},
+	},
+	{
+		id: "vital-registro",
+		type: "PROJETO",
+		number: "012",
+		title: "VITALREGISTRO",
+		description: "Um aplicativo Android local e open source para registrar pressão, pulso e peso — de uma necessidade pessoal a um APK documentado e verificável.",
+		image: "/images/vital-registro/apresentacao.png",
+		path: "/projetos/vital-registro/",
+		categories: [
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["VitalRegistro", "Android", "Python", "Kivy", "SQLite", "pressão arterial", "pulso", "peso", "CSV", "Buildozer", "python-for-android", "Google Colab", "Storage Access Framework", "build reproduzível", "open source"],
+		page: {
+			code: "VITALREGISTRO",
+			subtitle: "Um aplicativo Android open source para registrar pressão arterial, pulso e peso localmente — criado a partir de uma necessidade pessoal e levado até um APK verificável.",
+			status: [
+				{ label: "STATUS", value: "● PRIMEIRO MARCO FUNCIONAL", tone: "programacao" },
+				{ label: "VERSÃO", value: "v0.1.0 / DEBUG" },
+				{ label: "PLATAFORMA", value: "ANDROID / ARM64-V8A" },
+				{ label: "LICENÇA", value: "MIT" },
+			],
+			timeline: [
+				{ year: "ORIGEM", title: "Onde guardar as medições?", text: "A compra de um aparelho de pressão criou uma necessidade simples: registrar medições com data, horário e observações." },
+				{ year: "DESENVOLVIMENTO", title: "Python, Kivy e SQLite", text: "A planilha possível deu lugar a um aplicativo local, editável e sem dependência de servidor." },
+				{ year: "BUILD", title: "Do Python ao APK", text: "A mudança do Colab para Python 3.13 exigiu revisar a cadeia com Buildozer, python-for-android, SDK e NDK atuais." },
+				{ year: "30/09/2026", title: "Primeiro teste em hardware", text: "Instalação, inicialização, criação, persistência, histórico e gráfico com uma medição foram confirmados no Samsung Galaxy M55 com Android 16." },
+				{ year: "v0.1.0", title: "Primeira release pública", text: "O APK debug ARM64 e sua evidência de build formam o primeiro marco funcional publicado." },
+			],
+			specifications: [
+				{ name: "Aplicação", value: "Python / Kivy 2.3.1" },
+				{ name: "Persistência", value: "SQLite local" },
+				{ name: "Gráficos", value: "Pressão · pulso · peso" },
+				{ name: "Períodos", value: "7 dias · 30 dias · todos" },
+				{ name: "Exportação Android", value: "CSV / Storage Access Framework" },
+				{ name: "Artefato", value: "DEBUG · ARM64-V8A" },
+			],
+		},
+	},
+	{
 		id: "6ear",
 		type: "PROJETO",
 		number: "011",
