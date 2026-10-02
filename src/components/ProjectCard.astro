@@ -8,16 +8,21 @@ interface Props {
 
 const { project } = Astro.props;
 const containedCover = project.id === "6ear" || project.id === "optimus-sun" || project.id === "tr-serial-proxy";
-const coverStyle = containedCover ? "width:100%;height:100%;object-fit:contain;" : undefined;
+const circuitCover = project.id === "carregador-supervisionado";
+const coverStyle = containedCover
+	? "width:100%;height:100%;object-fit:contain;"
+	: circuitCover
+		? "width:70%;height:100%;object-fit:cover;object-position:center;display: block; margin: 0 auto;"
+		: undefined;
 ---
 
 <article class:list={["card", { future: !project.path }]}>
 	{project.path ? (
-		<a class:list={["card-image", { "card-image--contained": containedCover }]} href={project.path} aria-label={`Abrir ${project.title}`}>
+		<a class:list={["card-image", { "card-image--contained": containedCover, "card-image--circuit": circuitCover }]} href={project.path} aria-label={`Abrir ${project.title}`}>
 			<img src={project.image} alt={project.title} style={coverStyle} />
 		</a>
 	) : (
-		<div class:list={["card-image", { "card-image--contained": containedCover }]}><img src={project.image} alt={project.title} style={coverStyle} /></div>
+		<div class:list={["card-image", { "card-image--contained": containedCover, "card-image--circuit": circuitCover }]}><img src={project.image} alt={project.title} style={coverStyle} /></div>
 	)}
 
 	<div class="card-content">
@@ -66,6 +71,11 @@ const coverStyle = containedCover ? "width:100%;height:100%;object-fit:contain;"
 
 	.card-image--contained {
 		padding: 18px;
+		background: var(--surface);
+	}
+
+	.card-image--circuit {
+		overflow: hidden;
 		background: var(--surface);
 	}
 

@@ -1,0 +1,192 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import LineageGraph from "../../components/LineageGraph.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("carregador-supervisionado");
+if (!project?.page) throw new Error("Projeto carregador-supervisionado não encontrado.");
+---
+
+<BaseLayout title="Carregador V1 — Galeria -2048" description={project.page.subtitle}>
+	<SiteHeader />
+
+	<main class="project-page">
+		<header class="project-hero">
+			<div class="hero-copy">
+				<p class="eyebrow">PROJETO / {project.number} / ELETRÔNICA ANALÓGICA</p>
+				<h1>CARREGADOR<br />V1</h1>
+				<p class="hero-kicker">UMA FERRAMENTA QUE NÃO SABIA QUANDO PARAR.</p>
+				<p class="hero-subtitle">{project.page.subtitle}</p>
+				<div class="tag-list">{project.categories.map((category) => <Tag label={category.label} tone={category.tone} />)}</div>
+			</div>
+			<div class="hero-media">
+				<img src={project.image} alt="Placa perfurada do Carregador V1 com potenciômetro, dissipador, capacitores e resistor shunt" fetchpriority="high" />
+				<span>ISTO FOI CONSTRUÍDO E USADO.</span>
+			</div>
+		</header>
+
+		<StatusGrid items={project.page.status} />
+
+		<section class="section origin">
+			<p class="section-code">[ 01 / UM PROJETO NASCEU DENTRO DE OUTRO ]</p>
+			<h2>Antes de ser ferramenta, ele foi uma saída de emergência.</h2>
+			<div class="prose">
+				<p>Este projeto nasceu no meio de outro. Durante a investigação da <a href="/projetos/monza-ignicao-emergencial/">falha de ignição do Monza</a>, as muitas tentativas de partida enfraqueceram a bateria. Para continuar procurando a causa da falta de centelha, eu precisava primeiro recuperar a energia que os testes estavam consumindo.</p>
+				<p>Não havia a intenção de criar um carregador sofisticado. Usei o que estava disponível: um transformador, um diodo e uma lâmpada automotiva H4 como limitador de corrente. O transformador tinha enrolamentos de 7 + 7 Vac e 22 + 22 Vac. A primeira carga ficou na ordem de 0,5 A, partindo de uma bateria próxima de 12,2 V.</p>
+			</div>
+			<div class="media-pair">
+				<EditorialImage src="/images/carregador-supervisionado/origem-monza.jpeg" alt="Monza com o capô aberto e o primeiro carregador improvisado ao lado" caption="A origem: transformador, diodo e lâmpada H4 montados com o objetivo imediato de recuperar a bateria e continuar o diagnóstico do Monza." variant="portrait" fit="contain" />
+				<EditorialImage src="/images/carregador-supervisionado/medicao-primeira-carga.jpeg" alt="Multímetro medindo a corrente da primeira carga improvisada" caption="Medição histórica daquela primeira fase, com corrente aproximadamente na ordem de 0,5 A." variant="portrait" fit="contain" />
+			</div>
+		</section>
+
+		<section class="section split">
+			<div>
+				<p class="section-code">[ 02 / O MESMO TRANSFORMADOR VOLTA ]</p>
+				<h2>Uma improvisação ganhou uma segunda carreira.</h2>
+			</div>
+			<div class="prose">
+				<p>Algum tempo depois, um tuktuk com cinco baterias chumbo-ácido de 12 V trouxe outra necessidade. Em vez de comprar imediatamente um carregador comercial caro, decidi evoluir a ideia.</p>
+				<p>O transformador era exatamente o mesmo usado no Monza. O componente que havia começado apoiado ao lado do carro passaria a alimentar uma ferramenta reutilizável, agora com controle eletrônico de corrente.</p>
+			</div>
+		</section>
+
+		<section class="section">
+			<p class="section-code">[ 03 / DE LÂMPADA A CONTROLE ANALÓGICO ]</p>
+			<h2>A V1 controlava corrente. Só corrente.</h2>
+			<div class="prose">
+				<p>A nova placa usava LM324, MOSFET, resistor shunt, potenciômetro, capacitores e componentes discretos. O shunt transformava a corrente em uma pequena diferença de tensão; o amplificador diferencial media essa diferença e o circuito ajustava o MOSFET para manter a corrente escolhida.</p>
+				<p>O esquemático virou uma montagem real em placa perfurada. Também desenvolvi um layout de PCB, mas ele documenta uma possibilidade de fabricação apenas. A montagem foi feita em placa perfurada</p>
+			</div>
+			<div class="media-pair technical-media">
+				<EditorialImage src="/images/carregador-supervisionado/v1-esquematico.png" alt="Esquemático elétrico do Carregador V1" caption="Esquemático da V1: retificação, MOSFET, shunt, amplificador diferencial e ajuste de corrente." fit="contain" />
+				<EditorialImage src="/images/carregador-supervisionado/v1-layout-pcb.png" alt="Layout de PCB desenvolvido para o Carregador V1" caption="Layout de PCB desenvolvido para o circuito. A implementação física foi feita em placa perfurada." fit="contain" />
+			</div>
+		</section>
+
+		<section class="section split shunt-story">
+			<div>
+				<p class="section-code">[ 04 / TRINTA REAIS EM UM RESISTOR? ]</p>
+				<h2>O projeto esperou por quase nenhuma resistência.</h2>
+			</div>
+			<div class="prose">
+				<p>Parte do desenvolvimento ficou parada esperando um resistor shunt de aproximadamente 0,1 Ω. Ele custou perto de R$ 30 — mais do que eu achava razoável pagar por um componente cuja característica principal era, justamente, quase não ter resistência.</p>
+				<p>A indignação passou. O componente ficou. E foi ele que tornou possível medir a corrente de forma previsível para fechar a malha de controle.</p>
+			</div>
+			<EditorialImage src="/images/carregador-supervisionado/destaque-shunt.jpg" alt="Vista lateral da placa perfurada destacando o resistor shunt verde" caption="O resistor shunt verde na lateral da placa: pequeno valor elétrico, preço memorável e função central na medição de corrente." variant="portrait" fit="contain" />
+		</section>
+
+		<section class="section workbench">
+			<p class="section-code">[ 05 / FAZER FUNCIONAR FOI OUTRA HISTÓRIA ]</p>
+			<h2>O esquemático não saiu da tela pronto para a bancada.</h2>
+			<div class="prose">
+				<p>Houve ajustes no amplificador diferencial, correções de realimentação, mudanças de componentes e testes sucessivos. Pelo menos um MOSFET precisou ser substituído depois de falhar durante o desenvolvimento.</p>
+				<p>Por volta de 6 de julho de 2026, a V1 estava efetivamente funcionando. A maior corrente testada ficou aproximadamente em 0,93 A; em uma utilização inicial, o ajuste ficou perto de 0,70 A. São registros do protótipo, não especificações de um produto.</p>
+			</div>
+			<div class="state-card state-v1"><span>V1</span><strong>FUNCIONAL / USO SUPERVISIONADO</strong><small>HARDWARE EM PLACA PERFURADA</small></div>
+		</section>
+
+		<section class="section">
+			<p class="section-code">[ 06 / CINCO BATERIAS, CINCO RESISTORES ]</p>
+			<h2>Antes do barramento comum, cada bateria ganhou seu próprio freio.</h2>
+			<div class="prose">
+				<p>Cada uma das cinco baterias recebeu um resistor de 1,2 Ω em seu ramo. Essas resistências de lastro ajudavam a reduzir diferenças e distribuir melhor a corrente antes de os ramos se encontrarem no barramento compartilhado.</p>
+				<p>Não era balanceamento de estado de carga. Era uma maneira simples de tornar o compartilhamento de corrente menos desigual entre baterias que nunca são perfeitamente idênticas.</p>
+			</div>
+			<EditorialImage src="/images/carregador-supervisionado/baterias-tuktuk.jpg" alt="Cinco baterias do tuktuk ligadas a resistores individuais e a um barramento compartilhado" caption="As cinco baterias de 12 V. Cada ramo recebeu um resistor de 1,2 Ω antes da união no barramento comum." fit="contain" />
+			<div class="measurements">
+				<div><strong>180–223 mV</strong><span>queda medida nos resistores</span></div>
+				<div><strong>150–186 mA</strong><span>estimativa por bateria</span></div>
+				<div><strong>0,75–0,93 A</strong><span>corrente total aproximada</span></div>
+			</div>
+		</section>
+
+		<section class="section split">
+			<div>
+				<p class="section-code">[ 07 / DEVAGAR, MAS CARREGANDO ]</p>
+				<h2>Lento e consistente — enquanto alguém observava.</h2>
+			</div>
+			<div class="prose">
+				<p>A corrente relativamente baixa fazia a carga levar muitas horas. Em um acompanhamento, as baterias passaram de aproximadamente 12,94–12,95 V para 13,08–13,11 V. Depois de períodos de repouso, valores próximos de 13,0 V ainda foram observados.</p>
+				<p>A ponte retificadora ficava relativamente quente e o transformador aquecia moderadamente. MOSFET, shunt e os demais elementos permaneceram em condições mais tranquilas nos testes registrados.</p>
+			</div>
+		</section>
+
+		<section class="section limit-panel">
+			<p class="section-code">[ 08 / O QUE ELE NÃO FAZ ]</p>
+			<h2>Controlar corrente não significa controlar a carga inteira.</h2>
+			<div class="limit-grid">
+				<div class="yes"><span>A V1 FAZ</span><strong>CONTROLE ANALÓGICO DE CORRENTE</strong></div>
+				<div class="no"><span>A V1 NÃO FAZ</span><ul><li>controle automático da tensão final;</li><li>término automático;</li><li>perfil CC/CV completo;</li><li>supervisão independente de sobretensão;</li><li>proteção por química ou BMS;</li><li>temporização de segurança.</li></ul></div>
+			</div>
+			<p class="limit-statement">FUNCIONA COMO INSTRUMENTO DE BANCADA SUPERVISIONADO.<br />NÃO É UM CARREGADOR AUTÔNOMO UNIVERSAL.</p>
+		</section>
+
+		<section class="section">
+			<p class="section-code">[ 09 / VIROU FERRAMENTA ]</p>
+			<h2>O protótipo passou a resolver problemas reais.</h2>
+			<div class="prose">
+				<p>Depois do tuktuk, o carregador foi usado em mais duas baterias de moto. A montagem teve uma vida útil maior do que a necessidade que a originou e, quatro meses depois da V1 funcional, ainda havia adiado a compra de um carregador comercial dedicado.</p>
+				<p>Isso não o tornou equivalente a um carregador inteligente. Tornou-o útil dentro de um limite que dependia de supervisão.</p>
+			</div>
+		</section>
+
+		<section class="section lithium">
+			<p class="section-code">[ 10 / O DIA EM QUE EU CONFIEI DEMAIS ]</p>
+			<h2>O controle continuou funcionando. Esse era justamente o problema.</h2>
+			<div class="prose">
+				<p>Depois de vários usos bem-sucedidos, a V1 já parecia uma ferramenta confiável para mim. Em algum momento, conectei a ela um pack de células de lítio sem BMS. O carregador também não possuía controle automático de tensão adequado para essa situação.</p>
+				<p>Esqueci o conjunto ligado durante a noite inteira. O pack foi destruído. O circuito continuou mantendo corrente porque era exatamente isso que havia sido projetado para fazer; não existia nada dizendo que aquela carga precisava terminar.</p>
+				<p>O episódio não demonstra um problema do lítio. Demonstra a necessidade de proteção apropriada, supervisão e carregamento compatível com a química e a configuração de cada pack.</p>
+			</div>
+			<EditorialImage src="/images/carregador-supervisionado/pack-litio-danificado.jpg" alt="Pack de células de lítio fisicamente danificado após permanecer conectado ao carregador" caption="O pack destruído tornou física a limitação da V1: corrente controlada sem término, BMS ou supervisão adequada de tensão." variant="portrait" fit="contain" />
+		</section>
+
+		<section class="section concepts">
+			<p class="section-code">[ 11 / AS VIAGENS NA MAIONESE ]</p>
+			<h2>Depois que a V1 funcionou, os desenhos ficaram mais ambiciosos.</h2>
+			<div class="concept-panel concept-v2">
+				<div class="concept-heading"><span>CARREGADOR 2.0</span><strong>CONCEITO NÃO TESTADO</strong></div>
+				<p>Uma arquitetura mais modular passou a explorar controle CC/CV, supervisão de tensão, derating por temperatura e blocos analógicos reutilizáveis. O desenho registra a ideia; não comprova uma montagem funcional.</p>
+				<EditorialImage src="/images/carregador-supervisionado/v2-conceito.png" alt="Esquemático conceitual não testado do Carregador 2.0" caption="Carregador 2.0 — arquitetura conceitual não validada em bancada." fit="contain" />
+			</div>
+			<div class="concept-panel concept-v3">
+				<div class="concept-heading"><span>CARREGADOR 3.0</span><strong>ESTUDO INCOMPLETO</strong></div>
+				<p>A exploração seguinte foi ainda mais longe, mas o esquemático nem chegou a ser concluído. Fios soltos, blocos incompletos e decisões em aberto permanecem visíveis porque este registro também preserva caminhos abandonados antes da bancada.</p>
+				<EditorialImage src="/images/carregador-supervisionado/v3-estudo-incompleto.png" alt="Esquemático incompleto do estudo Carregador 3.0" caption="Carregador 3.0 — estudo incompleto, preservado sem fingir que se tornou uma versão funcional." fit="contain" />
+			</div>
+		</section>
+
+		<section class="section modular">
+			<p class="section-code">[ 12 / DE UM CARREGADOR PARA BLOCOS ]</p>
+			<h2>Fonte, medição, controle e proteção começaram a se separar.</h2>
+			<p class="prose">Os desenhos posteriores mudaram a pergunta. Em vez de construir uma caixa diferente para cada necessidade, passei a imaginar blocos reaproveitáveis.</p>
+			<ul class="block-list"><li>fonte e retificação</li><li>medição por shunt</li><li>corrente constante</li><li>tensão constante</li><li>derating térmico</li><li>polaridade e sobretensão</li><li>supervisão e temporização</li><li>perfil de carga</li></ul>
+		</section>
+
+		<section class="section split buy-build">
+			<div><p class="section-code">[ 13 / CONSTRUIR OU COMPRAR? ]</p><h2>Comprar provavelmente seria mais econômico. Construir ensinou outra coisa.</h2></div>
+			<div class="prose"><p>Um carregador comercial inteligente já reúne proteção, término automático, perfis específicos, gabinete e validação. Quando entram na conta horas, componentes queimados, protótipos, retrabalho e instrumentos, comprar pode ser a decisão economicamente melhor.</p><p>O valor desta ferramenta foi diferente: o conhecimento e os blocos permaneceram. A medição de corrente e o controle analógico podem reaparecer em uma fonte de bancada, em acionamentos ou em outros ensaios.</p></div>
+		</section>
+
+		<section class="section closing">
+			<p class="section-code">[ 14 / QUATRO MESES DEPOIS ]</p>
+			<h2>Ela resolveu o problema que existia. O uso mostrou exatamente onde ela terminava.</h2>
+			<div class="prose"><p>A V1 carregou o conjunto do tuktuk, foi usada em duas baterias de moto e adiou a compra de outro equipamento. Também destruiu um pack de lítio quando foi usada além dos limites de sua arquitetura.</p><p>A definição mais honesta não é “carregador universal”. É <strong>instrumento de bancada supervisionado</strong>: uma ferramenta real, útil e incompleta, cuja maior contribuição foi revelar por que carregadores completos precisam saber não apenas quanto fornecer, mas também quando parar.</p></div>
+		</section>
+	</main>
+
+	<LineageGraph currentId="carregador-supervisionado" />
+	<ImageLightbox />
+	<SiteFooter rightText="PROJETO / CARREGADOR V1" />
+</BaseLayout>
+
+<style>
+	.project-page{width:min(1180px,calc(100% - 48px));margin:0 auto;padding:54px 0 110px}.project-hero{display:grid;grid-template-columns:.95fr 1.05fr;min-height:650px;border:1px solid var(--line);background:var(--surface)}.hero-copy{display:flex;flex-direction:column;justify-content:center;padding:clamp(34px,5vw,70px)}.eyebrow,.section-code{margin:0 0 20px;color:var(--programacao);font:.875rem/1.5 monospace;letter-spacing:.06em}.project-hero h1,.section h2{font-family:Arial,Helvetica,sans-serif;letter-spacing:-.055em}.project-hero h1{margin:0;font-size:clamp(4rem,8vw,7.5rem);line-height:.84}.hero-kicker{margin:28px 0 0;color:var(--eletronica);font:700 .95rem/1.5 monospace}.hero-subtitle{max-width:600px;margin:18px 0 0;color:var(--muted);font:1.125rem/1.75 Georgia,serif}.tag-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}.hero-media{position:relative;min-height:100%;border-left:1px solid var(--line);background:#020303}.hero-media img{width:100%;height:100%;object-fit:contain}.hero-media span{position:absolute;right:16px;bottom:16px;padding:9px 11px;background:rgba(5,7,8,.9);color:var(--eletronica);font:700 .875rem/1.4 monospace}:global(.status-grid){margin-top:20px}.section{padding:clamp(78px,10vw,125px) 0 0}.section h2{max-width:960px;margin:0 0 38px;font-size:clamp(2.5rem,6vw,5.5rem);line-height:.95}.prose{max-width:750px}.prose p,.prose{color:var(--muted);font:1.125rem/1.82 Georgia,serif}.prose p{margin:0 0 22px}.prose a{color:var(--programacao)}.prose strong{color:var(--text)}.split{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(44px,8vw,100px)}.split h2{font-size:clamp(2.5rem,5vw,4.6rem)}.media-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.technical-media{align-items:start}.shunt-story>figure{grid-column:2}.workbench{display:grid;grid-template-columns:1fr 330px;gap:50px}.workbench>:not(.state-card){grid-column:1}.state-card{grid-column:2;grid-row:2/4;display:flex;flex-direction:column;align-self:start;gap:13px;padding:28px;border:1px solid var(--eletronica);background:rgba(207,255,0,.035);font-family:monospace}.state-card span{color:var(--eletronica);font-size:2.8rem}.state-card strong{font-size:1.15rem}.state-card small{color:var(--muted)}.measurements{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line)}.measurements div{padding:25px;border-right:1px solid var(--line)}.measurements div:last-child{border:0}.measurements strong,.measurements span{display:block}.measurements strong{color:var(--eletronica);font:700 clamp(1.5rem,3vw,2.5rem)/1 monospace}.measurements span{margin-top:10px;color:var(--muted);font:.875rem/1.5 monospace}.limit-panel{margin-top:110px;padding:clamp(38px,7vw,72px);border:1px solid var(--automacao);background:rgba(255,138,0,.025)}.limit-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.limit-grid>div{padding:28px;border:1px solid var(--line);background:var(--surface)}.limit-grid span{display:block;margin-bottom:18px;color:var(--muted);font:.875rem/1.5 monospace}.limit-grid strong{color:var(--eletronica);font:700 1.3rem/1.4 monospace}.limit-grid ul{margin:0;padding-left:20px;color:var(--muted);font:1rem/1.8 Georgia,serif}.limit-statement{margin:36px 0 0;color:var(--automacao);font:700 clamp(1.25rem,3vw,2rem)/1.45 monospace}.lithium{padding-bottom:40px}.concepts{display:grid;gap:28px}.concept-panel{padding:clamp(24px,4vw,44px);border:1px solid var(--line);background:var(--surface)}.concept-v2{border-color:var(--experimentacao)}.concept-v3{border-style:dashed;opacity:.86}.concept-heading{display:flex;justify-content:space-between;gap:20px;font-family:monospace}.concept-heading span{font-size:1.2rem}.concept-v2 .concept-heading strong{color:var(--experimentacao)}.concept-v3 .concept-heading strong{color:var(--automacao)}.concept-panel>p{max-width:750px;color:var(--muted);font:1.0625rem/1.75 Georgia,serif}.block-list{display:grid;grid-template-columns:repeat(4,1fr);margin:36px 0 0;padding:0;border:1px solid var(--line);list-style:none}.block-list li{padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);color:var(--text);font:.9rem/1.5 monospace}.closing{padding-bottom:110px}.closing h2{color:var(--text)}@media(max-width:800px){.project-hero,.split,.workbench{grid-template-columns:1fr}.project-hero{min-height:0}.hero-media{min-height:440px;border-top:1px solid var(--line);border-left:0}.shunt-story>figure,.workbench>:not(.state-card),.state-card{grid-column:auto;grid-row:auto}.media-pair,.limit-grid,.measurements{grid-template-columns:1fr}.measurements div{border-right:0;border-bottom:1px solid var(--line)}.block-list{grid-template-columns:repeat(2,1fr)}.concept-heading{flex-direction:column}.section{padding-top:78px}.limit-panel{margin-top:78px}}@media(max-width:600px){.project-page{width:calc(100% - 48px);padding-top:28px}.hero-copy{padding:32px 24px}.project-hero h1{font-size:clamp(3.3rem,18vw,5rem)}.hero-media{min-height:360px}.block-list{grid-template-columns:1fr}}
+</style>

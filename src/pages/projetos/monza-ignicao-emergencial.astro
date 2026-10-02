@@ -1,0 +1,574 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import LineageGraph from "../../components/LineageGraph.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("monza-ignicao-emergencial");
+
+if (!project?.page) {
+	throw new Error("Projeto monza-ignicao-emergencial não encontrado.");
+}
+---
+
+<BaseLayout
+	title="Monza sem faísca — Galeria -2048"
+	description={project.page.subtitle}
+>
+	<SiteHeader />
+
+	<main class="project-page">
+		<header class="project-hero">
+			<div class="hero-copy">
+				<p class="eyebrow">EXPERIMENTO / {project.number} / ELETRÔNICA AUTOMOTIVA</p>
+				<h1>MONZA<br />SEM FAÍSCA</h1>
+				<p class="hero-subtitle">{project.page.subtitle}</p>
+				<div class="tag-list" aria-label="Categorias do projeto">
+					{project.categories.map((category) => <Tag label={category.label} tone={category.tone} />)}
+				</div>
+			</div>
+
+			<div class="hero-media">
+				<img
+					src={project.image}
+					alt="Composição com cofre do motor do Monza, circuito experimental, distribuidor e bobina impulsora"
+					fetchpriority="high"
+					decoding="async"
+				/>
+			</div>
+		</header>
+
+		<StatusGrid items={project.page.status} />
+
+		<section class="intro editorial-section">
+			<p class="section-code">[ 01 / O PROBLEMA ]</p>
+			<h2>Uma manutenção simples terminou com o carro parado.</h2>
+			<div class="reading-width">
+				<p>
+					O motor do Chevrolet Monza SL/E 1988/1989, 1.8 a gasolina, foi lavado para remover o óleo acumulado e facilitar a procura por um vazamento. No mesmo período, troquei o conector do distribuidor e acabei danificando sua bobina impulsora — o pickup responsável por informar o momento da ignição.
+				</p>
+				<p>
+					O carro deixou de funcionar e ficou em um local de onde não era simples levá-lo a um eletricista automotivo. O objetivo inicial passou a ser muito concreto: entender por que não havia centelha e, se possível, construir uma solução emergencial suficiente para retirar o carro dali.
+				</p>
+			</div>
+
+			<EditorialImage
+				src="/images/monza-ignicao-emergencial/motor-limpo-seco.jpeg"
+				alt="Cofre do motor do Monza depois da limpeza"
+				caption="O motor já limpo e seco. A intervenção que ajudaria a localizar um vazamento também antecedeu a falha de ignição."
+				fit="contain"
+			/>
+
+			<div class="media-pair">
+				<EditorialImage
+					src="/images/monza-ignicao-emergencial/motor-depois.jpeg"
+					alt="Motor ainda molhado e sem os cabos de vela após a lavagem"
+					caption="O motor ainda molhado e sem os cabos de vela. Esta imagem antecede o período de secagem e todas as tentativas com o oscilador."
+					fit="contain"
+				/>
+				<EditorialImage
+					src="/images/monza-ignicao-emergencial/distribuidor-antes.jpeg"
+					alt="Distribuidor do Monza antes da troca de sua tomada elétrica"
+					caption="O distribuidor antes da troca da tomada. A bobina impulsora ainda não havia sido identificada como a causa da falha."
+					fit="contain"
+				/>
+			</div>
+
+			<div class="reading-width symptom-closing">
+				<p>Foi nesse momento que troquei a tomada do distribuidor e depois o montei novamente. A intervenção pretendia melhorar uma conexão antiga, mas acabou quebrando a bobina impulsora. Se eu tivesse deixado a tomada como estava, talvez essa falha específica não tivesse acontecido.</p>
+			</div>
+
+			<EditorialImage
+				src="/images/monza-ignicao-emergencial/distribuidor-reparado.jpeg"
+				alt="Distribuidor remontado após a troca de sua tomada elétrica"
+				caption="Distribuidor remontado com a tomada substituída. Foi durante essa intervenção que a bobina impulsora acabou danificada."
+				variant="portrait"
+				fit="contain"
+			/>
+		</section>
+
+		<section class="editorial-section split-section">
+			<div>
+				<p class="section-code">[ 02 / SINTOMAS ]</p>
+				<h2>Havia alimentação. Não havia faísca.</h2>
+			</div>
+			<div class="reading-width compact-copy">
+				<p>A bateria apresentava cerca de 12,27 V. Durante a partida, aproximadamente 9 V chegavam à bobina, mas não havia centelha enquanto o motor girava.</p>
+				<p>Em algumas tentativas surgiu algo parecido com uma centelha justamente ao soltar a chave. Velas, conexões, uma mangueira solta e a possibilidade de umidade entraram na investigação, sem resolver o defeito.</p>
+				<p class="observation"><strong>OBSERVAÇÃO</strong> — os valores registram aquela investigação específica. Não são apresentados como procedimento universal de diagnóstico.</p>
+			</div>
+		</section>
+
+		<EditorialImage
+			src="/images/monza-ignicao-emergencial/tensao-bateria.jpeg"
+			alt="Multímetro conectado à bateria do Monza durante o diagnóstico"
+			caption="Registro da bateria em aproximadamente 12,27 V durante a sequência de verificações."
+			variant="portrait"
+			fit="contain"
+		/>
+
+		<section class="editorial-section">
+			<p class="section-code">[ 03 / A IDEIA DE EMERGÊNCIA ]</p>
+			<h2>Se não havia comando de ignição, eu tentaria produzir um.</h2>
+			<div class="reading-width">
+				<p>
+					Com as peças disponíveis, montei um oscilador ajustável com NE555 e um IRFZ44N. A intenção era chavear a bobina e gerar pulsos de alta tensão. Cheguei a considerar potenciômetro de 100 kΩ, dissipação na própria lataria e até um circuito reserva: a hipótese era que a montagem talvez precisasse sustentar um deslocamento de aproximadamente 100 km.
+				</p>
+				<p>
+					Era uma tentativa de contingência, construída sob pressão e com recursos limitados. Este registro documenta o que foi feito e aprendido; não propõe a montagem como modificação permanente nem como orientação de reparo automotivo.
+				</p>
+			</div>
+
+			<EditorialImage
+				src="/images/monza-ignicao-emergencial/circuito-oscilador.jpeg"
+				alt="Circuito experimental do oscilador instalado temporariamente no cofre do motor"
+				caption="Montagem experimental com NE555 e MOSFET posicionada no cofre do motor durante os testes."
+				fit="contain"
+			/>
+		</section>
+
+		<section class="result-band" aria-label="Resultado central do experimento">
+			<p>O OSCILADOR FUNCIONOU.</p>
+			<p>A SOLUÇÃO IMPROVISADA DE IGNIÇÃO NÃO.</p>
+		</section>
+
+		<section class="editorial-section">
+			<p class="section-code">[ 04 / O QUE FUNCIONOU ]</p>
+			<h2>Frequência real, alta tensão e pequenas centelhas.</h2>
+			<div class="reading-width">
+				<p>
+					O circuito oscilava e produzia pulsos. Em um ponto da saída, uma medição chegou a aproximadamente 225 V, e pequenas centelhas confirmaram que a bobina de ignição conseguia elevar a tensão. Isso retirou a própria bobina da posição de suspeita principal.
+				</p>
+				<p>
+					Mas produzir uma centelha isolada é diferente de comandar um motor. A energia, a forma do pulso, a interface com o módulo e, principalmente, o instante da ignição continuavam sem solução.
+				</p>
+			</div>
+
+			<div class="video-card">
+				<video controls preload="metadata" playsinline>
+					<source src="/images/monza-ignicao-emergencial/teste-centelha.mp4" type="video/mp4" />
+					Seu navegador não oferece suporte à reprodução deste vídeo.
+				</video>
+				<p>Teste registrado em vídeo: o circuito produz centelha, mas isso ainda não representa uma ignição sincronizada e capaz de manter o motor funcionando.</p>
+			</div>
+		</section>
+
+		<section class="editorial-section split-section">
+			<div>
+				<p class="section-code">[ 05 / MUDANÇA DE ESTRATÉGIA ]</p>
+				<h2>Em vez de substituir o módulo, tentar enganá-lo.</h2>
+			</div>
+			<div class="reading-width compact-copy">
+				<p>A bobina impulsora apresentou resistência infinita: estava aberta. O módulo de ignição foi identificado posteriormente como Bosch 9 220 087 006.</p>
+				<p>Uma forma mais simples de imaginar esse sistema é pensar na bobina impulsora como o gatilho da ignição. Ela faz, sem contato físico, o papel que o platinado cumpria nos sistemas antigos: não produz a faísca por conta própria, mas avisa ao módulo a hora exata de disparar.</p>
+				<p>Quando o motor gira, uma peça dentada passa diante da bobina impulsora e cria pequenos pulsos elétricos. O módulo Bosch externo — este Monza não usa módulo HEI — recebe cada aviso e interrompe a corrente da bobina de ignição. É como soltar de uma vez uma energia que estava sendo acumulada: a bobina responde produzindo a alta tensão da centelha, e o distribuidor a encaminha para a vela correspondente.</p>
+				<p>Esse instante também muda conforme o motor acelera. Pesos dentro do distribuidor se afastam com o aumento da rotação e deslocam mecanicamente o ponto do disparo, fazendo o pulso chegar um pouco mais cedo. É o avanço centrífugo: um pequeno mecanismo que antecipa a faísca para acompanhar o ritmo do motor.</p>
+
+				<EditorialImage
+					src="/images/monza-ignicao-emergencial/pickup-avanco-centrifugo.gif"
+					alt="Animação comparando o platinado antigo com a bobina impulsora e demonstrando o avanço centrífugo do distribuidor"
+					caption="Uma analogia visual: platinado e pickup cumprem o papel de gatilho; o avanço centrífugo muda mecanicamente o momento desse aviso conforme a rotação sobe."
+					fit="contain"
+				/>
+
+				<p>A investigação então mudou de direção. Em vez de acionar diretamente a bobina de ignição com um oscilador livre, tentei reproduzir o sinal indutivo do pickup e preservar o módulo original como estágio de potência.</p>
+				<p>Entraram nos testes o sinal do 555, uma rede resistiva, capacitor, indutor e um BC548. Em uma inversão de polaridade apareceu uma única centelha, reforçando uma hipótese experimental:</p>
+				<blockquote>“Parece que esse módulo precisa de uma carga e depois de uma descarga abrupta.”</blockquote>
+			</div>
+		</section>
+
+		<section class="editorial-section dark-panel">
+			<p class="section-code">[ 06 / O PROBLEMA ESCONDIDO ]</p>
+			<h2>Não bastava escolher entre onda quadrada e triangular.</h2>
+			<div class="reading-width">
+				<p>
+					A forma de onda era apenas uma parte do problema. A centelha precisava acontecer na posição correta do virabrequim e para o cilindro correto. Um oscilador livre podia gerar pulsos, mas não sabia em que ponto do ciclo mecânico o motor estava.
+				</p>
+				<p>
+					Foram considerados meios de sincronizar pelo virabrequim, comando, eixo do distribuidor ou algum encoder improvisado. Cada alternativa acrescentava mecânica, referência angular e risco a uma solução que deveria ser apenas emergencial. Nesse ponto ficou claro por que uma ignição funcional era muito mais do que um gerador de frequência ligado à bobina.
+				</p>
+			</div>
+		</section>
+
+		<section class="editorial-section">
+			<p class="section-code">[ 07 / A TENTATIVA REAL ]</p>
+			<h2>O motor girava. A solução não assumia a ignição.</h2>
+			<div class="video-card">
+				<video controls preload="metadata" playsinline>
+					<source src="/images/monza-ignicao-emergencial/tentativa-partida.mp4" type="video/mp4" />
+					Seu navegador não oferece suporte à reprodução deste vídeo.
+				</video>
+				<p>Tentativa registrada de um dos dias seguintes: o motor de partida atua, mas o carro não entra em funcionamento.</p>
+			</div>
+			<div class="reading-width">
+				<p>
+					As partidas repetidas enfraqueceram a bateria. A necessidade de continuar os testes sem um carregador disponível acabou originando outra montagem improvisada, que será documentada separadamente.
+				</p>
+			</div>
+		</section>
+
+		<section class="editorial-section">
+			<p class="section-code">[ 08 / CONFIRMAÇÃO ]</p>
+			<h2>A bobina impulsora nova devolveu o sinal — e o carro voltou.</h2>
+			<div class="reading-width">
+				<p>
+					Depois que as medições e as tentativas passaram a apontar para a bobina impulsora aberta, comprei uma peça nova pela internet. Encontrar quem aceitasse instalá-la foi outra parte da história: entrei em contato com diversas autoelétricas e somente a sexta consultada aceitou executar esse tipo de serviço. O carro foi levado de guincho até lá.
+				</p>
+				<p>
+					A substituição do pickup confirmou a causa. Com a nova bobina impulsora instalada no distribuidor, a ignição original voltou a operar e o motor funcionou novamente. O carro permaneceu parado por aproximadamente dez dias.
+				</p>
+				<p>
+					O reparo final ficou em torno de R$ 200. Naquele momento, um distribuidor completo paralelo foi encontrado por cerca de R$ 390, enquanto uma peça original aparecia acima de R$ 1.200. São valores históricos daquele episódio, não preços atuais nem uma comparação universal de orçamento.
+				</p>
+			</div>
+
+			<div class="media-pair">
+				<EditorialImage
+					src="/images/monza-ignicao-emergencial/bobina-impulsora-frente.jpeg"
+					alt="Nova bobina impulsora do distribuidor vista pela frente"
+					caption="A peça de reposição que restaurou o sinal do distribuidor."
+					variant="portrait"
+					fit="contain"
+				/>
+				<EditorialImage
+					src="/images/monza-ignicao-emergencial/bobina-impulsora-verso.jpeg"
+					alt="Nova bobina impulsora do distribuidor vista pelo verso"
+					caption="Verso da bobina impulsora antes da instalação."
+					variant="portrait"
+					fit="contain"
+				/>
+			</div>
+		</section>
+
+		<section class="conclusion editorial-section">
+			<p class="section-code">[ 09 / O QUE FICOU ]</p>
+			<h2>O experimento falhou em sua missão original — e ainda assim valeu a pena.</h2>
+			<div class="reading-width">
+				<p>
+					Eu não consegui sair dali com um sistema próprio de ignição. Consegui, porém, comprovar blocos do circuito, entender por que o sincronismo era indispensável, deslocar a investigação até o sinal do pickup e confirmar a peça realmente aberta.
+				</p>
+				<p>
+					O resultado não foi um substituto improvisado para a ignição. Foi um diagnóstico mais consciente, uma compreensão melhor do sistema e a possibilidade de reparar o distribuidor sem trocar o conjunto inteiro por tentativa.
+				</p>
+			</div>
+		</section>
+
+		<aside class="future-project" aria-label="Projeto descendente relacionado">
+			<p class="section-code">[ PROJETO RELACIONADO / DESCENDENTE ]</p>
+			<h2>CARREGADOR V1</h2>
+			<p>A bateria enfraquecida durante as tentativas deu origem a uma ferramenta de bancada que ganhou uma história própria.</p>
+			<a class="related-link" href="/projetos/carregador-supervisionado/">VER PROJETO →</a>
+		</aside>
+	</main>
+
+	<LineageGraph currentId="monza-ignicao-emergencial" />
+	<ImageLightbox />
+	<SiteFooter rightText="PROJETO / MONZA / IGNIÇÃO" />
+</BaseLayout>
+
+<style>
+	.project-page {
+		width: min(1180px, calc(100% - 48px));
+		margin: 0 auto;
+		padding: 54px 0 110px;
+	}
+
+	.project-hero {
+		display: grid;
+		grid-template-columns: minmax(0, .9fr) minmax(420px, 1.1fr);
+		align-items: stretch;
+		min-height: 610px;
+		border: 1px solid var(--line);
+		background: var(--surface);
+	}
+
+	.hero-copy {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: clamp(34px, 5vw, 72px);
+	}
+
+	.eyebrow,
+	.section-code {
+		margin: 0 0 20px;
+		color: var(--programacao);
+		font-family: monospace;
+		font-size: .875rem;
+		line-height: 1.5;
+		letter-spacing: .05em;
+	}
+
+	.project-hero h1 {
+		margin: 0;
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: clamp(3.7rem, 8vw, 7.5rem);
+		line-height: .84;
+		letter-spacing: -.065em;
+	}
+
+	.hero-subtitle {
+		max-width: 610px;
+		margin: 34px 0 0;
+		color: var(--muted);
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.12rem;
+		line-height: 1.75;
+	}
+
+	.tag-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin-top: 30px;
+	}
+
+	.hero-media {
+		min-height: 100%;
+		border-left: 1px solid var(--line);
+		background: #020303;
+	}
+
+	.hero-media img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+
+	:global(.status-grid) {
+		margin-top: 20px;
+	}
+
+	.editorial-section {
+		padding: clamp(76px, 10vw, 124px) 0 0;
+	}
+
+	.editorial-section h2,
+	.future-project h2 {
+		max-width: 930px;
+		margin: 0 0 36px;
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: clamp(2.4rem, 6.5vw, 5.6rem);
+		line-height: .95;
+		letter-spacing: -.055em;
+	}
+
+	.reading-width {
+		max-width: 740px;
+	}
+
+	.symptom-closing {
+		margin-top: 64px;
+	}
+
+	.reading-width p,
+	.compact-copy p,
+	.future-project p {
+		margin: 0 0 22px;
+		color: var(--muted);
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.12rem;
+		line-height: 1.82;
+	}
+
+	.reading-width strong,
+	.compact-copy strong {
+		color: var(--text);
+	}
+
+	.split-section {
+		display: grid;
+		grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+		gap: clamp(40px, 8vw, 100px);
+		align-items: start;
+	}
+
+	.split-section h2 {
+		font-size: clamp(2.4rem, 5vw, 4.6rem);
+	}
+
+	.observation {
+		padding: 20px;
+		border-left: 2px solid var(--luthieria);
+		background: var(--surface);
+		font-family: monospace !important;
+		font-size: .9375rem !important;
+		line-height: 1.65 !important;
+	}
+
+	.media-pair {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 20px;
+	}
+
+	.result-band {
+		margin-top: clamp(80px, 12vw, 140px);
+		padding: clamp(32px, 5vw, 60px);
+		border: 1px solid var(--eletronica);
+		background: color-mix(in srgb, var(--eletronica) 4%, var(--surface));
+	}
+
+	.result-band p {
+		margin: 0;
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: clamp(2rem, 5.5vw, 5rem);
+		font-weight: 800;
+		line-height: 1;
+		letter-spacing: -.04em;
+	}
+
+	.result-band p + p {
+		margin-top: 12px;
+		color: var(--muted);
+	}
+
+	.video-card {
+		margin: 40px 0;
+		border: 1px solid var(--line);
+		background: var(--surface);
+	}
+
+	.video-card video {
+		display: block;
+		width: 100%;
+		max-height: 680px;
+		background: #000;
+	}
+
+	.video-card p {
+		margin: 0;
+		padding: 14px 18px;
+		color: var(--muted);
+		font-family: monospace;
+		font-size: .875rem;
+		line-height: 1.6;
+	}
+
+	blockquote {
+		margin: 34px 0;
+		padding: 24px 28px;
+		border-left: 2px solid var(--experimentacao);
+		background: var(--surface);
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.45rem;
+		font-style: italic;
+		line-height: 1.55;
+	}
+
+	.dark-panel {
+		margin-top: clamp(76px, 10vw, 124px);
+		padding: clamp(42px, 7vw, 80px);
+		border: 1px solid var(--line);
+		background:
+			linear-gradient(rgba(0, 217, 255, .035) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(0, 217, 255, .035) 1px, transparent 1px),
+			var(--surface);
+		background-size: 34px 34px;
+	}
+
+	.conclusion {
+		padding-bottom: clamp(76px, 10vw, 120px);
+		border-bottom: 1px solid var(--line);
+	}
+
+	.future-project {
+		margin-top: 40px;
+		padding: clamp(28px, 5vw, 54px);
+		border: 1px dashed var(--line);
+		background: var(--surface);
+	}
+
+	.future-project h2 {
+		font-size: clamp(2rem, 4vw, 3.6rem);
+	}
+
+	.future-project p {
+		max-width: 720px;
+		color: var(--muted);
+	}
+
+	.related-link {
+		display: inline-block;
+		margin-top: 12px;
+		padding: 8px 10px;
+		border: 1px solid var(--eletronica);
+		color: var(--eletronica);
+		font-family: monospace;
+		font-size: .875rem;
+		text-decoration: none;
+	}
+
+	.related-link:hover,
+	.related-link:focus-visible {
+		background: color-mix(in srgb, var(--eletronica) 10%, transparent);
+		outline: 2px solid var(--eletronica);
+		outline-offset: 3px;
+	}
+
+	@media (max-width: 800px) {
+		.project-page {
+			padding-top: 28px;
+		}
+
+		.project-hero,
+		.split-section,
+		.media-pair {
+			grid-template-columns: 1fr;
+		}
+
+		.project-hero {
+			min-height: 0;
+		}
+
+		.hero-media {
+			min-height: 340px;
+			border-top: 1px solid var(--line);
+			border-left: 0;
+		}
+
+		.editorial-section {
+			padding-top: 76px;
+		}
+
+		.split-section {
+			gap: 0;
+		}
+
+		.dark-panel {
+			margin-top: 76px;
+			padding: 34px 24px;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.project-page {
+			width: calc(100% - 48px);
+			padding-bottom: 76px;
+		}
+
+		.hero-copy {
+			padding: 32px 24px;
+		}
+
+		.project-hero h1 {
+			font-size: clamp(3.3rem, 18vw, 5rem);
+		}
+
+		.hero-media {
+			min-height: 260px;
+		}
+
+		.reading-width p,
+		.compact-copy p,
+		.future-project p {
+			font-size: 1.0625rem;
+		}
+	}
+</style>

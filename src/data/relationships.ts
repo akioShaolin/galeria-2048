@@ -31,6 +31,7 @@ export const influenceRelationshipTypes: RelationshipType[] = ["base_tecnica", "
 // Cada ligação é cadastrada uma única vez. O sentido inverso é derivado pelos helpers.
 // Relações somente devem entrar aqui depois de confirmação factual do autor.
 export const relationships: ContentRelationship[] = [
+	{ from: "monza-ignicao-emergencial", to: "carregador-supervisionado", type: "evoluiu_para", label: "NASCEU DURANTE O DIAGNÓSTICO" },
 	{ from: "sniffing-usb-wireshark", to: "tr-serial-proxy", type: "evoluiu_para", label: "DERIVADO DO ARTIGO" },
 	{ from: "solarview-ubox", to: "ed100-hardware-rs485", type: "contribuiu_para" },
 	{ from: "ed100-hardware-rs485", to: "dms-portable-logger", type: "evoluiu_para" },
