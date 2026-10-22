@@ -37,8 +37,6 @@ const page = project.page;
 		.prose a:hover, .references a:hover { color: var(--text); }
 		.callout { margin: 36px 0; padding: 28px; border: 1px solid var(--line); border-left: 2px solid var(--audio); background: rgba(255,32,199,.025); }
 		.callout p:last-child { margin-bottom: 0; }
-		.schematic-placeholder { display: grid; min-height: 250px; margin: 38px 0; padding: 30px; border: 1px dashed var(--line); background: linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px), var(--surface); background-size: 24px 24px; place-content: center; text-align: center; }
-		.schematic-placeholder p { max-width: 590px; margin: 10px auto 0; }
 		.documentation-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin-top: 35px; border: 1px solid var(--line); background: var(--line); }
 		.documentation-block { padding: 25px; background: var(--surface); }
 		.documentation-block ul { margin-bottom: 0; }
@@ -85,12 +83,11 @@ const page = project.page;
 				<p>Na entrada usei <strong>220 nF</strong> no lugar dos 470 nF vistos na referência, repetindo 220 nF na saída. Essa diferença está documentada como escolha de montagem; sem medições comparativas, não atribuo a ela uma mudança sonora específica.</p>
 				<div class="callout"><p class="note-label">COMPONENTE CONFIRMADO</p><p>Neste protótipo foi utilizado o diodo original <strong>1N4148</strong>. Não foram instaladas chaves de seleção de clipping.</p></div>
 				<h3>Esquemático de referência</h3>
-				<p>O desenho abaixo acompanha o material consultado no vídeo do Darta Effects e ajuda a compreender o circuito-base Mini Fuzz do Bertola. Ele é apresentado somente como referência histórica e técnica: <strong>não documenta exatamente a versão do PD-01 que foi construída</strong>.</p>
-				<EditorialImage src="/images/pd-01/esquematico-referencia-darta.jpg" alt="Esquemático de referência do circuito Mini Fuzz apresentado no material do Darta Effects" caption="ESQUEMÁTICO DE REFERÊNCIA — circuito-base apresentado no material do Darta Effects. Esta imagem não representa o esquema definitivo da versão construída do PD-01." fit="contain" />
-				<div class="schematic-placeholder" role="note" aria-label="Espaço reservado para o esquemático da versão construída">
-					<p class="note-label">[ ESQUEMÁTICO REAL DO PD-01 / PENDENTE ]</p>
-					<p>O esquemático correspondente exatamente à versão construída será adicionado após a recuperação dos arquivos originais ou uma conferência segura da montagem.</p>
-				</div>
+				<p>O desenho abaixo registra em KiCad o circuito-base Mini Fuzz do Bertola consultado durante o projeto. Ele ajuda a compreender o princípio da referência, mas <strong>não documenta exatamente a versão do PD-01 que foi construída</strong>.</p>
+				<EditorialImage src="/images/pd-01/esquematico-base.png" alt="Esquemático-base do Mini Fuzz do Bertola redesenhado no KiCad" caption="ESQUEMÁTICO DE REFERÊNCIA — redesenho em KiCad do circuito-base usado como ponto de partida para o PD-01." fit="contain" />
+				<h3>Esquemático real do PD-01</h3>
+				<p>O arquivo original do projeto também foi recuperado. Nele aparecem as adaptações efetivamente incorporadas ao protótipo, incluindo o par de transistores C945, o controle de ganho no emissor, o LED indicador e a alimentação da montagem.</p>
+				<EditorialImage src="/images/pd-01/esquematico-pd-01.png" alt="Esquemático real do PD-01 exportado do arquivo original do Fritzing" caption="ESQUEMÁTICO DO PD-01 — registro recuperado da versão efetivamente organizada para a construção do protótipo." fit="contain" />
 				<div class="media-pair">
 					<EditorialImage src="/images/pd-01/placa-superior.jpg" alt="Face de componentes da placa universal do pedal, com potenciômetros e LED aceso" caption="Face de componentes da placa universal durante a montagem." variant="portrait" fit="contain" />
 					<EditorialImage src="/images/pd-01/placa-inferior.jpg" alt="Face de soldagem da placa universal instalada na caixa" caption="Face inferior da placa: soldagem ponto a ponto e cabeamento do protótipo." variant="portrait" fit="contain" />
@@ -102,9 +99,9 @@ const page = project.page;
 			<p class="section-label">03 / PROTÓTIPO</p>
 			<div class="prose">
 				<h2>DO FRITZING À PLACA UNIVERSAL.</h2>
-				<p>Antes da soldagem, organizei o circuito no Fritzing para planejar as ligações na placa perfurada. As imagens recuperadas documentam esse desenho e permitem compará-lo diretamente à montagem física.</p>
-				<p>O layout serviu como guia de montagem e soldagem em placa universal; ele não representa uma PCB fabricada. O arquivo editável do Fritzing poderá ser acrescentado futuramente caso seja localizado.</p>
-				<EditorialImage src="/images/pd-01/fritzing-layout.jpg" alt="Layout de montagem aberto no Fritzing" caption="Desenho de referência no Fritzing usado para planejar as ligações da montagem em placa universal." fit="contain" />
+				<p>Antes da soldagem, organizei o circuito no Fritzing para planejar as ligações na placa perfurada. O arquivo original foi recuperado e permite comparar o desenho diretamente à montagem física.</p>
+				<p>O layout serviu como guia de montagem e soldagem em placa universal; ele não representa uma PCB fabricada.</p>
+				<EditorialImage src="/images/pd-01/layout-fritzing-pd-01.png" alt="Desenho original do PD-01 no modo PCB do Fritzing, organizado para montagem em placa universal" caption="Desenho original no Fritzing usado para orientar as ligações e a soldagem do PD-01 em placa universal." fit="contain" />
 				<EditorialImage src="/images/pd-01/fritzing-comparativo.jpg" alt="Placa universal soldada diante do desenho correspondente aberto no Fritzing" caption="Comparação entre o planejamento no Fritzing e a montagem física executada em placa universal." fit="contain" />
 				<p>A caixa veio de um telefone antigo. Por dentro, recebeu fita de alumínio, jacks, potenciômetros, bateria de 9 V e a placa universal. No painel de madeira, as marcações <strong>V</strong> e <strong>G</strong> indicavam volume e ganho.</p>
 				<EditorialImage src="/images/pd-01/blindagem-interna.jpg" alt="Interior da caixa do pedal com fita de alumínio, bateria, placa e cabeamento" caption="Interior do protótipo com blindagem improvisada e os componentes ainda sem fixação definitiva." fit="contain" />
@@ -158,11 +155,10 @@ const page = project.page;
 					<li>Separaria eletrônica e mecânica em etapas, usando uma caixa adequada e bypass definido.</li>
 					<li>Produziria diagrama de ligação, lista de materiais e fotografias antes de fechar o conjunto.</li>
 				</ul>
-				<h3>Documentação recuperada e pendente</h3>
-				<p>Parte da documentação original já pôde ser recuperada, incluindo registros do desenho no Fritzing e da montagem física. Ainda falta localizar ou reconstruir com segurança o esquemático correspondente exatamente à versão construída.</p>
+				<h3>Documentação recuperada</h3>
+				<p>A documentação original recuperada agora reúne o esquemático da versão construída, o desenho da placa no Fritzing e os registros fotográficos e audiovisuais da montagem.</p>
 				<div class="documentation-grid">
-					<div class="documentation-block"><p class="note-label">RECUPERADO</p><ul><li>Imagens do design no Fritzing.</li><li>Comparação entre design e placa física.</li><li>Fotografias da montagem.</li><li>Vídeos de teste.</li></ul></div>
-					<div class="documentation-block"><p class="note-label">PENDENTE</p><ul><li>Esquemático da versão efetivamente construída.</li></ul><p>Como registro secundário, o arquivo editável do Fritzing ainda poderá ser incluído caso seja localizado.</p></div>
+					<div class="documentation-block"><p class="note-label">RECUPERADO</p><ul><li>Esquemático-base redesenhado no KiCad.</li><li>Esquemático da versão efetivamente construída.</li><li>Desenho original da placa no Fritzing.</li><li>Comparação entre design e placa física.</li><li>Fotografias da montagem.</li><li>Vídeos de teste.</li></ul></div>
 				</div>
 				<div class="callout"><p class="note-label">NÃO FOI UM FRACASSO</p><p>O acabamento mecânico nunca ficou pronto, mas o circuito funcionou, foi usado na guitarra, no baixo e chegou ao palco. Para mim, isso é suficiente para que essa montagem tenha uma história própria.</p></div>
 			</div>
@@ -180,7 +176,7 @@ const page = project.page;
 				<p><strong>Bertola</strong> — autor do circuito Mini Fuzz usado como base.</p>
 				<p><strong>Darta Effects</strong> — vídeos consultados durante a construção:</p>
 				<ul><li><a href="https://youtu.be/BKW753mV-R4?is=B81xXqyhXehHVqqU" rel="external noreferrer">Mini Fuzz do Bertola — referência de montagem</a></li><li><a href="https://youtu.be/MLR3b_ab-Cc?is=0PtCy4gkaGctnk5d" rel="external noreferrer">Material complementar do Darta Effects</a></li></ul>
-				<p>O esquema exibido nesta página é reproduzido apenas como referência do material do Darta Effects e permanece separado do futuro esquemático específico do PD-01. Fotografias, vídeos e relato da montagem pertencem ao acervo de akioShaolin.</p>
+				<p>O circuito-base de Bertola permanece identificado separadamente do esquemático recuperado da versão construída do PD-01. Fotografias, vídeos, desenhos da adaptação e relato da montagem pertencem ao acervo de akioShaolin.</p>
 			</div>
 		</div></section>
 	</main>

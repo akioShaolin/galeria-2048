@@ -33,6 +33,8 @@ export const influenceRelationshipTypes: RelationshipType[] = ["base_tecnica", "
 export const relationships: ContentRelationship[] = [
 	{ from: "monza-ignicao-emergencial", to: "carregador-supervisionado", type: "evoluiu_para", label: "NASCEU DURANTE O DIAGNÓSTICO" },
 	{ from: "sniffing-usb-wireshark", to: "tr-serial-proxy", type: "evoluiu_para", label: "DERIVADO DO ARTIGO" },
+	{ from: "solarview-ubox", to: "esp07-jbd-bms-monitor", type: "evoluiu_para", label: "HARDWARE REAPROVEITADO" },
+	{ from: "esp07-jbd-bms-monitor", to: "dms-portable-logger", type: "contribuiu_para", label: "INSPIROU O LOGGER" },
 	{ from: "solarview-ubox", to: "ed100-hardware-rs485", type: "contribuiu_para" },
 	{ from: "ed100-hardware-rs485", to: "dms-portable-logger", type: "evoluiu_para" },
 	{ from: "solarview-ubox", to: "modbus-rtu-slave-sim", type: "base_tecnica" },

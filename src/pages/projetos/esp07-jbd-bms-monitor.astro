@@ -1,0 +1,186 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import LineageGraph from "../../components/LineageGraph.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("esp07-jbd-bms-monitor");
+if (!project?.page) throw new Error("Dados do ESP-07 JBD BMS Monitor não encontrados.");
+const page = project.page;
+---
+
+<BaseLayout
+	title="ESP-07 JBD BMS Monitor | Galeria -2048"
+	description={project.description}
+	image={project.image}
+	type="article"
+	keywords={project.keywords}
+>
+	<SiteHeader accent="var(--programacao)" />
+	<main>
+		<div class="container">
+			<section class="hero">
+				<div class="hero-copy">
+					<div class="code">{project.type} / {project.number} / DIAGNÓSTICO EMBARCADO</div>
+					<h1>ESP-07<br /><span>JBD BMS</span><br />MONITOR</h1>
+					<p class="subtitle">{page.subtitle}</p>
+					<div class="tags">{project.categories.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+					<div class="status"><StatusGrid items={page.status} /></div>
+				</div>
+				<EditorialImage
+					src="/images/esp07-jbd-bms-monitor/carga-equilibrada.webp"
+					alt="Painel BMS Monitor aberto no celular durante uma leitura do BMS JBD"
+					caption="O painel local durante a carga: 24 grupos visíveis pelo celular, sem depender de Internet. Nesta versão, o campo de potência ainda aparece rotulado como W; o valor mostrado corresponde a kW."
+					fit="contain"
+					variant="portrait"
+					eager={true}
+				/>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">01 / REAPROVEITAMENTO</div>
+					<div class="prose">
+						<h2>O hardware já tinha uma história antes deste projeto.</h2>
+						<p>O ponto de partida foi uma unidade SolarView que já havia cumprido sua função original como datalogger. Em vez de permanecer parada, ela voltou à bancada como plataforma de experimentação: dentro dela havia um ESP-07, uma interface RS485 e espaço suficiente para outra ideia.</p>
+						<p>Os primeiros testes com esse hardware tinham começado pelo básico — gravar firmware próprio, piscar um LED e entender as interfaces disponíveis. Desta vez, o objetivo era mais concreto: conversar diretamente com um BMS JBD e transformar suas respostas em algo que pudesse ser consultado pelo celular.</p>
+						<a class="related-link" href="/artigos/solarview-ubox/"><span>CONHECER A ORIGEM — SOLARVIEW UBOX</span><span>→</span></a>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">02 / O PROTOCOLO</div>
+					<div>
+						<h2>Antes da interface, os bytes precisavam fazer sentido.</h2>
+						<div class="prose">
+							<p>O BMS JBD SP24S004-K V1.3 se comunica por RS485 half-duplex a 9600 baud, 8N1. A primeira implementação ainda carregava hipóteses incompletas sobre o protocolo. As respostas reais do equipamento permitiram corrigir o enquadramento, o checksum e a interpretação dos campos.</p>
+							<p>O monitor passou a alternar duas consultas principais: <code>0x03</code> para as informações gerais do pack e <code>0x04</code> para as tensões dos 24 grupos. A leitura manual de <code>0x05</code> identifica a versão de hardware.</p>
+						</div>
+						<div class="frame-grid">
+							<div><span>SOLICITAÇÃO</span><code>DD A5 CMD 00 CHECKSUM 77</code></div>
+							<div><span>RESPOSTA</span><code>DD CMD STATUS LEN DATA CHECKSUM 77</code></div>
+						</div>
+						<div class="callout"><strong>[ VALIDAÇÃO REAL ]</strong><p>O parser verifica início e fim do frame, comprimento, status e checksum de 16 bits em complemento de dois. Bytes estranhos anteriores ao cabeçalho são preservados no diagnóstico, mas não confundidos com uma resposta válida.</p></div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">03 / ARQUITETURA</div>
+					<div>
+						<h2>RS485 de um lado. Wi-Fi local do outro.</h2>
+						<div class="architecture" aria-label="Arquitetura do monitor">
+							<div><strong>BMS JBD</strong><span>medições do pack</span></div><b>RS485<br />9600 8N1</b><div><strong>SOLARVIEW / ESP-07</strong><span>consulta, valida e apresenta</span></div><b>WI-FI<br />AP LOCAL</b><div><strong>CELULAR</strong><span>navegador em 192.168.4.1</span></div>
+						</div>
+						<div class="prose">
+							<p>O próprio ESP8266 cria a rede e serve a página. Não há nuvem, roteador ou conexão externa no caminho. O navegador consulta pequenas rotas JSON e atualiza a tela periodicamente enquanto o firmware continua atendendo o BMS.</p>
+							<p>A página reúne tensão do pack, corrente, potência, SOC, capacidade remanescente, ciclos, extremos e média das células, cinco temperaturas, proteções e detalhes da comunicação.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">04 / PRIMEIRA LEITURA</div>
+					<div>
+						<h2>A primeira leitura veio antes de eu conhecer o JBTools.</h2>
+						<div class="prose">
+							<p>A captura de 14 de agosto registra a primeira parte do teste, feita com uma bateria degradada que estava em recuperação. Naquele momento eu ainda nem sabia que existia o software JBTools; este monitor era a forma disponível de enxergar o que acontecia dentro do pack.</p>
+							<p>Os valores muito baixos, a grande diferença entre os grupos e as proteções de subtensão pertencem a esse contexto. Pela primeira vez, a recuperação podia ser acompanhada célula por célula, em vez de depender somente da tensão total da bateria.</p>
+						</div>
+						<EditorialImage
+							src="/images/esp07-jbd-bms-monitor/carga-inicio.webp"
+							alt="Painel do BMS Monitor em uma leitura inicial com valores baixos e proteções de subtensão indicadas"
+							caption="Registro inicial de 14/08/2026: uma bateria degradada durante a recuperação, antes de eu conhecer o software JBTools."
+							fit="contain"
+							variant="portrait"
+						/>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">05 / DURANTE A CARGA</div>
+					<div>
+						<h2>Três momentos, o mesmo pack ficando mais próximo.</h2>
+						<div class="prose">
+							<p>Em 17 de agosto, o painel acompanhou a bateria durante a carga. A tensão do pack avançou de 74,97 V para 77,65 V e depois para 79,70 V. Ao mesmo tempo, o delta entre o grupo mais alto e o mais baixo caiu de 517 mV para 119 mV e, por fim, para 31 mV.</p>
+							<p>O grupo 17 apareceu como mínimo nas três capturas; o grupo 4, como máximo. Isso descreve as leituras daquele ensaio, não uma classificação permanente dos grupos.</p>
+						</div>
+						<div class="metrics">
+							<div><span>10:50</span><strong>74,97 V</strong><small>Δ 517 mV</small></div>
+							<div><span>11:17</span><strong>77,65 V</strong><small>Δ 119 mV</small></div>
+							<div><span>12:46</span><strong>79,70 V</strong><small>Δ 31 mV</small></div>
+						</div>
+						<div class="image-sequence">
+							<EditorialImage src="/images/esp07-jbd-bms-monitor/carga-grupo-17.webp" alt="Painel durante a carga com 74,97 volts e grupo 17 como mínimo" caption="10:50 — 74,97 V no pack e diferença de 517 mV entre os extremos." fit="contain" variant="portrait" />
+							<EditorialImage src="/images/esp07-jbd-bms-monitor/carga-intermediaria.webp" alt="Painel durante a carga com 77,65 volts e redução da diferença entre células" caption="11:17 — 77,65 V no pack e delta reduzido para 119 mV." fit="contain" variant="portrait" />
+							<EditorialImage src="/images/esp07-jbd-bms-monitor/carga-equilibrada.webp" alt="Painel durante a carga com 79,70 volts e células próximas de 3,3 volts" caption="12:46 — 79,70 V e apenas 31 mV entre o maior e o menor grupo." fit="contain" variant="portrait" />
+						</div>
+						<div class="callout warning"><strong>[ CORREÇÃO DE UNIDADE ]</strong><p>Nas capturas, o painel rotula como W os valores 0,53 e 0,55. A unidade correta é kW. A página preserva as imagens históricas, mas não repete o rótulo incorreto como especificação.</p></div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">06 / LIMITE DELIBERADO</div>
+					<div class="prose">
+						<h2>Observar sem reconfigurar.</h2>
+						<p>O firmware envia somente comandos de leitura. Ele não oferece interface para alterar capacidade, calibração, proteções, balanceamento ou MOSFETs. Essa separação mantém o projeto no papel para o qual foi criado: monitoramento e diagnóstico.</p>
+						<p>Também não é uma documentação oficial da JBD nem uma garantia de compatibilidade universal. Os resultados correspondem ao hardware e ao BMS efetivamente testados.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">07 / O QUE VEIO DEPOIS</div>
+					<div class="prose">
+						<h2>Ver a bateria na bancada inspirou a vontade de registrá-la em movimento.</h2>
+						<p>Este monitor veio antes do DMS Portable Logger. Ele demonstrou que o protocolo podia ser interpretado, que as grandezas podiam ser apresentadas de forma útil e que acompanhar células e proteções dizia muito mais do que observar apenas um percentual no painel.</p>
+						<p>O projeto seguinte não foi uma simples troca de placa. O DMS Logger ganhou dois ED100, armazenamento, relógio, registros persistentes e uma arquitetura capaz de preservar o painel original da motocicleta. A inspiração, porém, começou aqui.</p>
+						<a class="related-link" href="/projetos/dms-portable-logger/"><span>CONTINUAR PARA O DMS PORTABLE LOGGER</span><span>→</span></a>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">08 / ESTADO ATUAL</div>
+					<div>
+						<h2>Uma ferramenta concluída e preservada.</h2>
+						<div class="prose"><p>O objetivo deste projeto foi alcançado: reaproveitar o ESP-07 e sua interface RS485 para consultar o BMS e oferecer um painel local de diagnóstico. O código, a implementação do protocolo e os testes foram preservados publicamente.</p></div>
+						<div class="links">
+							<a href="https://github.com/akioShaolin/esp07-jbd-bms-monitor" target="_blank" rel="noreferrer">FIRMWARE E DOCUMENTAÇÃO ↗</a>
+							<a href="/artigos/greenway-bms-rs485/">OUTRA INVESTIGAÇÃO BMS / RS485 →</a>
+						</div>
+						<div class="timeline">{page.timeline.map((event) => <article><time>{event.year}</time><h3>{event.title}</h3><p>{event.text}</p></article>)}</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="closing"><div>[ PROJETO / 016 / CONCLUÍDO ]</div><h2>O que antes era uma caixa fechada passou a caber na tela do celular.</h2><p>Reaproveitar o hardware não significou apenas fazê-lo funcionar novamente. Significou dar a ele uma pergunta nova — e guardar a resposta para o próximo projeto.</p></section>
+		</div>
+		<LineageGraph currentId={project.id} />
+	</main>
+	<SiteFooter rightText="PROJETO / ESP-07 / JBD / BMS" />
+	<ImageLightbox />
+</BaseLayout>
+
+<style>
+	:global(body){background:radial-gradient(circle at 82% 8%,rgba(0,217,255,.055),transparent 540px),linear-gradient(rgba(255,255,255,.014) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px),var(--bg);background-size:auto,42px 42px,42px 42px,auto}.hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:64px;align-items:start;padding:90px 0 80px}.hero .editorial-image{margin:0}.code,.section-label{color:var(--programacao);font:.875rem/1.5 monospace;letter-spacing:.08em}.hero h1{margin:24px 0 28px;font:700 clamp(3.5rem,7.6vw,7.3rem)/.84 Arial,sans-serif;letter-spacing:-.07em}.hero h1 span{color:var(--programacao)}.subtitle{max-width:760px;color:var(--muted);font:clamp(1.2rem,2vw,1.55rem)/1.65 Georgia,serif}.tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}.status{margin-top:42px}.content{padding:95px 0;border-top:1px solid var(--line)}.section-grid{display:grid;grid-template-columns:230px minmax(0,1fr);gap:70px}.prose{max-width:790px}.prose p,.prose li{color:var(--muted);font:1.125rem/1.8 Georgia,serif}.prose strong{color:var(--text)}.prose code{color:var(--programacao)}h2{max-width:900px;margin:0 0 32px;font:700 clamp(2.25rem,4.8vw,4.65rem)/.98 Arial,sans-serif;letter-spacing:-.05em}.frame-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin:36px 0;border:1px solid var(--line);background:var(--line)}.frame-grid div{padding:24px;background:var(--surface)}.frame-grid span,.frame-grid code{display:block;font:.875rem/1.55 monospace}.frame-grid span{margin-bottom:10px;color:var(--muted)}.frame-grid code{color:var(--programacao);overflow-wrap:anywhere}.callout{max-width:900px;margin:34px 0;padding:26px;border:1px solid var(--line);border-left:2px solid var(--programacao);background:rgba(0,217,255,.025)}.callout.warning{border-left-color:var(--automacao);background:rgba(255,138,0,.03)}.callout strong{font:.875rem/1.5 monospace}.callout p{margin:12px 0 0;color:var(--muted);font:1.05rem/1.7 Georgia,serif}.architecture{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:14px;margin:40px 0}.architecture div{padding:24px;border:1px solid var(--line);background:var(--surface);text-align:center}.architecture strong,.architecture span{display:block}.architecture strong{font:.9rem/1.4 monospace}.architecture span{margin-top:8px;color:var(--muted);font:.875rem/1.5 monospace}.architecture b{color:var(--programacao);font:.8rem/1.4 monospace;text-align:center}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin:36px 0;border:1px solid var(--line);background:var(--line)}.metrics div{padding:22px;background:var(--surface)}.metrics span,.metrics strong,.metrics small{display:block;font-family:monospace}.metrics span,.metrics small{color:var(--muted);font-size:.875rem}.metrics strong{margin:9px 0;color:var(--text);font-size:1.5rem}.image-sequence{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.image-sequence .editorial-image{min-width:0;margin:0}.image-sequence :global(.editorial-image__trigger img){height:620px}.related-link{display:flex;align-items:center;justify-content:space-between;gap:20px;max-width:790px;margin-top:34px;padding:18px 20px;border:1px solid var(--line);color:var(--text);font:700 .875rem/1.4 monospace;text-decoration:none}.related-link:hover,.related-link:focus-visible{border-color:var(--programacao);color:var(--programacao);outline:2px solid var(--programacao);outline-offset:3px}.links{display:flex;flex-wrap:wrap;gap:12px;margin:35px 0}.links a{padding:14px 17px;border:1px solid var(--line);color:var(--text);font:700 .875rem/1.4 monospace;text-decoration:none}.links a:hover,.links a:focus-visible{border-color:var(--programacao);color:var(--programacao);outline:2px solid var(--programacao);outline-offset:3px}.timeline{max-width:900px;margin-top:65px;border-left:1px solid var(--line)}.timeline article{position:relative;padding:0 0 42px 38px}.timeline article:last-child{padding-bottom:0}.timeline article::before{content:"";position:absolute;left:-5px;top:5px;width:9px;height:9px;border-radius:50%;background:var(--programacao);box-shadow:0 0 12px var(--programacao)}.timeline time{color:var(--programacao);font:.875rem/1.5 monospace}.timeline h3{margin:9px 0 10px;font:700 1.35rem/1.2 Arial,sans-serif}.timeline p{margin:0;color:var(--muted);font:1.05rem/1.7 Georgia,serif}.closing{padding:120px 0;text-align:center}.closing div{color:var(--programacao);font:.875rem/1.5 monospace}.closing h2{margin:20px auto 0}.closing p{max-width:760px;margin:28px auto 0;color:var(--muted);font:1.125rem/1.8 Georgia,serif}
+	@media(max-width:950px){.hero{grid-template-columns:1fr;gap:45px}.hero .editorial-image{max-width:520px}.architecture{grid-template-columns:1fr}.architecture b{padding:2px}.image-sequence{grid-template-columns:1fr 1fr}.image-sequence .editorial-image:last-child{grid-column:1/-1;max-width:440px}}
+	@media(max-width:800px){.hero{padding:68px 0 58px}.content{padding:72px 0}.section-grid{grid-template-columns:1fr;gap:28px}.frame-grid,.metrics{grid-template-columns:1fr}.image-sequence{grid-template-columns:1fr}.image-sequence .editorial-image:last-child{grid-column:auto;max-width:none}.image-sequence :global(.editorial-image__trigger img){height:620px}}
+	@media(max-width:600px){.image-sequence :global(.editorial-image__trigger img){height:540px}.closing{padding:90px 0}}
+</style>
