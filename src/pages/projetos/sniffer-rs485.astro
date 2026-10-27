@@ -1,0 +1,572 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import LineageGraph from "../../components/LineageGraph.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("sniffer-rs485");
+if (!project?.page) throw new Error("Dados do RS485 Sniffer não encontrados.");
+const page = project.page;
+---
+
+<BaseLayout
+	title="RS485 Sniffer — quando o barramento começou a falar | Galeria -2048"
+	description={project.description}
+	image={project.image}
+	type="article"
+	keywords={project.keywords}
+>
+	<SiteHeader accent="var(--programacao)" />
+	<main>
+		<div class="container">
+			<section class="hero">
+				<div class="hero-copy">
+					<div class="code">{project.type} / {project.number} / ENGENHARIA REVERSA</div>
+					<h1>RS485<br /><span>SNIFFER</span></h1>
+					<p class="hero-kicker">QUANDO O BARRAMENTO COMEÇOU A FALAR</p>
+					<p class="subtitle">{page.subtitle}</p>
+					<div class="tags">{project.categories.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+					<div class="status"><StatusGrid items={page.status} /></div>
+				</div>
+				<EditorialImage
+					src="/images/sniffer-rs485/hero-conceitual.webp"
+					alt="Representação conceitual de um ESP8266 observando um barramento RS485 e enviando bytes para um computador"
+					caption="Representação conceitual do projeto: o hardware entre o barramento RS485 e a leitura dos bytes no computador. Imagem criada para a Galeria -2048."
+					fit="contain"
+					eager={true}
+				/>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">01 / A PERGUNTA INICIAL</div>
+					<div>
+						<h2>Antes do código, havia uma conversa que eu não conseguia ouvir.</h2>
+						<div class="prose">
+							<p>O projeto começou em 29 de setembro de 2025, durante uma investigação sobre controle programado de potência em sistemas fotovoltaicos. A ideia era limitar a geração por horário, mas primeiro eu precisava entender a conversa entre o controlador e o inversor.</p>
+							<p>Foi nesse contexto que encontrei o termo <em>sniffer</em>: uma ferramenta que observa o tráfego sem ocupar o papel de mestre ou escravo. Em vez de pedir valores ao equipamento, ela escuta os bytes que já estão passando.</p>
+							<p>O hardware escolhido foi um datalogger SolarView já reaproveitado, com ESP-07 e interface RS485. Ele deixou de ser apenas objeto de estudo e passou a ser a própria ferramenta da investigação.</p>
+						</div>
+						<a class="related-link" href="/artigos/solarview-ubox/"><span>CONHECER O HARDWARE — SOLARVIEW UBOX</span><span>→</span></a>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">02 / O QUE É UM SNIFFER</div>
+					<div>
+						<h2>Escutar primeiro. Interpretar depois.</h2>
+						<div class="prose">
+							<p>Eu conhecia bibliotecas capazes de implementar um mestre ou escravo Modbus. A biblioteca <a href="https://github.com/emelianov/modbus-esp8266" target="_blank" rel="noreferrer">Modbus ESP8266, de Alexander Emelianov ↗</a>, é uma referência nesse tipo de abstração. O problema aqui era outro: antes de formular uma requisição, eu precisava observar a comunicação existente em seu nível mais cru.</p>
+							<p>Um sniffer recebe os bytes, preserva a ordem e registra o intervalo entre eles. O significado pode ser investigado depois. Essa separação foi importante porque eu ainda não possuía um mapa de registradores confiável e nem sabia quais perguntas o controlador fazia ao inversor.</p>
+						</div>
+						<EditorialImage
+							src="/images/sniffer-rs485/inicio-sniffer.webp"
+							alt="Registro da conversa inicial em que o termo sniffer foi apresentado para observar uma comunicação serial"
+							caption="O começo da investigação: a pergunta em que o termo sniffer apareceu como caminho para observar o barramento."
+							fit="contain"
+							variant="detail"
+						/>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">03 / O SILÊNCIO TAMBÉM CONTA</div>
+					<div>
+						<h2>Um frame não termina porque o código chegou ao fim da linha.</h2>
+						<div class="prose">
+							<p>No Modbus RTU, o intervalo de silêncio ajuda a separar uma mensagem da seguinte. A referência clássica é de pelo menos 3,5 tempos de caractere. Por isso, capturar somente a sequência hexadecimal não bastava: o tempo fazia parte da estrutura que eu tentava reconhecer.</p>
+							<p>A primeira versão usava uma espera fixa de 10 ms. Depois, o projeto passou a considerar aproximadamente 4 ms em 9600 baud e a registrar timestamps. Não era ainda um analisador universal, mas já preservava melhor o ritmo real da comunicação.</p>
+						</div>
+						<div class="signal-strip" aria-label="Fluxo de observação dos frames">
+							<div><span>BARRAMENTO</span><strong>BYTES</strong></div><b>→</b><div><span>INTERVALO</span><strong>≥ 3,5 CARACTERES</strong></div><b>→</b><div><span>REGISTRO</span><strong>NOVO FRAME</strong></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content version-section">
+				<div class="section-grid">
+					<div class="section-label">04 / VERSÃO 1.0</div>
+					<div>
+						<h2>O primeiro resultado apareceu no monitor serial.</h2>
+						<div class="prose">
+							<p>A UART de hardware recebeu o RS485 a 9600 baud. Uma <code>SoftwareSerial</code>, também a 9600 baud, enviou ao computador grupos identificados como <code>[RX]</code>. Depois de 10 ms sem novos dados, a captura era considerada encerrada.</p>
+							<p>Era uma solução simples e dependente do computador, sem timestamp e com uma pausa fixa entre leituras. Ainda assim, foi a primeira vez em que a conversa deixou de ser invisível e passou a existir como sequência de bytes.</p>
+						</div>
+						<EditorialImage
+							src="/images/sniffer-rs485/captura-monitor-serial.webp"
+							alt="Computador mostrando a captura hexadecimal do sniffer no monitor serial"
+							caption="A primeira saída útil: bytes recebidos pelo RS485 e apresentados no monitor serial."
+							fit="contain"
+							variant="detail"
+						/>
+					</div>
+				</div>
+			</section>
+
+			<section class="content version-section">
+				<div class="section-grid">
+					<div class="section-label">05 / VERSÃO 2.0</div>
+					<div>
+						<h2>Menos espera fixa. Mais contexto temporal.</h2>
+						<div class="prose">
+							<p>A saída de debug subiu para 115200 baud, a pausa fixa deixou de bloquear o laço e cada grupo recebeu o tempo transcorrido desde a inicialização. O timeout de aproximadamente 4 ms passou a representar, de modo prático, o silêncio entre frames para a configuração usada.</p>
+							<p>Nessa fase, o <code>serial_Saver</code> ajudou a preservar em arquivo aquilo que o computador recebia. Ele resolvia o registro, mas o sniffer ainda precisava permanecer fisicamente ligado ao PC para que alguém pudesse acompanhar a captura.</p>
+						</div>
+						<div class="change-grid">
+							<div><span>ANTES</span><strong>DELAY FIXO</strong><small>10 ms</small></div>
+							<div><span>DEPOIS</span><strong>TIMEOUT DO FRAME</strong><small>≈ 4 ms em 9600 baud</small></div>
+							<div><span>NOVO CONTEXTO</span><strong>TIMESTAMP</strong><small>segundos desde o boot</small></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content version-section">
+				<div class="section-grid">
+					<div class="section-label">06 / VERSÃO 3.0</div>
+					<div>
+						<h2>O navegador substituiu o cabo de debug.</h2>
+						<div class="prose">
+							<p>O ESP8266 passou a criar uma rede Wi-Fi própria, servir uma página por HTTP e transmitir as capturas por WebSocket. O celular passou a abrir o console, acompanhar o tráfego e salvar o conteúdo sem depender de Internet.</p>
+							<p>O arquivo oferecido pela interface ainda usava a extensão <code>.csv</code>, embora o conteúdo fosse texto corrido. Essa imperfeição ficou registrada porque também faz parte da evolução: a necessidade de retirar o computador da bancada foi resolvida antes de o formato de exportação ser refinado.</p>
+						</div>
+						<EditorialImage
+							src="/images/sniffer-rs485/console-websocket.webp"
+							alt="Celular exibindo o console web do sniffer e os controles para salvar a captura"
+							caption="Versão 3.0: console local no navegador, atualização por WebSocket e salvamento pelo celular."
+							fit="contain"
+							variant="portrait"
+						/>
+					</div>
+				</div>
+			</section>
+
+			<section class="content version-section">
+				<div class="section-grid">
+					<div class="section-label">07 / VERSÃO 4.0</div>
+					<div>
+						<h2>O sniffer começou a se adaptar ao barramento.</h2>
+						<div class="prose">
+							<p>A quarta versão reuniu a comunicação em um <code>ModbusManager</code> e levou para a interface web a escolha de baud rate, paridade, stop bits e endereço do escravo. Isso ampliou o uso além da configuração fixa de 9600 baud.</p>
+							<p>O campo de endereço ainda não filtra o tráfego, as configurações permanecem apenas na memória e o cálculo do timeout usa uma aproximação de 11 bits por caractere. Há também uma pendência estrutural: o firmware principal ficou em <code>main/</code>, enquanto a configuração padrão do PlatformIO continua apontando para o exemplo em <code>src/main.cpp</code>.</p>
+						</div>
+						<div class="settings" aria-label="Configurações da versão 4.0">
+							<div><span>BAUD RATE</span><strong>1200–115200</strong></div>
+							<div><span>PARIDADE</span><strong>N / E / O</strong></div>
+							<div><span>STOP BITS</span><strong>1 / 2</strong></div>
+							<div><span>SLAVE ID</span><strong>1–247</strong><small>configurado, ainda sem filtro</small></div>
+						</div>
+						<div class="callout warning"><strong>[ ESTADO REAL DO REPOSITÓRIO ]</strong><p>A versão 4.0 documenta uma direção funcional, mas a estrutura atual ainda exige ajuste para que o PlatformIO compile diretamente o firmware correto. A limitação foi mantida explícita em vez de apresentar a versão como encerrada.</p></div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">08 / UM FRAME CRU</div>
+					<div>
+						<h2>O registro guarda evidência, não inventa significado.</h2>
+						<div class="prose">
+							<p>Uma captura pode ser reconhecida como uma solicitação e uma resposta Modbus sem que isso revele todo o mapa do equipamento. O trecho abaixo foi reduzido a um exemplo curto e não contém número de série, credencial ou dado identificável.</p>
+						</div>
+						<div class="raw-frame">
+							<div><span>SOLICITAÇÃO</span><code>01 03 75 76 00 01 7F DC</code></div>
+							<div><span>RESPOSTA</span><code>01 03 02 01 BC B8 65</code></div>
+						</div>
+						<div class="callout"><strong>[ LEITURA DELIBERADAMENTE LIMITADA ]</strong><p>O exemplo mostra endereço, função, faixa consultada, quantidade e CRC, mas não atribui nomes ou unidades ao registrador. A interpretação do protocolo exige comparação, documentação e repetição dos testes.</p></div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">09 / RUÍDO</div>
+					<div>
+						<h2>Nem toda sequência recebida era uma mensagem útil.</h2>
+						<div class="prose">
+							<p>Durante os testes apareceram bytes soltos, enquadramentos incompletos e sequências com CRC inválido. Parte do trabalho deixou de ser apenas capturar dados e passou a ser distinguir comunicação coerente de ruído elétrico, colisões ou um agrupamento temporal incorreto.</p>
+							<p>Esses registros não foram apagados. Eles mostram por que uma tela cheia de hexadecimal não equivale, sozinha, a compreender um protocolo.</p>
+						</div>
+						<EditorialImage
+							src="/images/sniffer-rs485/ruido-crc.webp"
+							alt="Terminal do sniffer mostrando sequências recebidas e indicação de CRC inválido"
+							caption="Ruído e frames inválidos também fizeram parte da investigação e ajudaram a definir o que a ferramenta precisava preservar."
+							fit="contain"
+							variant="detail"
+						/>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">10 / O QUE ELE DESTRAVOU</div>
+					<div>
+						<h2>O sniffer deixou de ser o destino e virou uma ferramenta para os projetos seguintes.</h2>
+						<div class="prose">
+							<p>O objetivo inicial era compreender a comunicação necessária para um controle programado de potência fotovoltaica. Ao chegar aos bytes, aos tempos e aos erros, o projeto criou uma base prática para investigações posteriores com Modbus RTU.</p>
+							<p>Esse aprendizado reapareceu em bibliotecas, simuladores, bridges e proxies. O sniffer não precisava concentrar todas essas funções: sua contribuição foi tornar o barramento observável e permitir que cada problema seguinte recebesse uma ferramenta mais específica.</p>
+						</div>
+						<a class="related-link" href="/projetos/inverter-modbus-lib/"><span>VER UM DOS DESDOBRAMENTOS — INVERTER MODBUS LIB</span><span>→</span></a>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">11 / ESTADO ATUAL</div>
+					<div>
+						<h2>Em desenvolvimento, mas sem evolução planejada agora.</h2>
+						<div class="prose">
+							<p>O status permanece <strong>EM DESENVOLVIMENTO</strong> porque a versão 4.0 conserva limitações conhecidas e a estrutura de build ainda pode ser organizada. Isso não significa que exista uma nova versão em andamento.</p>
+							<p>Por enquanto, não pretendo ampliar o sniffer. Ele já cumpriu o papel de abrir caminho e deu origem a outros projetos, que hoje carregam adiante partes mais específicas do problema. O repositório continua público como registro técnico dessa evolução.</p>
+						</div>
+						<div class="links">
+							<a href="https://github.com/akioShaolin/sniffer-rs485" target="_blank" rel="noreferrer">CÓDIGO E README NO GITHUB ↗</a>
+						</div>
+						<div class="timeline">{page.timeline.map((event) => <article><time>{event.year}</time><h3>{event.title}</h3><p>{event.text}</p></article>)}</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="closing">
+				<div>[ PROJETO / 017 / EM DESENVOLVIMENTO ]</div>
+				<h2>Primeiro vieram os bytes. Depois, as ferramentas que nasceram deles.</h2>
+				<p>Observar o barramento não respondeu tudo de uma vez. Tornou possível formular perguntas melhores — e preservar as respostas nos projetos seguintes.</p>
+			</section>
+		</div>
+		<LineageGraph currentId={project.id} />
+	</main>
+	<SiteFooter rightText="PROJETO / RS485 / SNIFFER" />
+	<ImageLightbox />
+</BaseLayout>
+
+<style>
+	:global(body) {
+		background:
+			radial-gradient(circle at 84% 7%, rgba(0, 217, 255, .06), transparent 540px),
+			linear-gradient(rgba(255, 255, 255, .014) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255, 255, 255, .014) 1px, transparent 1px),
+			var(--bg);
+		background-size: auto, 42px 42px, 42px 42px, auto;
+	}
+
+	.hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1.15fr) minmax(340px, .85fr);
+		gap: 58px;
+		align-items: start;
+		padding: 90px 0 80px;
+	}
+
+	.hero .editorial-image { margin: 0; }
+	.code,
+	.section-label {
+		color: var(--programacao);
+		font: .875rem/1.5 monospace;
+		letter-spacing: .08em;
+	}
+
+	.hero h1 {
+		margin: 24px 0 18px;
+		font: 700 clamp(4.2rem, 8.6vw, 8.8rem)/.83 Arial, sans-serif;
+		letter-spacing: -.075em;
+	}
+
+	.hero h1 span { color: var(--programacao); }
+	.hero-kicker {
+		margin: 0 0 26px;
+		color: var(--text);
+		font: 700 clamp(1rem, 1.7vw, 1.35rem)/1.3 monospace;
+		letter-spacing: .04em;
+	}
+
+	.subtitle {
+		max-width: 760px;
+		color: var(--muted);
+		font: clamp(1.18rem, 1.9vw, 1.48rem)/1.65 Georgia, serif;
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		margin-top: 30px;
+	}
+
+	.status { margin-top: 42px; }
+	.content {
+		padding: 95px 0;
+		border-top: 1px solid var(--line);
+	}
+
+	.version-section {
+		background: linear-gradient(90deg, transparent, rgba(0, 217, 255, .018), transparent);
+	}
+
+	.section-grid {
+		display: grid;
+		grid-template-columns: 230px minmax(0, 1fr);
+		gap: 70px;
+	}
+
+	h2 {
+		max-width: 920px;
+		margin: 0 0 32px;
+		font: 700 clamp(2.25rem, 4.7vw, 4.6rem)/.98 Arial, sans-serif;
+		letter-spacing: -.052em;
+	}
+
+	.prose { max-width: 800px; }
+	.prose p,
+	.prose li {
+		color: var(--muted);
+		font: 1.125rem/1.8 Georgia, serif;
+	}
+
+	.prose strong { color: var(--text); }
+	.prose code { color: var(--programacao); }
+	.prose a {
+		color: var(--text);
+		text-decoration-color: var(--programacao);
+		text-underline-offset: 4px;
+	}
+
+	.prose a:hover,
+	.prose a:focus-visible { color: var(--programacao); }
+
+	.related-link {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+		max-width: 800px;
+		margin-top: 34px;
+		padding: 18px 20px;
+		border: 1px solid var(--line);
+		color: var(--text);
+		font: 700 .875rem/1.4 monospace;
+		text-decoration: none;
+	}
+
+	.related-link:hover,
+	.related-link:focus-visible,
+	.links a:hover,
+	.links a:focus-visible {
+		border-color: var(--programacao);
+		color: var(--programacao);
+		outline: 2px solid var(--programacao);
+		outline-offset: 3px;
+	}
+
+	.signal-strip {
+		display: grid;
+		grid-template-columns: 1fr auto 1fr auto 1fr;
+		align-items: center;
+		gap: 14px;
+		max-width: 900px;
+		margin-top: 40px;
+	}
+
+	.signal-strip div,
+	.change-grid div,
+	.settings div,
+	.raw-frame div {
+		padding: 23px;
+		border: 1px solid var(--line);
+		background: var(--surface);
+	}
+
+	.signal-strip span,
+	.signal-strip strong,
+	.change-grid span,
+	.change-grid strong,
+	.change-grid small,
+	.settings span,
+	.settings strong,
+	.settings small,
+	.raw-frame span,
+	.raw-frame code {
+		display: block;
+		font-family: monospace;
+	}
+
+	.signal-strip span,
+	.change-grid span,
+	.change-grid small,
+	.settings span,
+	.settings small,
+	.raw-frame span {
+		color: var(--muted);
+		font-size: .875rem;
+	}
+
+	.signal-strip strong,
+	.change-grid strong,
+	.settings strong { margin-top: 9px; }
+	.signal-strip b {
+		color: var(--programacao);
+		font: 700 1rem monospace;
+	}
+
+	.change-grid,
+	.settings {
+		display: grid;
+		gap: 1px;
+		max-width: 900px;
+		margin-top: 38px;
+		border: 1px solid var(--line);
+		background: var(--line);
+	}
+
+	.change-grid { grid-template-columns: repeat(3, 1fr); }
+	.settings { grid-template-columns: repeat(4, 1fr); }
+	.change-grid div,
+	.settings div { border: 0; }
+	.change-grid small,
+	.settings small { margin-top: 9px; line-height: 1.45; }
+
+	.raw-frame {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1px;
+		max-width: 900px;
+		margin: 38px 0;
+		border: 1px solid var(--line);
+		background: var(--line);
+	}
+
+	.raw-frame div { border: 0; }
+	.raw-frame code {
+		margin-top: 12px;
+		color: var(--programacao);
+		font-size: 1rem;
+		line-height: 1.6;
+		overflow-wrap: anywhere;
+	}
+
+	.callout {
+		max-width: 900px;
+		margin: 34px 0;
+		padding: 26px;
+		border: 1px solid var(--line);
+		border-left: 2px solid var(--programacao);
+		background: rgba(0, 217, 255, .025);
+	}
+
+	.callout.warning {
+		border-left-color: var(--automacao);
+		background: rgba(255, 138, 0, .03);
+	}
+
+	.callout strong { font: .875rem/1.5 monospace; }
+	.callout p {
+		margin: 12px 0 0;
+		color: var(--muted);
+		font: 1.05rem/1.7 Georgia, serif;
+	}
+
+	.links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin: 35px 0;
+	}
+
+	.links a {
+		padding: 14px 17px;
+		border: 1px solid var(--line);
+		color: var(--text);
+		font: 700 .875rem/1.4 monospace;
+		text-decoration: none;
+	}
+
+	.timeline {
+		max-width: 900px;
+		margin-top: 65px;
+		border-left: 1px solid var(--line);
+	}
+
+	.timeline article {
+		position: relative;
+		padding: 0 0 42px 38px;
+	}
+
+	.timeline article:last-child { padding-bottom: 0; }
+	.timeline article::before {
+		content: "";
+		position: absolute;
+		left: -5px;
+		top: 5px;
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		background: var(--programacao);
+		box-shadow: 0 0 12px var(--programacao);
+	}
+
+	.timeline time {
+		color: var(--programacao);
+		font: .875rem/1.5 monospace;
+	}
+
+	.timeline h3 {
+		margin: 9px 0 10px;
+		font: 700 1.35rem/1.2 Arial, sans-serif;
+	}
+
+	.timeline p {
+		margin: 0;
+		color: var(--muted);
+		font: 1.05rem/1.7 Georgia, serif;
+	}
+
+	.closing {
+		padding: 120px 0;
+		text-align: center;
+	}
+
+	.closing div {
+		color: var(--programacao);
+		font: .875rem/1.5 monospace;
+	}
+
+	.closing h2 { margin: 20px auto 0; }
+	.closing p {
+		max-width: 760px;
+		margin: 28px auto 0;
+		color: var(--muted);
+		font: 1.125rem/1.8 Georgia, serif;
+	}
+
+	@media (max-width: 1024px) {
+		.hero { grid-template-columns: 1fr; gap: 45px; }
+		.hero .editorial-image { max-width: 760px; }
+		.settings { grid-template-columns: 1fr 1fr; }
+	}
+
+	@media (max-width: 800px) {
+		.hero { padding: 68px 0 58px; }
+		.content { padding: 72px 0; }
+		.section-grid { grid-template-columns: 1fr; gap: 28px; }
+		.signal-strip { grid-template-columns: 1fr; }
+		.signal-strip b { text-align: center; transform: rotate(90deg); }
+		.change-grid,
+		.raw-frame { grid-template-columns: 1fr; }
+	}
+
+	@media (max-width: 600px) {
+		.settings { grid-template-columns: 1fr; }
+		.closing { padding: 90px 0; }
+	}
+</style>

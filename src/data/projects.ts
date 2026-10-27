@@ -41,6 +41,48 @@ export type Project = {
 
 export const projects: Project[] = [
 	{
+		id: "sniffer-rs485",
+		type: "PROJETO",
+		number: "017",
+		title: "RS485 SNIFFER",
+		description: "Um datalogger SolarView reaproveitado para observar tráfego RS485: da serial a um console WebSocket acessível pelo celular.",
+		image: "/images/sniffer-rs485/capa-conceitual.webp",
+		path: "/projetos/sniffer-rs485/",
+		categories: [
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "DIAGNÓSTICO", tone: "diagnostico" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["RS485 Sniffer", "ESP-07", "ESP8266", "SolarView", "uBox", "Modbus RTU", "sniffer", "engenharia reversa", "WebSocket", "SoftwareSerial", "serial_Saver", "tráfego serial", "hexadecimal", "diagnóstico"],
+		page: {
+			code: "RS485 SNIFFER",
+			subtitle: "Uma necessidade de controle de potência fotovoltaica levou ao nível mais cru do Modbus: bytes, silêncio entre frames e uma ferramenta que evoluiu do monitor serial para o navegador.",
+			status: [
+				{ label: "STATUS", value: "● EM DESENVOLVIMENTO", tone: "programacao" },
+				{ label: "INÍCIO", value: "29/09/2025" },
+				{ label: "VERSÕES", value: "1.0 → 4.0" },
+				{ label: "ETAPA ATIVA", value: "SEM EVOLUÇÃO PLANEJADA" },
+			],
+			timeline: [
+				{ year: "29/09/2025", title: "A pergunta inicial", text: "Uma tarefa de controle fotovoltaico criou a necessidade de observar o que controlador e inversor diziam no barramento." },
+				{ year: "1.0", title: "Bytes crus pela serial", text: "A UART principal recebeu o RS485 e uma SoftwareSerial levou a saída hexadecimal até o computador." },
+				{ year: "2.0", title: "Tempo e registro", text: "Timestamp, debug mais rápido e a aproximação do silêncio de 3,5 caracteres prepararam as capturas para registro externo." },
+				{ year: "3.0", title: "Console no navegador", text: "Wi-Fi, servidor HTTP e WebSocket retiraram do monitor serial a exclusividade sobre a visualização e o salvamento." },
+				{ year: "4.0", title: "Configuração dinâmica", text: "Baud rate, paridade, stop bits e slave ID chegaram a uma interface web mais organizada." },
+				{ year: "ATUAL", title: "Uma ferramenta que se ramificou", text: "Não há uma nova etapa planejada agora; o aprendizado e as capturas já deram origem a outros projetos." },
+			],
+			specifications: [
+				{ name: "Hardware", value: "Datalogger SolarView / ESP-07" },
+				{ name: "Barramento", value: "RS485 half-duplex" },
+				{ name: "Protocolo observado", value: "Modbus RTU e tráfego serial bruto" },
+				{ name: "Saída inicial", value: "SoftwareSerial / USB-TTL" },
+				{ name: "Saída posterior", value: "Wi-Fi local / WebSocket" },
+				{ name: "Licença", value: "MIT" },
+			],
+		},
+	},
+	{
 		id: "esp07-jbd-bms-monitor",
 		type: "PROJETO",
 		number: "016",

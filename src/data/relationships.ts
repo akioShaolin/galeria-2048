@@ -31,8 +31,10 @@ export const influenceRelationshipTypes: RelationshipType[] = ["base_tecnica", "
 // Cada ligação é cadastrada uma única vez. O sentido inverso é derivado pelos helpers.
 // Relações somente devem entrar aqui depois de confirmação factual do autor.
 export const relationships: ContentRelationship[] = [
+	{ from: "rtc-ds1307", to: "solarview-ubox", type: "base_tecnica", label: "CONHECIMENTO REUTILIZADO NA IDENTIFICAÇÃO" },
 	{ from: "monza-ignicao-emergencial", to: "carregador-supervisionado", type: "evoluiu_para", label: "NASCEU DURANTE O DIAGNÓSTICO" },
 	{ from: "sniffing-usb-wireshark", to: "tr-serial-proxy", type: "evoluiu_para", label: "DERIVADO DO ARTIGO" },
+	{ from: "solarview-ubox", to: "sniffer-rs485", type: "evoluiu_para", label: "HARDWARE REAPROVEITADO" },
 	{ from: "solarview-ubox", to: "esp07-jbd-bms-monitor", type: "evoluiu_para", label: "HARDWARE REAPROVEITADO" },
 	{ from: "esp07-jbd-bms-monitor", to: "dms-portable-logger", type: "contribuiu_para", label: "INSPIROU O LOGGER" },
 	{ from: "solarview-ubox", to: "ed100-hardware-rs485", type: "contribuiu_para" },

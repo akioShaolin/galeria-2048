@@ -13,6 +13,22 @@ export type Article = {
 
 export const articles: Article[] = [
 	{
+		id: "rtc-ds1307",
+		type: "ARTIGO / REFERÊNCIA TÉCNICA",
+		code: "RTC / DS1307",
+		label: "ARTIGO / FUNDAMENTOS DE ELETRÔNICA",
+		title: "RTC — UM RELÓGIO QUE NÃO ESQUECE",
+		description: "Do DS1302 nos primeiros ensaios ao DS1307 integrado ao SolarView: uma introdução a cristais de 32,768 kHz, BCD, registradores, I²C e leitura de datasheets.",
+		image: "/images/artigos/rtc-ds1307/hero.webp",
+		path: "/artigos/rtc-ds1307/",
+		areas: [
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["RTC", "Real Time Clock", "DS1307", "DS1307Z", "DS1302", "I2C", "BCD", "32.768 kHz", "Arduino Nano", "Arduino Mega", "ESP-07", "ESP8266", "SolarView", "RTClib", "datasheet", "registradores", "memória RAM"],
+	},
+	{
 		id: "greenway-bms-rs485",
 		type: "ARTIGO / REFERÊNCIA TÉCNICA",
 		code: "RS485 / BMS",

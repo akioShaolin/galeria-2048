@@ -1,0 +1,398 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import Tag from "../../components/Tag.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import LineageGraph from "../../components/LineageGraph.astro";
+import { articles } from "../../data/articles";
+
+const article = articles.find(({ id }) => id === "rtc-ds1307");
+if (!article) throw new Error("Dados do artigo RTC / DS1307 não encontrados.");
+
+const status = [
+	{ label: "NÍVEL", value: "INTRODUTÓRIO" },
+	{ label: "PROTAGONISTA", value: "DS1307Z", tone: "eletronica" },
+	{ label: "INTERFACE", value: "I²C / 0x68", tone: "programacao" },
+	{ label: "TRAJETÓRIA", value: "NANO · MEGA · ESP-07" },
+];
+
+const comparison = [
+	["FUNÇÃO", "RTC / CALENDÁRIO", "RTC / CALENDÁRIO"],
+	["CRISTAL", "32,768 kHz", "32,768 kHz"],
+	["COMUNICAÇÃO", "SERIAL DE 3 FIOS", "I²C"],
+	["SINAIS", "CE · I/O · SCLK", "SDA · SCL"],
+	["RAM GERAL", "31 BYTES", "56 BYTES"],
+	["PAPEL NESTE ARTIGO", "PRIMEIROS ENSAIOS", "ASSUNTO PRINCIPAL"],
+];
+
+const registers = [
+	["0x00", "SEGUNDOS", "00–59", "BCD; bit 7 é CH"],
+	["0x01", "MINUTOS", "00–59", "BCD"],
+	["0x02", "HORAS", "00–23 ou 1–12", "Seleção 12/24 h e AM/PM"],
+	["0x03", "DAY", "01–07", "Dia da semana; convenção da aplicação"],
+	["0x04", "DATE", "01–31", "Dia do mês"],
+	["0x05", "MÊS", "01–12", "BCD"],
+	["0x06", "ANO", "00–99", "BCD"],
+	["0x07", "CONTROLE", "—", "SQW/OUT, OUT, RS1 e RS0"],
+	["0x08–0x3F", "RAM", "56 bytes", "Uso geral, mantida pela bateria"],
+];
+
+const ds1302Code = `#include <Ds1302.h>
+
+uint8_t rtcRST  = D2;
+uint8_t rtcIO   = D3;
+uint8_t rtcSCLK = D10;
+
+Ds1302 rtc(rtcRST, rtcSCLK, rtcIO);`;
+
+const bcdCode = `uint8_t bcdToDec(uint8_t value) {
+  return (value / 16 * 10) + (value % 16);
+}
+
+uint8_t decToBcd(uint8_t value) {
+  return (value / 10 * 16) + (value % 10);
+}`;
+
+const libraryCode = `RTC_DS1307 rtc;
+
+Wire.begin(4, 5); // ESP-07: SDA, SCL
+rtc.begin();
+
+if (!rtc.isrunning()) {
+  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+}
+
+DateTime now = rtc.now();`;
+
+const ramCode = `constexpr uint8_t RTC_ADDR = 0x68;
+constexpr uint8_t RAM_START = 0x08;
+
+void writeRtcRam(uint8_t offset, uint8_t value) {
+  if (offset >= 56) return;
+  Wire.beginTransmission(RTC_ADDR);
+  Wire.write(RAM_START + offset);
+  Wire.write(value);
+  Wire.endTransmission();
+}
+
+uint8_t readRtcRam(uint8_t offset) {
+  if (offset >= 56) return 0;
+  Wire.beginTransmission(RTC_ADDR);
+  Wire.write(RAM_START + offset);
+  Wire.endTransmission(false);
+  Wire.requestFrom(RTC_ADDR, (uint8_t)1);
+  return Wire.available() ? Wire.read() : 0;
+}`;
+---
+
+<BaseLayout
+	title="RTC — um relógio que não esquece | Galeria -2048"
+	description={article.description}
+	image={article.image}
+	type="article"
+	keywords={article.keywords}
+>
+	<SiteHeader accent="var(--eletronica)" />
+	<main>
+		<article>
+			<header class="article-hero">
+				<div class="container">
+					<div class="eyebrow">[ ARTIGO / FUNDAMENTOS DE ELETRÔNICA ]</div>
+					<h1>RTC <span>UM RELÓGIO QUE NÃO ESQUECE</span></h1>
+					<p class="lead">O DS1307Z como guia para entender cristais, registradores, BCD e I²C — em uma trajetória que começou com módulos DS1302, passou pela bancada com Arduino e reapareceu dentro de hardware embarcado.</p>
+					<div class="tags">{article.areas.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+					<div class="article-status"><StatusGrid items={status} /></div>
+					<EditorialImage
+						src="/images/artigos/rtc-ds1307/hero.webp"
+						alt="Composição editorial com módulo RTC, bateria, cristal de 32,768 quilohertz e diagrama funcional"
+						caption="Composição editorial do tema. Os diagramas e valores técnicos do artigo são explicados a partir dos datasheets oficiais do DS1307 e do DS1302."
+						fit="contain"
+						eager
+					/>
+				</div>
+			</header>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 01 / ANTES DO DS1307 ]</div>
+					<div class="section-body wide prose">
+						<h2>O relógio começou como parte de uma ideia maior.</h2>
+						<p>Os primeiros ensaios preservados são de uma fase em que usei Arduino Nano e Arduino Mega. O objetivo não era apenas exibir horas: eu queria manter data e hora quando o microcontrolador fosse desligado, guardar eventos programados e controlar saídas no momento certo.</p>
+						<p>Na arquitetura imaginada, o RTC manteria o horário atual, uma EEPROM guardaria os eventos e o firmware compararia as duas coisas para acionar as saídas. Os sketches preservam LCD, botões, quatro saídas e a estrutura dos menus, embora o agendador completo ainda não estivesse implementado.</p>
+						<div class="progression" aria-label="Arquitetura pretendida no projeto inicial"><span>RTC<br /><small>hora atual</small></span><b>→</b><span>FIRMWARE<br /><small>compara eventos</small></span><b>→</b><span>SAÍDAS<br /><small>ações programadas</small></span></div>
+						<h3>O primeiro RTC dessa história foi o DS1302.</h3>
+						<p>Os arquivos do Nano e do Mega usam a biblioteca <code>Ds1302</code> e três sinais dedicados. Não era I²C. O trecho abaixo pertence ao código histórico e registra exatamente essa escolha:</p>
+						<div class="code-block"><div class="code-title">TRECHO HISTÓRICO / NANO E MEGA / DS1302</div><pre><code>{ds1302Code}</code></pre></div>
+						<figure class="video-record">
+							<video controls preload="metadata" playsinline poster="/images/artigos/rtc-ds1307/rtc-demo-poster.webp">
+								<source src="/images/artigos/rtc-ds1307/rtc-demo.mp4" type="video/mp4" />
+								<a href="/images/artigos/rtc-ds1307/rtc-demo.mp4">Abrir o vídeo do experimento</a>
+							</video>
+							<figcaption>Registro real da bancada: Arduino Mega, protoboard e OLED apresentando data e hora. O sketch <code>2.teste_display.ino</code> e este vídeo pertencem ao mesmo trabalho.</figcaption>
+						</figure>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 02 / DOIS RTCs ]</div>
+					<div class="section-body wide prose">
+						<h2>O mesmo problema. Duas interfaces bem diferentes.</h2>
+						<p>DS1302 e DS1307 mantêm relógio e calendário com auxílio de um cristal de 32,768 kHz e alimentação de reserva. Isso não torna seus módulos intercambiáveis. Identificar o componente continua sendo mais importante do que reconhecer apenas a aparência geral da placa.</p>
+						<div class="comparison-wrap"><table class="comparison"><thead><tr><th>CARACTERÍSTICA</th><th>DS1302</th><th>DS1307</th></tr></thead><tbody>{comparison.map(([feature, ds1302, ds1307]) => <tr><th>{feature}</th><td>{ds1302}</td><td>{ds1307}</td></tr>)}</tbody></table></div>
+						<div class="image-pair">
+							<EditorialImage src="/images/artigos/rtc-ds1307/ds1302-modulo-bateria.webp" alt="Verso do módulo DS1302 usado nos primeiros experimentos, com a bateria de reserva visível" caption="O módulo real usado na fase inicial. A bateria ocupa quase todo o verso da placa." fit="contain" />
+							<EditorialImage src="/images/artigos/rtc-ds1307/ds1302-modulo-componentes.webp" alt="Lado dos componentes do módulo DS1302, com circuito integrado, cristal e terminais identificados" caption="No lado dos componentes aparecem o CI, o cristal e os sinais RST, DAT e CLK. No datasheet atual, o sinal antes chamado RST aparece como CE." fit="contain" />
+						</div>
+						<div class="notice"><div class="notice-title">[ PERSONAGEM DE APOIO ]</div><p>O DS1302 explica como essa história começou. A partir daqui, o DS1307 assume o papel principal: é nele que vamos estudar I²C, registradores, BCD, SQW/OUT e RAM.</p></div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 03 / O QUE É UM RTC ]</div>
+					<div class="section-body prose">
+						<h2>Um pequeno domínio de tempo dentro do circuito.</h2>
+						<p><em>Real Time Clock</em>, ou RTC, é um circuito dedicado a manter relógio e calendário. O microcontrolador pode desligar, reiniciar ou executar outras tarefas; o RTC continua contando segundos com consumo muito baixo enquanto houver uma fonte de reserva adequada.</p>
+						<p>No DS1307, o circuito monitora a alimentação principal e passa automaticamente para <code>VBAT</code> quando necessário. Nessa condição, a contagem continua, mas o acesso normal ao barramento fica protegido contra escritas indevidas provocadas por uma alimentação fora da faixa.</p>
+						<div class="pullquote">O RTC não substitui o programa. Ele oferece ao programa uma referência de tempo que sobrevive aos reinícios.</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 04 / 32,768 kHz ]</div>
+					<div class="section-body wide prose">
+						<h2>Por que esse cristal aparece em tantos relógios?</h2>
+						<div class="power-equation"><span>32768</span><b>=</b><span>2<sup>15</sup></span><b>→</b><span>1 Hz</span></div>
+						<p>Como 32.768 é uma potência de dois, uma cadeia de quinze divisões binárias por dois transforma a oscilação do cristal em uma referência de um pulso por segundo. É uma relação conveniente para circuitos digitais e ajuda a explicar por que essa frequência se tornou tão comum em relógios.</p>
+						<p>O cristal não garante precisão perfeita sozinho. Seleção, capacitância de carga, temperatura, ruído e o desenho das trilhas também influenciam o resultado. O datasheet do DS1307 recomenda um cristal externo de 32,768 kHz com características específicas e cuidados de layout.</p>
+						<EditorialImage src="/images/artigos/rtc-ds1307/diagrama-blocos-ds1307.webp" alt="Diagrama de blocos oficial do DS1307 com oscilador, controle de alimentação, interface serial, registradores e RAM" caption="Diagrama de blocos do DS1307. Fonte: datasheet oficial Maxim/Analog Devices. O oscilador é apenas o começo; o chip também reúne controle de alimentação, lógica, interface I²C, registradores e RAM." fit="contain" variant="detail" />
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 05 / ABRINDO O DATASHEET ]</div>
+					<div class="section-body wide prose">
+						<h2>O componente deixa de ser uma caixa-preta quando sabemos o que procurar.</h2>
+						<ol class="reading-path"><li>Confirmar a marcação e a variante do encapsulamento.</li><li>Localizar o pinout.</li><li>Separar alimentação principal e bateria.</li><li>Identificar a interface de comunicação.</li><li>Localizar componentes externos.</li><li>Encontrar o mapa de registradores.</li><li>Entender como os dados são representados.</li><li>Comparar leituras reais com valores esperados.</li></ol>
+						<div class="pin-grid" aria-label="Pinos do DS1307Z"><div><strong>1 · X1</strong><span>cristal</span></div><div><strong>2 · X2</strong><span>cristal</span></div><div><strong>3 · VBAT</strong><span>reserva</span></div><div><strong>4 · GND</strong><span>referência</span></div><div><strong>5 · SDA</strong><span>dados I²C</span></div><div><strong>6 · SCL</strong><span>clock I²C</span></div><div><strong>7 · SQW/OUT</strong><span>onda quadrada / saída</span></div><div><strong>8 · VCC</strong><span>alimentação principal</span></div></div>
+						<div class="notice warning"><div class="notice-title">[ PINOUT NÃO É ESQUEMA DE LIGAÇÃO ]</div><p>O datasheet informa a função dos pinos, mas a ligação final também depende da alimentação, dos resistores de pull-up e do módulo ou placa usados. Não se deve copiar uma montagem de 5 V diretamente para GPIOs de 3,3 V sem verificar os níveis do barramento.</p></div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 06 / MAPA DE REGISTRADORES ]</div>
+					<div class="section-body wide prose">
+						<h2>O tempo fica guardado em endereços.</h2>
+						<p>O DS1307 organiza relógio, calendário e controle nos endereços <code>0x00</code> a <code>0x07</code>. A RAM de uso geral ocupa <code>0x08</code> a <code>0x3F</code>. O endereço diz onde procurar; os bits de cada byte dizem como interpretar o valor.</p>
+						<div class="table-scroll"><table class="register-table"><thead><tr><th>ENDEREÇO</th><th>FUNÇÃO</th><th>FAIXA</th><th>OBSERVAÇÃO</th></tr></thead><tbody>{registers.map(([address, name, range, note]) => <tr><td><code>{address}</code></td><th>{name}</th><td>{range}</td><td>{note}</td></tr>)}</tbody></table></div>
+						<div class="day-date"><div><span>DAY</span><strong>Dia da semana</strong><p>Valor sequencial de 1 a 7. A aplicação escolhe qual número representa cada dia.</p></div><div><span>DATE</span><strong>Dia do mês</strong><p>Valor de 1 a 31. É um campo diferente, apesar de os nomes parecerem próximos.</p></div></div>
+						<div class="notice"><div class="notice-title">[ CLOCK HALT ]</div><p>O bit 7 do registrador de segundos é o <strong>CH</strong>. Em 1, ele interrompe o oscilador; em 0, permite a contagem. Bibliotecas costumam esconder esse detalhe atrás de chamadas como <code>isrunning()</code> e <code>adjust()</code>.</p></div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 07 / BCD ]</div>
+					<div class="section-body wide prose">
+						<h2>O valor parece decimal, mas cada algarismo ocupa quatro bits.</h2>
+						<p>Os campos de tempo do DS1307 usam <em>Binary-Coded Decimal</em>, ou BCD. Em binário comum, o número decimal 25 é <code>0001 1001</code>. Em BCD, o algarismo 2 vira <code>0010</code> e o algarismo 5 vira <code>0101</code>: o byte passa a ser <code>0010 0101</code>, ou <code>0x25</code>.</p>
+						<div class="bit-example" aria-label="Comparação entre binário comum e BCD para o número 25">
+							<div><span>25 EM BINÁRIO</span><strong>0001 1001</strong></div>
+							<div><span>25 EM BCD</span><strong>0010 0101</strong></div>
+						</div>
+						<p>Essa diferença explica leituras que parecem erradas quando o byte bruto é tratado como inteiro comum. A conversão é pequena, mas precisa acontecer nos dois sentidos:</p>
+						<div class="code-block"><div class="code-title">CONVERSÃO / BCD ↔ DECIMAL</div><pre><code>{bcdCode}</code></pre></div>
+						<p>O registrador de horas ainda combina o valor BCD com bits de modo. Um deles escolhe entre 12 e 24 horas; no modo de 12 horas, outro distingue AM e PM. Já <code>DAY</code> não calcula sozinho nomes como segunda ou terça: o chip apenas mantém uma sequência de 1 a 7, e o programa define a correspondência.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 08 / I²C ]</div>
+					<div class="section-body wide prose">
+						<h2>Dois fios para escolher um endereço e conversar com vários circuitos.</h2>
+						<p>No DS1307, <code>SDA</code> transporta os dados e <code>SCL</code> fornece o ritmo da comunicação. Os dispositivos compartilham essas linhas e são diferenciados por endereço. O endereço de 7 bits do DS1307 é <code>0x68</code>.</p>
+						<div class="bus-flow" aria-label="Fluxo simplificado de uma leitura I2C"><span>START</span><b>→</b><span>0x68 + WRITE</span><b>→</b><span>REGISTRADOR</span><b>→</b><span>RESTART</span><b>→</b><span>0x68 + READ</span><b>→</b><span>DADOS</span></div>
+						<p>Uma leitura típica começa escrevendo apenas o endereço interno do registrador que será consultado. Sem encerrar completamente a transação, o controlador muda para leitura e recebe os bytes. Esse mecanismo permite percorrer relógio, calendário ou RAM sem criar um fio separado para cada função.</p>
+						<div class="notice"><div class="notice-title">[ A CRONOLOGIA IMPORTA ]</div><p>O I²C com DS1307 pertence à fase do ESP-07 e da placa SolarView. Nos primeiros ensaios com Arduino Nano e Mega, o RTC usado era o DS1302, ligado por sua interface serial de três fios.</p></div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 09 / BIBLIOTECA E RAM ]</div>
+					<div class="section-body wide prose">
+						<h2>A biblioteca facilita o uso. O datasheet explica o que ela está fazendo.</h2>
+						<p>Com a <code>RTClib</code>, a leitura do DS1307 se torna direta. Nos sketches do ESP-07, a inicialização do barramento e a consulta do horário aparecem de forma semelhante a esta:</p>
+						<div class="code-block"><div class="code-title">ESP-07 / DS1307 / RTCLIB</div><pre><code>{libraryCode}</code></pre></div>
+						<p>A abstração é útil, mas não apaga os registradores. Saber que <code>now()</code> termina em uma comunicação com <code>0x68</code> ajuda a diagnosticar falhas, conferir o barramento com instrumentos e ler implementações de outras bibliotecas.</p>
+						<h3>Há também 56 bytes que não marcam as horas.</h3>
+						<p>Os endereços <code>0x08</code> a <code>0x3F</code> formam uma pequena RAM alimentada pela bateria. Ela pode guardar preferências compactas, marcadores ou estados que precisem sobreviver à falta de alimentação principal. Não substitui armazenamento de massa e não deve receber dados sem estratégia de validação.</p>
+						<div class="code-block"><div class="code-title">ACESSO DIRETO / PRINCÍPIO BASEADO NO DATASHEET</div><pre><code>{ramCode}</code></pre></div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 10 / EVOLUÇÃO NO ESP-07 ]</div>
+					<div class="section-body wide prose">
+						<h2>Primeiro observar. Depois ajustar. Por fim, operar pela rede local.</h2>
+						<p>Quando o trabalho migrou para o ESP-07, o DS1307 já fazia parte da placa SolarView. A evolução preservada nos sketches mostra três passos claros:</p>
+						<div class="evolution-grid">
+							<article><span>30 / 09 / 2025</span><strong>LEITURA SERIAL</strong><p><code>esp07_rtc_serial_test</code> abriu o barramento I²C, verificou o RTC e imprimiu data e hora.</p></article>
+							<article><span>23 / 12 / 2025</span><strong>AJUSTE LOCAL</strong><p><code>rtc_adj</code> acrescentou ajuste pela serial e uma interação por botão.</p></article>
+							<article><span>31 / 12 / 2025</span><strong>AJUSTE VIA WI-FI</strong><p><code>rtc_adj_wifi</code> levou o ajuste a uma interface web servida pelo próprio ESP-07.</p></article>
+						</div>
+						<p>Não eram três relógios diferentes. Era o mesmo DS1307 integrado à placa, ganhando interfaces de teste e configuração cada vez mais convenientes.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 11 / O RTC DO SOLARVIEW ]</div>
+					<div class="section-body wide prose">
+						<h2>O componente foi identificado pelo mapeamento da placa.</h2>
+						<p>No SolarView, a identificação do RTC não nasceu apenas da aparência da fotografia. Eu mesmo acompanhei as conexões e fiz o mapeamento do circuito. A posição junto ao cristal e à bateria ajudou a localizar o conjunto; o caminho elétrico e a comunicação confirmaram a função do DS1307Z.</p>
+						<EditorialImage src="/images/artigos/rtc-ds1307/rtc-solarview.webp" alt="Placa SolarView com o circuito RTC identificado junto ao cristal e à bateria de reserva" caption="O RTC na placa SolarView. A marcação visual registra o componente cuja função foi confirmada durante o mapeamento do circuito." fit="contain" variant="detail" />
+						<div class="heuristic"><span>CI PEQUENO</span><b>+</b><span>CRISTAL DE RELÓGIO</span><b>+</b><span>BATERIA</span><b>→</b><strong>INVESTIGAR UM RTC</strong></div>
+						<p>Essa combinação é uma boa pista de bancada, não uma prova universal. A confirmação deve vir da marcação do componente, do pinout, das trilhas, do endereço observado no barramento e do datasheet correspondente.</p>
+						<a class="internal-link" href="/artigos/solarview-ubox/"><span>ARTIGO RELACIONADO</span><strong>SOLARVIEW UBOX — DO HARDWARE FECHADO À PLATAFORMA ABERTA ↗</strong></a>
+					</div>
+				</div>
+			</section>
+
+			<section class="content-section conclusion-section">
+				<div class="container section-grid">
+					<div class="section-label">[ 12 / O QUE FICOU ]</div>
+					<div class="section-body wide prose">
+						<h2>O componente saiu do teste e passou a sustentar funções reais.</h2>
+						<p>O percurso começou com DS1302, Nano, Mega, display e a ideia de acionar saídas em horários definidos. Mais tarde, o DS1307 já presente no SolarView foi lido pelo ESP-07, ajustado pela serial, configurado por Wi-Fi e reaproveitado em firmwares que precisavam de agendamento e sincronização.</p>
+						<p>A principal lição não está em decorar uma biblioteca. Está em saber reconhecer o circuito, abrir o datasheet, localizar o mapa de registradores, entender a representação dos dados e comparar cada camada com o que existe na placa.</p>
+						<div class="closing"><span>CRISTAL</span><b>→</b><span>REGISTRADORES</span><b>→</b><span>I²C</span><b>→</b><span>APLICAÇÃO</span></div>
+						<div class="reference-list">
+							<a href="https://www.analog.com/media/en/technical-documentation/data-sheets/ds1307.pdf" target="_blank" rel="noopener noreferrer"><span>REFERÊNCIA OFICIAL</span><strong>DATASHEET DS1307 ↗</strong></a>
+							<a href="https://www.analog.com/media/en/technical-documentation/data-sheets/ds1302.pdf" target="_blank" rel="noopener noreferrer"><span>CONTEXTO HISTÓRICO</span><strong>DATASHEET DS1302 ↗</strong></a>
+						</div>
+					</div>
+				</div>
+			</section>
+		</article>
+
+		<LineageGraph currentId="rtc-ds1307" />
+	</main>
+	<ImageLightbox />
+	<SiteFooter />
+</BaseLayout>
+
+<style>
+	:global(body) {
+		background-color: var(--bg);
+		background-image:
+			linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px),
+			radial-gradient(circle at 79% 13%, rgba(207,255,0,.045), transparent 28%);
+		background-size: 48px 48px, 48px 48px, auto;
+	}
+	.container { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+	.article-hero { padding: 88px 0 76px; border-bottom: 1px solid var(--line); }
+	.eyebrow, .section-label, .code-title, .notice-title { font: .875rem/1.5 "Courier New", Courier, monospace; letter-spacing: .07em; color: var(--eletronica); }
+	h1 { max-width: 980px; margin: 18px 0 24px; font: 800 clamp(3.8rem, 9vw, 7.8rem)/.82 Arial, Helvetica, sans-serif; letter-spacing: -.065em; }
+	h1 span { display: block; margin-top: 14px; font-size: .47em; line-height: .95; color: var(--muted); }
+	.lead { max-width: 850px; margin: 0 0 26px; font: 1.24rem/1.75 Georgia, "Times New Roman", serif; color: var(--muted); }
+	.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 36px; }
+	.article-status { margin-bottom: 34px; }
+	.content-section { padding: 80px 0; border-bottom: 1px solid var(--line); }
+	.section-grid { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 50px; align-items: start; }
+	.section-label { position: sticky; top: 24px; }
+	.section-body { max-width: 760px; min-width: 0; }
+	.section-body.wide { max-width: none; }
+	.prose h2 { max-width: 900px; margin: 0 0 28px; font: 800 clamp(2.15rem, 5vw, 4.7rem)/.98 Arial, Helvetica, sans-serif; letter-spacing: -.045em; }
+	.prose h3 { margin: 50px 0 15px; font: 700 clamp(1.35rem, 2.5vw, 2rem)/1.12 Arial, Helvetica, sans-serif; }
+	.prose > p { max-width: 760px; margin: 0 0 22px; font: 1.125rem/1.82 Georgia, "Times New Roman", serif; color: var(--text); }
+	.prose code { font-family: "Courier New", Courier, monospace; color: var(--programacao); }
+	.progression, .bus-flow, .heuristic, .closing { display: flex; align-items: stretch; gap: 10px; margin: 34px 0; overflow-x: auto; padding-bottom: 6px; }
+	.progression span, .bus-flow span, .heuristic span, .heuristic strong, .closing span { display: grid; place-items: center; min-width: 150px; padding: 18px; border: 1px solid var(--line); background: var(--surface); text-align: center; font: 700 .875rem/1.45 "Courier New", Courier, monospace; }
+	.progression small { margin-top: 4px; color: var(--muted); font-size: .78rem; font-weight: 400; }
+	.progression b, .bus-flow b, .heuristic b, .closing b { align-self: center; color: var(--eletronica); font: 700 1.15rem/1 monospace; }
+	.video-record { margin: 38px 0 0; border: 1px solid var(--line); background: var(--surface); }
+	.video-record video { display: block; width: 100%; max-height: 720px; background: #000; }
+	.video-record figcaption { padding: 15px 18px; color: var(--muted); font: .875rem/1.6 "Courier New", Courier, monospace; }
+	.comparison-wrap, .table-scroll { max-width: 100%; margin: 34px 0; overflow-x: auto; border: 1px solid var(--line); }
+	table { width: 100%; min-width: 700px; border-collapse: collapse; background: var(--surface); }
+	th, td { padding: 14px 16px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font: .875rem/1.55 "Courier New", Courier, monospace; }
+	thead th { color: var(--eletronica); background: #0a0e0e; }
+	tbody th { color: var(--text); }
+	td { color: var(--muted); }
+	tr:last-child > * { border-bottom: 0; }
+	tr > *:last-child { border-right: 0; }
+	.image-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 34px 0; }
+	.notice, .pullquote { max-width: 820px; margin: 34px 0; padding: 24px 26px; border: 1px solid var(--line); border-left: 3px solid var(--eletronica); background: rgba(9,12,14,.85); }
+	.notice.warning { border-left-color: var(--automacao); }
+	.notice p { margin: 10px 0 0; color: var(--muted); font: 1rem/1.7 Georgia, "Times New Roman", serif; }
+	.pullquote { font: italic 700 clamp(1.25rem, 2.6vw, 1.8rem)/1.55 Georgia, "Times New Roman", serif; }
+	.power-equation { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin: 0 0 30px; font: 800 clamp(2.4rem, 7vw, 5.5rem)/1 Arial, Helvetica, sans-serif; }
+	.power-equation b { color: var(--eletronica); }
+	.reading-path { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 34px 0; padding: 1px; background: var(--line); counter-reset: reading; }
+	.reading-path li { min-height: 92px; padding: 18px 18px 18px 54px; background: var(--surface); font: 1rem/1.55 Georgia, "Times New Roman", serif; counter-increment: reading; }
+	.reading-path li::marker { color: var(--eletronica); font-family: monospace; }
+	.pin-grid, .day-date, .bit-example { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 34px 0; padding: 1px; background: var(--line); }
+	.pin-grid > div, .day-date > div, .bit-example > div { display: grid; gap: 8px; padding: 20px; background: var(--surface); }
+	.pin-grid strong, .day-date span, .bit-example span { color: var(--programacao); font: .875rem/1.5 "Courier New", Courier, monospace; }
+	.pin-grid span { color: var(--muted); font: .875rem/1.5 "Courier New", Courier, monospace; }
+	.day-date strong, .bit-example strong { font: 700 1.2rem/1.3 Arial, Helvetica, sans-serif; }
+	.day-date p { margin: 0; color: var(--muted); font: 1rem/1.65 Georgia, "Times New Roman", serif; }
+	.bit-example strong { font-family: "Courier New", Courier, monospace; color: var(--text); }
+	.code-block { max-width: 900px; margin: 30px 0; border: 1px solid var(--line); background: #030505; }
+	.code-title { padding: 12px 16px; border-bottom: 1px solid var(--line); color: var(--programacao); }
+	.code-block pre { margin: 0; padding: 20px; overflow-x: auto; }
+	.code-block code { color: #d7e0e3; font: .9rem/1.7 "Courier New", Courier, monospace; }
+	.bus-flow span { min-width: 132px; border-color: rgba(0,217,255,.35); }
+	.evolution-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 34px 0; }
+	.evolution-grid article { min-height: 215px; padding: 22px; border: 1px solid var(--line); background: var(--surface); }
+	.evolution-grid span, .evolution-grid strong { display: block; font: .875rem/1.5 "Courier New", Courier, monospace; }
+	.evolution-grid span { margin-bottom: 18px; color: var(--eletronica); }
+	.evolution-grid strong { color: var(--programacao); }
+	.evolution-grid p { margin: 14px 0 0; color: var(--muted); font: 1rem/1.65 Georgia, "Times New Roman", serif; }
+	.heuristic strong { color: var(--eletronica); }
+	.internal-link, .reference-list a { display: grid; gap: 8px; padding: 20px; border: 1px solid var(--line); background: var(--surface); color: var(--text); text-decoration: none; }
+	.internal-link { max-width: 780px; margin-top: 34px; }
+	.internal-link span, .reference-list span { color: var(--programacao); font: .875rem/1.5 "Courier New", Courier, monospace; }
+	.internal-link strong, .reference-list strong { font: 700 1rem/1.35 Arial, Helvetica, sans-serif; }
+	.internal-link:hover, .internal-link:focus-visible, .reference-list a:hover, .reference-list a:focus-visible { border-color: var(--eletronica); background: var(--surface-hover); outline: 2px solid var(--eletronica); outline-offset: 3px; }
+	.conclusion-section { background: rgba(9,12,14,.52); }
+	.closing span { color: var(--text); border-color: rgba(207,255,0,.35); }
+	.reference-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 36px; }
+	@media (max-width: 800px) {
+		.article-hero { padding: 62px 0 54px; }
+		h1 { font-size: clamp(3.2rem, 17vw, 5.3rem); }
+		.content-section { padding: 58px 0; }
+		.section-grid { grid-template-columns: 1fr; gap: 24px; }
+		.section-label { position: static; }
+		.image-pair, .evolution-grid, .reference-list { grid-template-columns: 1fr; }
+		.reading-path { grid-template-columns: 1fr; }
+	}
+	@media (max-width: 600px) {
+		.container { width: calc(100% - 48px); }
+		.lead { font-size: 1.08rem; }
+		.prose > p { font-size: 1.05rem; }
+		.pin-grid, .day-date, .bit-example { grid-template-columns: 1fr; }
+		.notice, .pullquote { padding: 20px; }
+	}
+</style>
