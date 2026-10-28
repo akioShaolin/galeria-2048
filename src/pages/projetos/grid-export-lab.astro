@@ -1,0 +1,385 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import LineageGraph from "../../components/LineageGraph.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("grid-export-lab");
+if (!project?.page) throw new Error("Dados do Grid Export Lab não encontrados.");
+const page = project.page;
+---
+
+<BaseLayout
+	title="Grid Export Lab — controle de exportação em campo | Galeria -2048"
+	description={project.description}
+	image={project.image}
+	type="article"
+	keywords={project.keywords}
+>
+	<SiteHeader accent="var(--automacao)" />
+	<main>
+		<div class="container">
+			<section class="hero">
+				<div class="hero-copy">
+					<div class="code">{project.type} / {project.number} / CONTROLE DISTRIBUÍDO</div>
+					<h1>GRID<br /><span>EXPORT</span><br />LAB</h1>
+					<p class="subtitle">{page.subtitle}</p>
+					<div class="tags">{project.categories.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+				</div>
+
+				<div class="hero-diagram" aria-label="Arquitetura resumida do Grid Export Lab">
+					<div class="diagram-title">[ ARQUITETURA EXPERIMENTAL ]</div>
+					<div class="diagram-node measure"><span>MEDIÇÃO</span><strong>URP6000</strong><small>RS485 / MODBUS RTU</small></div>
+					<div class="diagram-link"><span>REDE LOCAL</span></div>
+					<div class="diagram-node control"><span>CONTROLE</span><strong>PYTHON → ESP8266</strong><small>PROPORCIONAL → PI</small></div>
+					<div class="diagram-link"><span>COMANDOS</span></div>
+					<div class="diagram-node generation"><span>GERAÇÃO</span><strong>2 × SIW400G</strong><small>LIMITAÇÃO POR MODBUS RTU</small></div>
+					<p>Dois Solar View reaproveitados fizeram a ponte entre a medição, a rede e o barramento dos inversores.</p>
+				</div>
+			</section>
+
+			<div class="status"><StatusGrid items={page.status} /></div>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">01 / O PROBLEMA</div>
+					<div>
+						<h2>Um relé podia atuar. O aviso podia chegar tarde.</h2>
+						<div class="prose">
+							<p>A origem do Grid Export Lab não foi um produto de exportação zero. Foi uma necessidade mais direta: tornar observável o que acontecia em uma instalação fotovoltaica cujo relé de proteção podia operar, especialmente em períodos de chuva e tempestade, e permanecer sem atenção imediata.</p>
+							<p>Os dados também estavam fragmentados. Duas famílias de inversores apareciam em plataformas diferentes, enquanto o PEXTRON URP6000-5A concentrava medidas importantes no ponto de conexão. Eu queria uma leitura local, independente e capaz de alimentar um histórico.</p>
+						</div>
+						<div class="context-grid">
+							<article><span>INSTALAÇÃO ORIGINAL</span><strong>2 × SIW400G T100 W0</strong><small>mais 1 × SIW500H ST030 M3</small></article>
+							<article><span>REDE ELÉTRICA</span><strong>380 V</strong><small>transformação para 13,8 kV</small></article>
+							<article><span>MEDIÇÃO E PROTEÇÃO</span><strong>URP6000-5A</strong><small>leitura local pelo barramento serial</small></article>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">02 / O RELÉ COMEÇOU A FALAR</div>
+					<div>
+						<h2>O software do fabricante abriu a porta. O Modbus mudou o projeto.</h2>
+						<div class="prose">
+							<p>O programa do fabricante já permitia recuperar registros e alterar parâmetros. A descoberta decisiva, porém, foi perceber que o relé também expunha dados por Modbus RTU. Em vez de depender somente de uma visita ao equipamento, tornou-se possível consultar tensões, correntes, frequência, fator de potência e potência ativa por uma interface própria.</p>
+							<p>O mapa foi usado como referência de implementação, mas não é reproduzido aqui. O que importa para esta história é a mudança de escala: o URP6000 deixou de ser apenas um dispositivo consultado manualmente e passou a ser a fonte de medição de uma malha experimental.</p>
+						</div>
+						<div class="notice">
+							<strong>DOCUMENTAÇÃO OFICIAL</strong>
+							<p>O manual do URP6000 deve ser obtido diretamente na área de downloads da PEXTRON. Nenhum PDF ou mapa de registradores é republicado nesta página.</p>
+							<a href="https://www.pextron.com/area-de-download/" target="_blank" rel="noreferrer">ÁREA DE DOWNLOADS PEXTRON ↗</a>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">03 / PRIMEIRA PONTE</div>
+					<div>
+						<h2>Levar o barramento até a rede sem puxar outro cabo.</h2>
+						<div class="prose">
+							<p>Um datalogger Solar View reaproveitado, com ESP8266 e interface RS485, foi instalado como gateway próximo ao relé. A alternativa física seria lançar aproximadamente 300 metros de um novo caminho de comunicação.</p>
+							<p>A primeira experiência de transporte usou um enquadramento binário próprio sobre TCP. Ela carregava os bytes RTU pela rede, mas <strong>não era Modbus TCP padrão</strong>. Versões posteriores do monitor passaram a oferecer os dados do relé por uma interface de rede mais estruturada.</p>
+							<p>Dentro do painel metálico, o Wi‑Fi era fraco. A antena foi levada para fora com um suporte adaptado e ímãs de neodímio, sem perfurar o gabinete. Foi uma solução de campo para melhorar o enlace, não uma mudança no circuito de proteção.</p>
+						</div>
+						<a class="related-link" href="/artigos/solarview-ubox/"><span>O HARDWARE REAPROVEITADO — SOLAR VIEW UBOX</span><span>→</span></a>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">04 / SEGUNDA PONTE</div>
+					<div>
+						<h2>Do outro lado da rede, os comandos voltavam a ser RS485.</h2>
+						<div class="prose">
+							<p>Um segundo Solar View foi colocado próximo aos inversores. Ele recebia comandos pela rede e os transformava em operações Modbus RTU no barramento de geração. A primeira geração apenas aplicava limites; a seguinte também devolvia a potência lida.</p>
+							<p>Essa separação criou duas pontas bem definidas: uma media o ponto de conexão e outra atuava sobre a geração. O SIW500H ST030 M3 chegou a fazer parte das tentativas de integração, mas não permaneceu na mesma malha de controle. A causa não foi fechada, portanto não trato o resultado como incompatibilidade fundamental do equipamento.</p>
+						</div>
+						<div class="flow" aria-label="Fluxo distribuído do controle">
+							<div><span>RELÉ</span><strong>MEDIR</strong></div><b>→</b><div><span>REDE</span><strong>TRANSPORTAR</strong></div><b>→</b><div><span>CONTROLADOR</span><strong>CALCULAR</strong></div><b>→</b><div><span>INVERSORES</span><strong>LIMITAR</strong></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">05 / O COMPUTADOR NO MEIO</div>
+					<div>
+						<h2>Ler, calcular, comandar, repetir.</h2>
+						<div class="prose">
+							<p>A primeira malha fechada viveu em Python. O computador lia a potência do relé, registrava os valores, calculava uma correção e enviava limites ao gateway dos inversores. O controle começou proporcional e depois incorporou a parcela integral.</p>
+							<p>Os ganhos preservados dessa fase são <code>Kp = 0,25</code>, <code>Ki = 0,005</code> e <code>Kd = 0</code>. Apesar de anotações antigas usarem a palavra PID, na prática a configuração era <strong>PI</strong>: proporcional mais integral, sem parcela derivativa.</p>
+							<p>Essa etapa provou que a medição e o comando podiam atravessar a rede Wi‑Fi e fechar o ciclo remotamente. Em partes do desenvolvimento, apenas um inversor participou do teste. A ampliação para dois equipamentos veio depois.</p>
+						</div>
+						<div class="control-loop">
+							<div><span>ENTRADA</span><strong>POTÊNCIA NO URP</strong></div>
+							<div><span>ERRO</span><strong>SETPOINT − MEDIDA</strong></div>
+							<div><span>PI</span><strong>Kp + Ki</strong></div>
+							<div><span>SAÍDA</span><strong>LIMITES DE GERAÇÃO</strong></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">06 / CONTROLE NA BORDA</div>
+					<div>
+						<h2>O computador saiu do caminho crítico.</h2>
+						<div class="prose">
+							<p>O passo seguinte reuniu no ESP8266 a leitura remota do relé, o controle PI e a comunicação RTU com os inversores. O computador deixou de comandar a malha e passou a coletar histórico e servir visualização.</p>
+							<p>O controlador também ganhou diagnóstico web, atualização OTA, descoberta por mDNS, contadores de comunicação e estatísticas em janelas de cinco minutos. Em memória ficavam médias, mínimos e máximos da potência do URP, geração dos inversores, setpoint e erro; o coletor em Python persistia o histórico.</p>
+						</div>
+						<div class="responsibility-grid">
+							<article><span>ESP8266</span><strong>malha de controle</strong><p>medição remota, PI, comandos RTU e recuperação</p></article>
+							<article><span>COMPUTADOR</span><strong>memória do experimento</strong><p>coleta, CSV local e visualização histórica</p></article>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content evidence-section">
+				<div class="section-grid">
+					<div class="section-label">07 / QUANDO FUNCIONOU</div>
+					<div>
+						<h2>A geração respondeu ao limite.</h2>
+						<div class="prose">
+							<p>O controle chegou a funcionar em campo com os dois WEG SIW400G. Os limites enviados alteraram visivelmente a geração e o histórico registrou a resposta a uma mudança de setpoint.</p>
+							<p><strong>Isso demonstra a malha fechada; não demonstra estabilidade contínua.</strong> O painel também mantém o inversor de 30 kW como offline, preservando uma limitação real daquela integração.</p>
+						</div>
+						<div class="media-pair">
+							<EditorialImage
+								src="/images/grid-export-lab/controle-exportacao-em-campo.webp"
+								alt="Gráfico histórico com potência medida no URP6000, geração dos inversores e mudança do setpoint"
+								caption="Registro de um período em que a potência medida respondeu à mudança do setpoint. A captura prova a resposta observada naquele intervalo, não a estabilidade contínua do sistema."
+								fit="contain"
+								variant="portrait"
+							/>
+							<EditorialImage
+								src="/images/grid-export-lab/painel-controle-ativo.webp"
+								alt="Painel do controlador mostrando medição, setpoint e dois inversores SIW400G em operação"
+								caption="Painel durante um período de controle ativo. O equipamento de 30 kW aparece offline e não é apresentado como participante da malha validada."
+								fit="contain"
+								variant="portrait"
+							/>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content failure-section">
+				<div class="section-grid">
+					<div class="section-label">08 / QUANDO PAROU</div>
+					<div>
+						<h2>O barramento voltava somente depois de reiniciar.</h2>
+						<div class="prose">
+							<p>Depois de períodos bem-sucedidos, os dois SIW400G podiam acumular erros e ficar offline ao mesmo tempo. A rotina normal de consulta não recuperava a comunicação. Reiniciar o ESP fazia o RTU voltar.</p>
+							<p>Foram experimentadas estratégias de espera, recuo e recuperação. O reinício, porém, era apenas uma forma de restabelecer o sistema — não uma explicação. A causa definitiva não foi estabelecida e não atribuo a falha, sem evidência suficiente, ao hardware, à biblioteca ou aos inversores.</p>
+						</div>
+						<EditorialImage
+							src="/images/grid-export-lab/painel-comunicacao-offline.webp"
+							alt="Painel histórico com os três inversores offline, leitura sinalizada como inválida e controle PI pausado"
+							caption="A captura registra o estado exibido: inversores offline, leitura inválida ou desatualizada e PI pausado. Ela não determina a causa da indisponibilidade."
+							fit="contain"
+						/>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">09 / O PROJETO QUE NASCEU DA FALHA</div>
+					<div>
+						<h2>Se uma espera trava tudo, a arquitetura precisa mudar.</h2>
+						<div class="prose">
+							<p>A falha de campo motivou a revisão não bloqueante da InverterModbusLib. Em vez de iniciar uma transação e manter a aplicação parada até a resposta, a nova linha trabalha com estado explícito: uma operação ocupa o barramento por vez, enquanto Wi‑Fi, servidor web, diagnóstico e a própria lógica de aplicação continuam executando.</p>
+							<p>Timeouts, rejeições, conclusão e recuperação passam a ser resultados observáveis. Essa arquitetura foi implementada e continua em testes, mas ainda não é apresentada como solução comprovada para a falha vista neste projeto.</p>
+						</div>
+						<div class="compare">
+							<article><span>ANTES</span><strong>enviar → esperar → continuar</strong><p>A comunicação ocupava o fluxo da aplicação durante a transação.</p></article>
+							<article><span>REVISÃO</span><strong>iniciar → acompanhar estado → concluir</strong><p>O barramento permanece serial, mas a aplicação não precisa congelar enquanto espera.</p></article>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">10 / ESTADO ATUAL</div>
+					<div>
+						<h2>Hoje, medir continua. Controlar, não.</h2>
+						<div class="prose">
+							<p>O RS485 dos inversores está fisicamente desconectado. A instalação preserva a leitura e o armazenamento dos dados do URP6000, mas não envia limites de geração. O Grid Export Lab permanece como acervo experimental e como contexto de origem para a revisão da biblioteca.</p>
+							<p>O sistema não é uma solução comercial, não substitui proteção elétrica e não deve ser tratado como plataforma certificada de exportação zero. O que ele preserva é uma sequência de engenharia: observação, hipótese, controle funcional, falha persistente e mudança de arquitetura.</p>
+						</div>
+						<div class="state-grid">
+							<div><span>URP6000</span><strong>MONITORADO</strong></div>
+							<div><span>HISTÓRICO</span><strong>PRESERVADO</strong></div>
+							<div><span>CONTROLE</span><strong>DESCONECTADO</strong></div>
+							<div><span>CAUSA DA FALHA</span><strong>EM ABERTO</strong></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">11 / LINHA DO TEMPO</div>
+					<div>
+						<h2>Uma ferramenta foi virando sistema.</h2>
+						<div class="timeline">
+							{page.timeline.map((entry) => (
+								<article class="event">
+									<div class="event-year">{entry.year}</div>
+									<h3>{entry.title}</h3>
+									<p>{entry.text}</p>
+								</article>
+							))}
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="project-open">
+				<div>[ CÓDIGO E EVOLUÇÃO ]</div>
+				<h2>O experimento continua público em duas frentes.</h2>
+				<p>O acervo histórico preserva as fases do Grid Export Lab. A branch não bloqueante mostra a consequência arquitetural da falha observada em campo.</p>
+				<div class="project-links">
+					<a href="https://github.com/akioShaolin/grid-export-lab" target="_blank" rel="noreferrer">GRID EXPORT LAB NO GITHUB ↗</a>
+					<a href="https://github.com/akioShaolin/InverterModbusLib/tree/refactor/nonblocking-modbus" target="_blank" rel="noreferrer">INVERTERMODBUSLIB / NONBLOCKING ↗</a>
+				</div>
+			</section>
+		</div>
+
+		<LineageGraph currentId={project.id} />
+	</main>
+	<ImageLightbox />
+	<SiteFooter rightText={`${project.type} / ${project.number}`} />
+</BaseLayout>
+
+<style is:global>
+	body {
+		background:
+			radial-gradient(circle at 78% 8%, rgba(255, 138, 0, .055), transparent 520px),
+			linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px),
+			var(--bg);
+		background-size: auto, 42px 42px, 42px 42px, auto;
+		font-family: Arial, Helvetica, sans-serif;
+	}
+
+	.hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(360px, .9fr); gap: 65px; align-items: center; padding: 100px 0 70px; }
+	.hero > *, .section-grid > *, .media-pair > * { min-width: 0; }
+	.code, .section-label, .event-year, .diagram-title { color: var(--automacao); font: .875rem/1.5 monospace; letter-spacing: .08em; }
+	h1 { margin: 25px 0 0; font-size: clamp(4.1rem, 9.2vw, 8rem); line-height: .78; letter-spacing: -.075em; }
+	h1 span { color: var(--automacao); }
+	.subtitle { max-width: 780px; margin: 38px 0 0; color: var(--muted); font-size: clamp(1.15rem, 2vw, 1.5rem); line-height: 1.55; overflow-wrap: anywhere; }
+	.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+	.status { margin-bottom: 10px; }
+	.status .status-grid { grid-template-columns: repeat(4, 1fr); }
+
+	.hero-diagram { padding: 24px; border: 1px solid var(--line); background: rgba(9, 12, 14, .9); }
+	.diagram-title { margin-bottom: 20px; }
+	.diagram-node { padding: 18px 20px; border: 1px solid var(--line); background: var(--surface); }
+	.diagram-node span, .diagram-node strong, .diagram-node small { display: block; font-family: monospace; }
+	.diagram-node span { color: var(--muted); font-size: .875rem; }
+	.diagram-node strong { margin-top: 7px; font-size: 1.1rem; }
+	.diagram-node small { margin-top: 7px; color: var(--muted); font-size: .8125rem; line-height: 1.5; }
+	.diagram-node.measure { border-left: 2px solid var(--programacao); }
+	.diagram-node.control { border-left: 2px solid var(--automacao); }
+	.diagram-node.generation { border-left: 2px solid var(--eletronica); }
+	.diagram-link { display: flex; align-items: center; gap: 10px; min-height: 46px; color: var(--muted); font: .8125rem/1.4 monospace; }
+	.diagram-link::before { content: "↓"; color: var(--automacao); font-size: 1.2rem; }
+	.hero-diagram > p { margin: 20px 0 0; color: var(--muted); font: .875rem/1.6 monospace; }
+
+	.content { padding: 100px 0; border-bottom: 1px solid var(--line); }
+	.section-grid { display: grid; grid-template-columns: 235px minmax(0, 1fr); gap: 75px; }
+	h2 { max-width: 900px; margin: 0 0 35px; font-size: clamp(2.35rem, 5.1vw, 4.7rem); line-height: .94; letter-spacing: -.055em; }
+	h3 { margin: 10px 0; font-size: 1.4rem; }
+	.prose { max-width: 780px; }
+	.prose p, .prose li { color: var(--muted); font: 1.125rem/1.8 Georgia, "Times New Roman", serif; }
+	.prose p { margin: 0 0 22px; }
+	.prose strong { color: var(--text); }
+	.prose code { padding: 2px 5px; color: var(--text); background: var(--surface); font: .95em/1.5 monospace; }
+
+	.context-grid, .responsibility-grid, .compare, .state-grid, .control-loop { display: grid; gap: 1px; margin-top: 38px; border: 1px solid var(--line); background: var(--line); }
+	.context-grid { grid-template-columns: repeat(3, 1fr); }
+	.responsibility-grid, .compare { grid-template-columns: repeat(2, 1fr); max-width: 900px; }
+	.state-grid, .control-loop { grid-template-columns: repeat(4, 1fr); }
+	.context-grid article, .responsibility-grid article, .compare article, .state-grid div, .control-loop div { padding: 22px; background: var(--surface); }
+	.context-grid span, .responsibility-grid span, .compare span, .state-grid span, .control-loop span { display: block; color: var(--automacao); font: .8125rem/1.5 monospace; }
+	.context-grid strong, .responsibility-grid strong, .compare strong, .state-grid strong, .control-loop strong { display: block; margin-top: 9px; font-size: 1rem; line-height: 1.45; }
+	.context-grid small { display: block; margin-top: 8px; color: var(--muted); font: .875rem/1.5 monospace; }
+	.responsibility-grid p, .compare p { margin: 10px 0 0; color: var(--muted); font: 1rem/1.65 Georgia, "Times New Roman", serif; }
+
+	.notice { max-width: 780px; margin-top: 36px; padding: 24px; border: 1px solid var(--line); border-left: 2px solid var(--automacao); background: rgba(255,138,0,.035); }
+	.notice strong { font: .875rem/1.5 monospace; letter-spacing: .06em; }
+	.notice p { color: var(--muted); font: 1rem/1.7 Georgia, "Times New Roman", serif; }
+	.notice a { color: var(--automacao); font: 700 .875rem/1.5 monospace; text-decoration: none; }
+	.notice a:hover, .notice a:focus-visible { color: var(--text); outline: none; }
+
+	.related-link { display: flex; justify-content: space-between; gap: 20px; max-width: 780px; margin-top: 32px; padding: 16px 18px; border: 1px solid var(--line); color: var(--text); font: 700 .875rem/1.5 monospace; text-decoration: none; }
+	.related-link:hover, .related-link:focus-visible { border-color: var(--programacao); color: var(--programacao); outline: none; }
+
+	.flow { display: flex; align-items: stretch; max-width: 920px; margin-top: 38px; border: 1px solid var(--line); background: var(--surface); }
+	.flow div { flex: 1; padding: 20px; }
+	.flow span, .flow strong { display: block; font-family: monospace; }
+	.flow span { color: var(--muted); font-size: .8125rem; }
+	.flow strong { margin-top: 8px; font-size: .875rem; }
+	.flow b { align-self: center; color: var(--automacao); }
+
+	.media-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; margin-top: 28px; }
+	.media-pair .editorial-image { max-width: none; margin: 0; }
+	.media-pair .editorial-image__trigger img { height: clamp(430px, 58vw, 720px); }
+	.failure-section .editorial-image { max-width: 980px; }
+
+	.timeline { border-left: 1px solid var(--line); margin-top: 45px; }
+	.event { position: relative; padding: 0 0 48px 40px; }
+	.event:last-child { padding-bottom: 0; }
+	.event::before { content: ""; position: absolute; left: -5px; top: 5px; width: 9px; height: 9px; border-radius: 50%; background: var(--automacao); box-shadow: 0 0 12px rgba(255,138,0,.75); }
+	.event p { max-width: 720px; margin: 0; color: var(--muted); font: 1.0625rem/1.75 Georgia, "Times New Roman", serif; }
+
+	.project-open { padding: 120px 0; text-align: center; }
+	.project-open > div:first-child { color: var(--automacao); font: .875rem/1.5 monospace; }
+	.project-open h2 { margin: 20px auto 0; }
+	.project-open p { max-width: 720px; margin: 25px auto 0; color: var(--muted); font: 1.125rem/1.75 Georgia, "Times New Roman", serif; }
+	.project-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 35px; }
+	.project-links a { padding: 14px 18px; border: 1px solid var(--line); color: var(--text); font: 700 .875rem/1.4 monospace; text-decoration: none; }
+	.project-links a:hover, .project-links a:focus-visible { border-color: var(--automacao); color: var(--automacao); outline: none; }
+
+	@media (max-width: 950px) {
+		.hero { grid-template-columns: 1fr; }
+		.hero-diagram { max-width: 720px; }
+	}
+
+	@media (max-width: 800px) {
+		.hero { padding: 70px 0 55px; gap: 45px; }
+		.content { padding: 75px 0; }
+		.status .status-grid { grid-template-columns: 1fr; }
+		.section-grid { grid-template-columns: 1fr; gap: 30px; }
+		.context-grid, .state-grid, .control-loop { grid-template-columns: 1fr 1fr; }
+		.media-pair { grid-template-columns: 1fr; }
+		.media-pair .editorial-image__trigger img { height: clamp(430px, 110vw, 700px); }
+	}
+
+	@media (max-width: 600px) {
+		h1 { font-size: clamp(3.55rem, 19vw, 5.2rem); }
+		.hero-diagram { padding: 16px; }
+		.context-grid, .responsibility-grid, .compare, .state-grid, .control-loop { grid-template-columns: 1fr; }
+		.flow { display: grid; }
+		.flow b { padding-left: 20px; transform: rotate(90deg); transform-origin: center; }
+		.project-links { display: grid; }
+		.project-links a { text-align: left; }
+	}
+</style>

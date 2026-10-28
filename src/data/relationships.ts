@@ -41,6 +41,8 @@ export const relationships: ContentRelationship[] = [
 	{ from: "ed100-hardware-rs485", to: "dms-portable-logger", type: "evoluiu_para" },
 	{ from: "solarview-ubox", to: "modbus-rtu-slave-sim", type: "base_tecnica" },
 	{ from: "modbus-rtu-slave-sim", to: "inverter-modbus-lib", type: "usado_em_conjunto" },
+	{ from: "solarview-ubox", to: "grid-export-lab", type: "base_tecnica", label: "HARDWARE REAPROVEITADO" },
+	{ from: "grid-export-lab", to: "inverter-modbus-lib", type: "contribuiu_para", label: "MOTIVOU A REVISÃO NÃO BLOQUEANTE" },
 ];
 
 export function getRelatedArchiveItem(id: string): (ArchiveItem & { url: string }) | undefined {

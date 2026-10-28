@@ -1,0 +1,866 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("rex-zmb");
+
+if (!project?.page) {
+	throw new Error("Projeto rex-zmb não encontrado.");
+}
+---
+
+<BaseLayout
+	title="rex & zmb — O notebook que virou dois — Galeria -2048"
+	description={project.page.subtitle}
+>
+	<SiteHeader />
+
+	<main class="project-page">
+		<header class="project-hero">
+			<div class="hero-copy">
+				<p class="eyebrow">PROJETO / {project.number} / RESTAURAÇÃO</p>
+				<h1>rex &<br /><span>zmb</span></h1>
+				<p class="hero-kicker">O NOTEBOOK QUE VIROU DOIS</p>
+				<p class="hero-subtitle">{project.page.subtitle}</p>
+				<div class="tag-list" aria-label="Categorias do projeto">
+					{project.categories.map((category) => <Tag label={category.label} tone={category.tone} />)}
+				</div>
+			</div>
+
+			<div class="hero-media">
+				<img
+					src={project.image}
+					alt="Dois notebooks Samsung lado a lado durante o transplante de peças de 2021"
+					fetchpriority="high"
+					decoding="async"
+				/>
+				<p>27.11.2021 / uma máquina montada, outra guardada</p>
+			</div>
+		</header>
+
+		<StatusGrid items={project.page.status} />
+
+		<section class="editorial-section intro">
+			<p class="section-code">[ 01 / O PRÊMIO ]</p>
+			<h2>Antes de rex e zmb, havia apenas um Samsung novo.</h2>
+			<div class="reading-width">
+				<p>O primeiro notebook chegou no fim de 2012 como prêmio pelo meu desempenho escolar. Era um Samsung NP300E4A-BD3BR com Windows 7, Core i3-2310M, 2 GB de memória DDR3 e um disco rígido Samsung de 320 GB.</p>
+				<p>O primeiro programa que instalei foi League of Legends, ainda na segunda temporada. Depois vieram trabalhos de escola, Minecraft, vídeos no YouTube e anos de uso cotidiano. Naquela época ele ainda não tinha nome. Era simplesmente o meu notebook.</p>
+			</div>
+
+			<div class="fact-strip" aria-label="Configuração original">
+				<span>NP300E4A-BD3BR</span>
+				<span>CORE i3-2310M</span>
+				<span>2 GB DDR3</span>
+				<span>HDD 320 GB</span>
+				<span>WINDOWS 7</span>
+			</div>
+		</section>
+
+		<section class="editorial-section split-section">
+			<div>
+				<p class="section-code">[ 02 / PRIMEIROS ACIDENTES ]</p>
+				<h2>A história começou a ser escrita em peças.</h2>
+			</div>
+			<div class="reading-width">
+				<p>Uma queda quebrou a tela. O reparo foi feito sem custo e ainda trouxe mais 2 GB de memória e um HDD de 500 GB doados. Foi o primeiro grande transplante, muito antes de eu pensar no notebook como um conjunto de partes com histórias diferentes.</p>
+				<p>Em setembro de 2015 comprei uma ventoinha por R$ 49,90. Esse é o registro de manutenção mais antigo que ainda encontrei. Em maio de 2016 a bateria original já estava inutilizada; uma fotografia feita por causa de outro experimento acabou preservando, por acaso, o registro físico mais antigo da máquina.</p>
+			</div>
+		</section>
+
+		<div class="media-pair">
+			<EditorialImage
+				src="/images/rex-zmb/2015-compra-ventoinha.webp"
+				alt="Registro de compra de uma ventoinha para o notebook em setembro de 2015"
+				caption="09.09.2015 — o primeiro registro de manutenção recuperado."
+				fit="contain"
+			/>
+			<EditorialImage
+				src="/images/rex-zmb/2016-primeiro-registro.webp"
+				alt="Notebook Samsung fechado ao fundo de uma fotografia feita em maio de 2016"
+				caption="28.05.2016 — a fotografia não era sobre o notebook, mas acabou preservando sua imagem."
+				fit="contain"
+			/>
+		</div>
+
+		<section class="editorial-section dark-panel">
+			<p class="section-code">[ 03 / MAIS FÔLEGO ]</p>
+			<h2>O SSD foi uma das mudanças que adiaram a aposentadoria.</h2>
+			<div class="reading-width">
+				<p>O notebook continuou aparecendo em registros de 2017, 2019 e 2020. Em setembro de 2019 recebeu um ADATA SU630 de 480 GB. A troca do disco mecânico pelo SSD não resolveu o desgaste físico, mas devolveu agilidade suficiente para estender sua vida útil.</p>
+			</div>
+			<EditorialImage
+				src="/images/rex-zmb/2019-upgrade-ssd.webp"
+				alt="Registro do SSD ADATA SU630 instalado no notebook em 2019"
+				caption="05.09.2019 — ADATA SU630 de 480 GB, que continua no rex."
+				fit="contain"
+			/>
+		</section>
+
+		<section class="editorial-section">
+			<p class="section-code">[ 04 / O CORPO QUEBRADO ]</p>
+			<h2>Em 2021, funcionar já não significava estar inteiro.</h2>
+			<div class="reading-width">
+				<p>A carcaça estava bastante danificada, especialmente na região das dobradiças. Em 14 de novembro gravei o estado do notebook antes da intervenção. A máquina ainda ligava, mas abrir e fechar a tela já era uma operação que cobrava cuidado.</p>
+			</div>
+
+			<div class="video-card">
+				<video controls preload="metadata" playsinline>
+					<source src="/images/rex-zmb/2021-carcaca-antes-transplante.mp4" type="video/mp4" />
+					Seu navegador não oferece suporte à reprodução deste vídeo.
+				</video>
+				<p>14.11.2021 — situação da carcaça antes do transplante.</p>
+			</div>
+		</section>
+
+		<section class="editorial-section split-section">
+			<div>
+				<p class="section-code">[ 05 / O DOADOR ]</p>
+				<h2>Um segundo NP300E4A entrou na história por R$ 600.</h2>
+			</div>
+			<div class="reading-width">
+				<p>Em novembro de 2021 encontrei um NP300E4A-BD2BR usado por R$ 600. A ideia era aproveitar a carcaça e as melhores peças para reconstruir o notebook que já estava bastante danificado.</p>
+				<p>O doador chegou com Windows 10 Home e um único pente de 2 GB. A compra e o recebimento aconteceram antes de 28 de novembro; uma mensagem posterior do vendedor registra que a transação havia terminado bem. A data exata da compra se perdeu, mas a sequência do transplante ficou preservada.</p>
+			</div>
+		</section>
+
+		<div class="media-pair">
+			<EditorialImage
+				src="/images/rex-zmb/2021-mensagem-vendedor.webp"
+				alt="Mensagem do vendedor após a compra do notebook doador"
+				caption="28.11.2021 — retorno do vendedor depois de a compra já ter sido concluída."
+				fit="contain"
+			/>
+			<EditorialImage
+				src="/images/rex-zmb/2021-transplante-placa.webp"
+				alt="Placa-mãe do notebook doador exposta durante o transplante"
+				caption="27.11.2021 — a placa que mais tarde permaneceria no rex durante a troca de carcaça."
+				fit="contain"
+			/>
+		</div>
+
+		<section class="editorial-section thesis-panel">
+			<p class="section-code">[ INTERLÚDIO / O NAVIO DE TESEU ]</p>
+			<blockquote>Se a tela, a carcaça, o teclado, a memória, o armazenamento, a placa-mãe e até o processador mudam, em que momento o notebook deixa de ser o mesmo?</blockquote>
+			<p>Em 2021 eu ainda não chamava as máquinas de rex e zmb. Havia o notebook que eu queria continuar usando e um conjunto de peças que parecia ter encerrado sua função. A pergunta só ficou interessante quando os dois voltaram a funcionar.</p>
+		</section>
+
+		<section class="editorial-section">
+			<p class="section-code">[ 06 / O TRANSPLANTE ]</p>
+			<h2>As melhores partes formaram uma máquina. O restante não foi descartado.</h2>
+			<div class="reading-width">
+				<p>Em 27 de novembro de 2021 aconteceu a grande troca. A placa-mãe do BD2BR passou para o conjunto principal junto da carcaça do doador. A tela original foi reaproveitada apesar das linhas verticais que já carregava. O Core i3-2310M, o SSD e os módulos de memória continuaram acompanhando a máquina em uso.</p>
+				<p>O pente de 8 GB já havia sido comprado antes de 28 de novembro e, junto de um outro módulo de 4 GB adquirido anteriormente, levou o sistema a 12 GB. O pedido de avaliação registrado em 7 de dezembro pertence a esse mesmo pente. Um teclado novo completou a fase de reconstrução.</p>
+			</div>
+			<div class="media-pair">
+				<EditorialImage
+					src="/images/rex-zmb/2021-configuracao-12gb.webp"
+					alt="Tela do Windows mostrando Core i3-2310M e 12 GB de memória após o transplante"
+					caption="28.11.2021 — o conjunto reconstruído reconhecendo 12 GB de RAM."
+					fit="contain"
+				/>
+				<EditorialImage
+					src="/images/rex-zmb/2021-teclado.webp"
+					alt="Teclado de reposição instalado no notebook Samsung"
+					caption="08.12.2021 — mais uma peça substituída na reconstrução."
+					fit="contain"
+				/>
+			</div>
+		</section>
+
+		<section class="editorial-section warning-panel">
+			<p class="section-code">[ 07 / A BATERIA ERRADA ]</p>
+			<h2>O encaixe parecia promissor. A tensão dizia o contrário.</h2>
+			<div class="reading-width">
+				<p>Em janeiro de 2022 comprei uma bateria BringIT anunciada para outra combinação da família. A bateria original era uma AA-PB9NC6B de 11,1 V e 48 Wh; a nova trabalhava com tensão superior. Por isso ela não funcionou neste notebook.</p>
+				<p>A tentativa de recuperar o conjunto original também não se tornou uma solução utilizável. Desde então, as duas máquinas permaneceram sem bateria funcional e dependentes de alimentação externa.</p>
+			</div>
+			<EditorialImage
+				src="/images/rex-zmb/2022-bateria-incompativel.webp"
+				alt="Bateria BringIT comprada para o notebook e identificada como incompatível"
+				caption="05.02.2022 — a bateria de tensão superior que não funcionou no conjunto."
+				fit="contain"
+			/>
+		</section>
+
+		<section class="editorial-section split-section">
+			<div>
+				<p class="section-code">[ 08 / A RESSURREIÇÃO ]</p>
+				<h2>Em 2026, as peças guardadas voltaram a formar um computador.</h2>
+			</div>
+			<div class="reading-width">
+				<p>A partir da ressurreição de 2026, os nomes finalmente aparecem. O notebook principal se tornou <strong>rex</strong>. A placa-mãe original, o HDD original de 320 GB e outras peças guardadas foram reunidos em uma segunda máquina: <strong>zmb</strong>.</p>
+				<p>O Celeron B800 que estava no conjunto doador permitiu os primeiros testes. Depois, em 26 de outubro, o Core i3-2310M original migrou para zmb quando rex recebeu um Core i7-2640M. O processador que iniciou esta história em 2012 agora trabalha na placa-mãe que também iniciou a história.</p>
+			</div>
+		</section>
+
+		<EditorialImage
+			src="/images/rex-zmb/2026-renascimento-zmb.webp"
+			alt="Notebook aberto durante a remontagem que originou o zmb em 2026"
+			caption="07.10.2026 — o primeiro dia da remontagem que passou a se chamar zmb."
+			fit="contain"
+		/>
+
+		<section class="editorial-section dark-panel">
+			<p class="section-code">[ 09 / A MEMÓRIA AMALDIÇOADA ]</p>
+			<h2>O pente funcionava. O sistema insistia em contar outra história.</h2>
+			<div class="reading-width">
+				<p>Os testes de memória misturaram módulos DDR3 de frequências e capacidades diferentes. A tentativa com um Kingston KVR16LS11/8, nominalmente DDR3L-1600, não funcionou neste modelo. A configuração que permaneceu em rex trabalha a 1333 MT/s com dois módulos de 8 GB identificados pelas marcações <strong>Kingston 9905428-155.A00LF</strong> e <strong>Samsung M471B1G73QH0-YK0</strong>.</p>
+				<p>Com os 16 GB instalados aparecendo na BIOS, o Windows ainda disponibilizava apenas cerca de 8,7 GB. Em 20 de outubro de 2026 encontrei no <code>msconfig</code> a opção de memória máxima marcada com o valor <code>2048</code>.</p>
+				<p>Não recuperei uma explicação segura para a unidade ou para a origem daquele número. O que ficou comprovado na prática foi o efeito: a configuração limitava o sistema. Ao remover a limitação e revisar também a quantidade de processadores selecionada, o Windows voltou a reconhecer os recursos esperados. A BIOS não era a culpada.</p>
+			</div>
+			<div class="media-pair">
+				<EditorialImage
+					src="/images/rex-zmb/2026-memoria-ddr3.webp"
+					alt="Módulo Kingston KVR16LS11/8 de 1600 MT/s que não funcionou no notebook"
+					caption="09.10.2026 — o KVR16LS11/8 de 1600 MT/s testado, mas não aceito por este modelo."
+					fit="contain"
+				/>
+				<EditorialImage
+					src="/images/rex-zmb/2026-limitacao-msconfig.webp"
+					alt="Tela de opções avançadas do Windows com limitação de memória e processadores"
+					caption="20.10.2026 — a configuração que restringia a memória disponível a cerca de 8,7 GB."
+					fit="contain"
+				/>
+			</div>
+		</section>
+
+		<section class="editorial-section">
+			<p class="section-code">[ 10 / DUAS FUNÇÕES ]</p>
+			<h2>rex virou servidor. zmb virou laboratório.</h2>
+			<div class="reading-width">
+				<p>Os dois passaram a rodar a mesma versão do Ubuntu Server LTS de forma headless. rex ficou com a configuração mais forte e com serviços permanentes, incluindo Navidrome, Mumble, acesso SSH e Tailscale. zmb permaneceu como bancada de Linux e de hardware, acessível pela rede mesmo sem depender de teclado e tela no uso diário.</p>
+				<p>Uma das telas preservadas em rex registra Ubuntu 26.04.1 LTS, codinome Resolute, naquela etapa da recuperação. rex usa a BIOS 04QA; zmb usa 09QA. Essa última identificação vem do mapeamento histórico que fiz durante a recuperação.</p>
+			</div>
+			<div class="media-pair">
+				<EditorialImage
+					src="/images/rex-zmb/2026-zmb-ssh.webp"
+					alt="Sessão SSH aberta no celular mostrando temperaturas do zmb"
+					caption="09.10.2026 — zmb acessado pelo celular, já operando como servidor headless."
+					fit="contain"
+				/>
+				<EditorialImage
+					src="/images/rex-zmb/2026-rex-btop.webp"
+					alt="rex executando btop no Ubuntu com a tela marcada por linhas verticais"
+					caption="20.10.2026 — rex em Linux; as linhas verticais permanecem como parte visível de sua história."
+					fit="contain"
+				/>
+			</div>
+		</section>
+
+		<section class="editorial-section roar-panel">
+			<p class="section-code">[ 11 / O zmb FINALMENTE RUGIU ]</p>
+			<h2>O servidor ganhou uma voz de treze segundos.</h2>
+			<div class="reading-width">
+				<p>O hardware Intel HDA com codec Realtek ALC269VB era detectado, mas o áudio interno não aparecia para o usuário <code>akio</code>. Executado com <code>sudo</code>, <code>aplay -l</code> encontrava a placa; como usuário comum, não. O diagnóstico apontou para permissões: os dispositivos em <code>/dev/snd/*</code> pertenciam ao grupo <code>audio</code>, do qual o usuário ainda não fazia parte.</p>
+				<pre><code>sudo usermod -aG audio akio
+# logout e novo login
+aplay -l
+speaker-test</code></pre>
+				<p>Depois da correção, a placa e os alto-falantes internos voltaram a responder. Eles estão fisicamente cansados e distorcem bastante em volume alto, o que tornou o primeiro teste especialmente apropriado:</p>
+				<pre><code>mpv --no-video --ao=alsa "/srv/allan/godzilla.mp3"</code></pre>
+				<p>Após anos de desmontagens, transplantes e reaproveitamento de peças, o zmb finalmente ganhou uma voz: ao concluir o boot, o velho Samsung anuncia que voltou à vida com um rugido do Godzilla.</p>
+			</div>
+
+			<div class="video-card">
+				<video controls preload="metadata" playsinline>
+					<source src="/images/rex-zmb/2026-godzilla-roar-zmb.mp4" type="video/mp4" />
+					Seu navegador não oferece suporte à reprodução deste vídeo.
+				</video>
+				<p>21.10.2026 — demonstração do rugido reproduzido pelos alto-falantes originais do zmb.</p>
+			</div>
+
+			<div class="code-card">
+				<p>/etc/systemd/system/godzilla-roar.service</p>
+				<pre><code>[Unit]
+Description=Godzilla roar no boot do zmb
+After=sound.target local-fs.target
+Wants=sound.target
+RequiresMountsFor=/srv/allan
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/mpv --no-video --ao=alsa --really-quiet /srv/allan/godzilla.mp3
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+			</div>
+
+			<div class="reading-width">
+				<p>O serviço <code>oneshot</code> espera o áudio e os sistemas de arquivos locais; <code>RequiresMountsFor=/srv/allan</code> garante que o local do arquivo esteja disponível. Antes do primeiro reboot ele foi testado com <code>sudo systemctl start godzilla-roar.service</code>, habilitado após <code>daemon-reload</code> e <code>systemctl enable</code>. O volume foi ajustado no <code>alsamixer</code> e persistido com <code>sudo alsactl store</code>.</p>
+				<p>O rugido não é necessário para o servidor funcionar. Ainda assim, o caminho até ele reuniu permissões ALSA, grupos Linux, estado do mixer e automação com systemd — e acabou dando ao projeto uma identidade sonora muito mais adequada do que um simples beep.</p>
+			</div>
+		</section>
+
+		<section class="editorial-section split-section">
+			<div>
+				<p class="section-code">[ 12 / O i7 ]</p>
+				<h2>rex recebeu o último grande transplante desta fase.</h2>
+			</div>
+			<div class="reading-width">
+				<p>Em 26 de outubro de 2026, o Core i3-2310M saiu de rex e voltou para a placa original, agora em zmb. rex recebeu um Core i7-2640M: ainda são dois núcleos e quatro threads, mas com clock de até 3,5 GHz e 4 MB de cache.</p>
+				<p>A troca também exigiu atenção térmica. O dissipador foi limpo, a pasta térmica renovada e as temperaturas acompanhadas no Linux. O ganho não transforma um notebook de 2011 em uma máquina moderna, mas melhora o servidor dentro dos limites mecânicos e elétricos que ele já possui.</p>
+			</div>
+		</section>
+
+		<div class="media-pair">
+			<EditorialImage
+				src="/images/rex-zmb/2026-troca-processadores.webp"
+				alt="Core i7 sem pasta térmica e Core i3 retirado durante a troca"
+				caption="26.10.2026 — o i7 antes da montagem e o i3 que seguiria para zmb."
+				fit="contain"
+			/>
+			<EditorialImage
+				src="/images/rex-zmb/2026-i7-instalado.webp"
+				alt="Core i7-2640M instalado na placa-mãe de rex"
+				caption="26.10.2026 — Core i7-2640M instalado em rex."
+				fit="contain"
+			/>
+		</div>
+
+		<section class="editorial-section lineage-section">
+			<p class="section-code">[ 13 / QUEM FICOU COM O QUÊ ]</p>
+			<h2>Duas máquinas, uma história material compartilhada.</h2>
+			<div class="machine-grid">
+				<article>
+					<p class="machine-name">rex</p>
+					<h3>O conjunto reconstruído</h3>
+					<ul>
+						<li>placa-mãe do NP300E4A-BD2BR doador;</li>
+						<li>Core i7-2640M;</li>
+						<li>16 GB DDR3-1333 em dois módulos de 8 GB;</li>
+						<li>SSD ADATA SU630 de 480 GB;</li>
+						<li>tela original com linhas verticais;</li>
+						<li>BIOS 04QA;</li>
+						<li>Ubuntu Server LTS.</li>
+					</ul>
+				</article>
+				<article>
+					<p class="machine-name">zmb</p>
+					<h3>O original ressuscitado</h3>
+					<ul>
+						<li>placa-mãe original do NP300E4A-BD3BR;</li>
+						<li>Core i3-2310M original;</li>
+						<li>6 GB DDR3, em módulos de 4 GB e 2 GB;</li>
+						<li>HDD Samsung original de 320 GB;</li>
+						<li>BIOS 09QA;</li>
+						<li>Ubuntu Server LTS;</li>
+						<li>laboratório headless — com rugido no boot.</li>
+					</ul>
+				</article>
+			</div>
+		</section>
+
+		<section class="editorial-section reference-section">
+			<p class="section-code">[ 14 / REFERÊNCIA DE RESTAURAÇÃO ]</p>
+			<h2>A placa original agora tem nome, revisão e números.</h2>
+			<div class="reading-width">
+				<p>As fotografias de 10 de setembro de 2022 e 27 de outubro de 2026 pertencem à placa-mãe original de rex, hoje instalada em zmb. O silk identifica <strong>PETRONAS-14(DC)</strong>, <strong>REV 1.4</strong>, <strong>Made in China</strong> e <strong>BA41-01666A</strong>.</p>
+				<p>Também aparecem a etiqueta <strong>NP300E4 BA92-09247B</strong> e a marcação <strong>BA62-00605A</strong> sobre a proteção do PCH. O dissipador, embora não esteja legível nestas fotografias, traz <strong>BA62-00640A</strong>. Esses códigos passam a servir como referência para futuras buscas de placa, dissipador e peças compatíveis.</p>
+			</div>
+			<div class="documentation-grid">
+				<EditorialImage
+					src="/images/rex-zmb/2022-identificacao-placa.webp"
+					alt="Placa-mãe mostrando a proteção do PCH BA62-00605A e a etiqueta NP300E4 BA92-09247B"
+					caption="10.09.2022 — PCH BA62-00605A e etiqueta NP300E4 BA92-09247B."
+					fit="contain"
+				/>
+				<EditorialImage
+					src="/images/rex-zmb/2026-placa-ba41-01666a.webp"
+					alt="Detalhe do silk BA41-01666A na placa-mãe"
+					caption="27.10.2026 — identificação BA41-01666A."
+					fit="contain"
+				/>
+				<EditorialImage
+					src="/images/rex-zmb/2026-placa-petronas-14.webp"
+					alt="Detalhe do silk PETRONAS-14(DC), revisão 1.4, Made in China"
+					caption="27.10.2026 — PETRONAS-14(DC), REV 1.4."
+					fit="contain"
+				/>
+			</div>
+		</section>
+
+		<section class="editorial-section technical-panel">
+			<p class="section-code">[ 15 / NOTAS TÉCNICAS ]</p>
+			<h2>Referências para a próxima desmontagem.</h2>
+			<div class="notes-grid">
+				<article>
+					<h3>Processadores</h3>
+					<p>O i3-2310M não possui Turbo Boost. O i7-2640M mantém 35 W de TDP e chega a 3,5 GHz, com limite térmico de junção informado em 100 °C.</p>
+					<a href="https://www.intel.com/content/www/us/en/products/sku/52220/intel-core-i32310m-processor-3m-cache-2-10-ghz/specifications.html">INTEL / i3-2310M ↗</a>
+					<a href="https://www.intel.com/content/www/us/en/products/sku/53464/intel-core-i72640m-processor-4m-cache-up-to-3-50-ghz/specifications.html">INTEL / i7-2640M ↗</a>
+				</article>
+				<article>
+					<h3>Memória</h3>
+					<p>Os controladores de memória dos Core i3-2310M e i7-2640M suportam oficialmente DDR3-1066 e DDR3-1333, com até 16 GB em dois canais. Em rex, a configuração estável opera em DDR3-1333 com dois SO-DIMMs de 8 GB.</p>
+					<p>O módulo Kingston traz a marcação <strong>9905428-155.A00LF</strong>. A folha de referência DDR3-1333 da Kingston descreve um SO-DIMM de 8 GB, 2Rx8, PC3-10600, CL9, 204 pinos, não ECC, sem buffer e alimentado em 1,5 V.</p>
+					<p>O Samsung <strong>M471B1G73QH0-YK0</strong> é um SO-DIMM de 8 GB, 2Rx8 e 204 pinos. O sufixo K0 identifica a especificação nominal DDR3L-1600 CL11, mas o datasheet declara compatibilidade retroativa com DDR3L-1333 CL9. Neste notebook, ele trabalha no perfil de 1333 MT/s.</p>
+					<p>O Kingston KVR16LS11/8 mostrado anteriormente também é nominalmente DDR3L-1600, porém não funcionou neste modelo e não faz parte da configuração atual.</p>
+					<a href="https://www.kingston.com/datasheets/KVR1333D3S9_8G.pdf">KINGSTON / DDR3-1333 8 GB ↗</a>
+					<a href="https://semiconductor.samsung.com/resources/data-sheet/135V_DDR3_4Gb_Qdie_UnbufferedSODIMM_Rev121.pdf">SAMSUNG / M471B1G73QH0 ↗</a>
+					<a href="https://www.kingston.com/datasheets/KVR16LS11_8.pdf?_=v1">KINGSTON / KVR16LS11/8 — TESTE SEM SUCESSO ↗</a>
+				</article>
+				<article>
+					<h3>Armazenamento</h3>
+					<p>Na referência Petronas, o HDD aparece no primeiro porto SATA do chipset e a unidade óptica em outro porto. A documentação do HM65 diferencia portas de até 6 Gb/s e portas de até 3 Gb/s.</p>
+					<a href="https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/6-chipset-c200-chipset-datasheet.pdf">INTEL / 6 SERIES PCH ↗</a>
+					<a href="https://www.adata.com/storage/downloadfile/datasheet_su630_qlc_25_inch_sata_ssd.pdf">ADATA / SU630 ↗</a>
+				</article>
+			</div>
+		</section>
+
+		<section class="editorial-section conclusion">
+			<p class="section-code">[ 16 / ESTADO ATUAL ]</p>
+			<h2>O notebook original não desapareceu. Ele se dividiu.</h2>
+			<div class="reading-width">
+				<p>rex carrega a continuidade de uso: a máquina que foi sendo atualizada para continuar servindo. zmb carrega a continuidade física: a placa-mãe, o processador e o disco que estavam no início da história, reunidos outra vez.</p>
+				<p>Nenhum dos dois é exatamente o Samsung recebido em 2012. Ao mesmo tempo, ambos são. A melhor resposta para o navio de Teseu, neste caso, não foi escolher um herdeiro — foi ligar os dois.</p>
+			</div>
+			<div class="result-band">
+				<p>UM NOTEBOOK.</p>
+				<p>DOIS SERVIDORES.</p>
+				<p>QUATORZE ANOS DE PEÇAS QUE SE RECUSARAM A SUMIR.</p>
+			</div>
+		</section>
+	</main>
+
+	<ImageLightbox />
+	<SiteFooter />
+</BaseLayout>
+
+<style>
+	.project-page {
+		width: min(1180px, calc(100% - 48px));
+		margin: 0 auto;
+		padding: 54px 0 110px;
+	}
+
+	.project-hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1.08fr) minmax(380px, .92fr);
+		min-height: 620px;
+		overflow: hidden;
+		border: 1px solid var(--line);
+		background: var(--surface);
+	}
+
+	.hero-copy {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		min-width: 0;
+		padding: clamp(36px, 6vw, 74px);
+	}
+
+	.eyebrow,
+	.section-code,
+	.hero-kicker,
+	.hero-media p,
+	.machine-name {
+		font-family: "Courier New", Courier, monospace;
+		font-size: .875rem;
+		line-height: 1.5;
+	}
+
+	.eyebrow,
+	.section-code {
+		color: var(--programacao);
+	}
+
+	.project-hero h1 {
+		margin: 18px 0 0;
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: clamp(4rem, 9vw, 8.4rem);
+		line-height: .82;
+		letter-spacing: -.075em;
+	}
+
+	.project-hero h1 span {
+		color: var(--muted);
+		font-size: .72em;
+	}
+
+	.hero-kicker {
+		margin: 24px 0 0;
+		color: var(--eletronica);
+		font-weight: 700;
+	}
+
+	.hero-subtitle {
+		max-width: 680px;
+		margin: 24px 0 0;
+		overflow-wrap: anywhere;
+		color: var(--muted);
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.15rem;
+		line-height: 1.75;
+	}
+
+	.tag-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 28px;
+	}
+
+	.hero-media {
+		display: grid;
+		grid-template-rows: minmax(0, 1fr) auto;
+		min-width: 0;
+		border-left: 1px solid var(--line);
+		background: #020304;
+	}
+
+	.hero-media img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
+	}
+
+	.hero-media p {
+		margin: 0;
+		padding: 12px 14px;
+		color: var(--muted);
+		border-top: 1px solid var(--line);
+	}
+
+	:global(.status-grid) {
+		margin-top: 20px;
+	}
+
+	.editorial-section {
+		padding-top: clamp(76px, 10vw, 124px);
+	}
+
+	.editorial-section h2 {
+		max-width: 960px;
+		margin: 0 0 38px;
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: clamp(2.5rem, 6.6vw, 5.7rem);
+		line-height: .95;
+		letter-spacing: -.055em;
+	}
+
+	.reading-width {
+		max-width: 760px;
+	}
+
+	.reading-width p,
+	.thesis-panel > p,
+	.notes-grid p {
+		margin: 0 0 22px;
+		color: var(--muted);
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.12rem;
+		line-height: 1.82;
+	}
+
+	.reading-width strong {
+		color: var(--text);
+	}
+
+	.reading-width code,
+	.notes-grid code {
+		color: var(--text);
+		font-family: "Courier New", Courier, monospace;
+	}
+
+	.fact-strip {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1px;
+		margin-top: 46px;
+		background: var(--line);
+		border: 1px solid var(--line);
+	}
+
+	.fact-strip span {
+		flex: 1 1 170px;
+		padding: 18px;
+		background: var(--surface);
+		font-family: "Courier New", Courier, monospace;
+		font-size: .875rem;
+		text-align: center;
+	}
+
+	.split-section {
+		display: grid;
+		grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+		gap: clamp(42px, 8vw, 100px);
+		align-items: start;
+	}
+
+	.split-section h2 {
+		font-size: clamp(2.5rem, 5vw, 4.7rem);
+	}
+
+	.media-pair,
+	.documentation-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 20px;
+	}
+
+	.documentation-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.dark-panel,
+	.warning-panel,
+	.roar-panel,
+	.technical-panel {
+		margin-top: clamp(76px, 10vw, 124px);
+		padding: clamp(38px, 7vw, 78px);
+		border: 1px solid var(--line);
+		background:
+			linear-gradient(rgba(0, 217, 255, .032) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(0, 217, 255, .032) 1px, transparent 1px),
+			var(--surface);
+		background-size: 34px 34px;
+	}
+
+	.warning-panel {
+		border-left: 2px solid var(--automacao);
+	}
+
+	.roar-panel {
+		border-left: 2px solid var(--experimentacao);
+	}
+
+	.thesis-panel {
+		max-width: 980px;
+		margin: clamp(90px, 12vw, 150px) auto 0;
+		padding: clamp(34px, 6vw, 66px);
+		border-top: 1px solid var(--experimentacao);
+		border-bottom: 1px solid var(--experimentacao);
+	}
+
+	.thesis-panel blockquote {
+		margin: 18px 0 32px;
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: clamp(2rem, 4.2vw, 3.8rem);
+		font-style: italic;
+		line-height: 1.18;
+	}
+
+	.video-card,
+	.code-card {
+		margin: 40px 0;
+		border: 1px solid var(--line);
+		background: #020304;
+	}
+
+	.video-card video {
+		display: block;
+		width: 100%;
+		max-height: 720px;
+		background: #000;
+	}
+
+	.video-card p,
+	.code-card > p {
+		margin: 0;
+		padding: 13px 16px;
+		color: var(--muted);
+		border-top: 1px solid var(--line);
+		font-family: "Courier New", Courier, monospace;
+		font-size: .875rem;
+		line-height: 1.55;
+	}
+
+	pre {
+		max-width: 100%;
+		margin: 28px 0;
+		padding: 20px;
+		overflow-x: auto;
+		border: 1px solid var(--line);
+		background: #020304;
+		color: var(--text);
+		font-family: "Courier New", Courier, monospace;
+		font-size: .9rem;
+		line-height: 1.65;
+	}
+
+	.code-card pre {
+		margin: 0;
+		border: 0;
+	}
+
+	.machine-grid,
+	.notes-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 20px;
+	}
+
+	.machine-grid article,
+	.notes-grid article {
+		padding: clamp(26px, 4vw, 42px);
+		border: 1px solid var(--line);
+		background: var(--surface);
+	}
+
+	.machine-grid article:first-child {
+		border-top: 2px solid var(--eletronica);
+	}
+
+	.machine-grid article:last-child {
+		border-top: 2px solid var(--experimentacao);
+	}
+
+	.machine-name {
+		margin: 0 0 10px;
+		color: var(--programacao);
+		font-weight: 700;
+	}
+
+	.machine-grid h3,
+	.notes-grid h3 {
+		margin: 0 0 22px;
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: 1.65rem;
+	}
+
+	.machine-grid ul {
+		margin: 0;
+		padding-left: 20px;
+		color: var(--muted);
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.03rem;
+		line-height: 1.72;
+	}
+
+	.notes-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.notes-grid p {
+		font-size: 1rem;
+	}
+
+	.notes-grid a {
+		display: block;
+		width: fit-content;
+		margin-top: 12px;
+		color: var(--programacao);
+		font-family: "Courier New", Courier, monospace;
+		font-size: .875rem;
+		text-underline-offset: 4px;
+	}
+
+	.notes-grid a:focus-visible {
+		outline: 2px solid var(--programacao);
+		outline-offset: 4px;
+	}
+
+	.conclusion {
+		padding-bottom: 20px;
+	}
+
+	.result-band {
+		margin-top: 62px;
+		padding: clamp(30px, 5vw, 58px);
+		border: 1px solid var(--eletronica);
+		background: color-mix(in srgb, var(--eletronica) 3%, var(--surface));
+	}
+
+	.result-band p {
+		margin: 0;
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: clamp(2rem, 5vw, 4.7rem);
+		font-weight: 800;
+		line-height: 1.02;
+		letter-spacing: -.045em;
+	}
+
+	.result-band p + p {
+		margin-top: 10px;
+		color: var(--muted);
+	}
+
+	@media (max-width: 950px) {
+		.project-hero {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.hero-media {
+			min-height: 460px;
+			border-top: 1px solid var(--line);
+			border-left: 0;
+		}
+
+		.notes-grid,
+		.documentation-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 800px) {
+		.project-page {
+			padding-top: 28px;
+		}
+
+		.split-section,
+		.media-pair,
+		.machine-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.split-section {
+			gap: 0;
+		}
+
+		.dark-panel,
+		.warning-panel,
+		.roar-panel,
+		.technical-panel {
+			margin-top: 76px;
+			padding: 34px 24px;
+		}
+
+		.documentation-grid :global(.editorial-image),
+		.media-pair :global(.editorial-image) {
+			margin-block: 16px;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.project-page {
+			width: calc(100% - 48px);
+			padding-bottom: 76px;
+		}
+
+		.hero-copy {
+			padding: 34px 24px;
+		}
+
+		.project-hero h1 {
+			font-size: clamp(3.4rem, 19vw, 5.1rem);
+		}
+
+		.hero-media {
+			min-height: 310px;
+		}
+
+		.editorial-section {
+			padding-top: 76px;
+		}
+
+		.reading-width p,
+		.thesis-panel > p {
+			font-size: 1.0625rem;
+		}
+
+		.thesis-panel {
+			padding-inline: 0;
+		}
+	}
+</style>
