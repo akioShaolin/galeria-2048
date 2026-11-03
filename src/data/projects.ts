@@ -251,7 +251,7 @@ export const projects: Project[] = [
 		id: "monza-ignicao-emergencial",
 		type: "EXPERIMENTO",
 		number: "014",
-		title: "MONZA SEM FAÍSCA",
+		title: "TESTADOR DE IGNIÇÃO",
 		description: "Uma tentativa real de improvisar a ignição com 555 e MOSFET que não moveu o carro, mas ajudou a isolar um pickup aberto.",
 		image: "/images/monza-ignicao-emergencial/capa-hero.png",
 		path: "/projetos/monza-ignicao-emergencial/",
