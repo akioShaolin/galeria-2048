@@ -41,6 +41,49 @@ export type Project = {
 
 export const projects: Project[] = [
 	{
+		id: "horwin-qbd1-can",
+		type: "PROJETO",
+		number: "020",
+		title: "QBD1 — QUANDO A MOTO PAROU DE FALAR",
+		description: "Uma pane na Horwin QBD1 levou do alarme e da T-Box à rede CAN, aos testes cruzados e à troca da placa lógica do controlador.",
+		image: "/images/horwin-qbd1-can/moto-na-oficina.webp",
+		path: "/projetos/horwin-qbd1-can/",
+		categories: [
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "DIAGNÓSTICO", tone: "diagnostico" },
+			{ label: "REPARO", tone: "reparo" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["Horwin QBD1", "CAN", "CANalyst-II", "Lingbo", "T-Box", "BMS", "TJA1042", "TCAN1042V", "diagnóstico", "placa doadora", "Self-Learning Mode", "moto elétrica", "engenharia reversa"],
+		page: {
+			code: "QBD1 / CAN",
+			subtitle: "Do maldito alarme e da T-Box aos testes CAN, à placa lógica doadora e ao Self-Learning Mode que devolveu a moto à operação.",
+			status: [
+				{ label: "STATUS", value: "● FUNCIONAL / INVESTIGAÇÃO ABERTA", tone: "diagnostico" },
+				{ label: "REDE", value: "CAN / 250 KBIT/S / 29 BITS" },
+				{ label: "RESULTADO", value: "COMUNICAÇÃO E TRAÇÃO RESTAURADAS" },
+				{ label: "PENDÊNCIA", value: "HODÔMETRO ABSOLUTO" },
+			],
+			timeline: [
+				{ year: "ORIGEM", title: "Economizar sem depender tanto do carro", text: "A QBD1 entrou na rotina como alternativa prática ao carro a combustão, aproveitando o contexto de energia elétrica e reduzindo custo e desgaste no deslocamento." },
+				{ year: "ALARME", title: "A T-Box entrou na história", text: "O alarme excessivamente sensível, a retirada e a reconexão da T-Box antecederam comportamentos anormais, sem que essa sequência prove causalidade isolada." },
+				{ year: "CAN", title: "A oficina virou laboratório", text: "CANalyst-II, CSVs, Listen-Only, Normal Mode, osciloscópio e comparação entre três motos transformaram a pane em investigação de comunicação." },
+				{ year: "12 NOV 2026", title: "O defeito acompanhou o controlador", text: "Instalado na moto funcional de referência, o controlador original reproduziu a falha: 2.813 frames de outros módulos, mas nenhum C1 e nenhum A5." },
+				{ year: "REPARO", title: "Uma placa lógica doadora", text: "A placa de controle e comunicação de outro Lingbo condenado por defeito diferente foi transplantada para o estágio de potência original." },
+				{ year: "AJUSTE", title: "Self-Learning Mode", text: "O procedimento corrigiu o sentido de rotação e o comportamento de velocidade depois do transplante." },
+				{ year: "ATUAL", title: "A moto voltou; a pesquisa continua", text: "TRIP e hodômetro voltaram a avançar, mas a leitura absoluta permanece em 100.018 km e a placa original aguarda diagnóstico eletrônico." },
+			],
+			specifications: [
+				{ name: "Veículo", value: "Horwin QBD1" },
+				{ name: "Controlador", value: "Lingbo LBMC072352GC5XC-M44 / LBC176.00G" },
+				{ name: "Aquisição CAN", value: "CANalyst-II / USB-CAN Tool V9.11" },
+				{ name: "Painel", value: "MCU KF32A1 / transceptor TJA1042" },
+				{ name: "Placa de controle", value: "Transceptor marcado 1042V, compatível com a família TCAN1042V" },
+				{ name: "Estado atual", value: "Operacional com placa doadora; placa original preservada" },
+			],
+		},
+	},
+	{
 		id: "grid-export-lab",
 		type: "PROJETO",
 		number: "019",
@@ -587,7 +630,7 @@ export const projects: Project[] = [
 			{ label: "ELETRÔNICA", tone: "eletronica" },
 			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
 		],
-		keywords: ["555 discreto", "NE555", "timer", "temporizador", "transistores", "eletrônica analógica", "Fritzing", "PCB", "circuito discreto"],
+		keywords: ["555 discreto", "NE555", "timer", "temporizador", "transistores", "eletrônica analógica", "Fritzing", "PCB", "circuito discreto", "Three Fives", "Eric Schlaepfer"],
 		page: {
 			code: "555 DISCRETO",
 			subtitle: "Uma tentativa de reconstruir o temporizador 555 em escala visível para entender a roda por dentro — inclusive onde ela deixou de girar.",
@@ -597,6 +640,7 @@ export const projects: Project[] = [
 				{ label: "RESULTADO", value: "REV. 1 EM DIAGNÓSTICO" },
 			],
 			timeline: [
+				{ year: "22/02/2020", title: "Inspiração física", text: "O Three Fives mostrou como os blocos internos e os oito sinais do 555 poderiam se tornar um objeto didático em escala visível." },
 				{ year: "2020", title: "Redesenho", text: "O circuito de referência foi refeito no Fritzing e organizado como uma placa didática de componentes PTH." },
 				{ year: "2020", title: "Fabricação", text: "Dez placas foram fabricadas no exterior depois que o orçamento nacional se mostrou incompatível com o caráter de protótipo do projeto." },
 				{ year: "MONTAGEM", title: "Estrutura em escala", text: "Bornes banana e pernas impressas em 3D aproximaram visualmente a placa de um circuito integrado de oito pinos." },

@@ -104,7 +104,10 @@ const nationalQuotes = [
 					<p>Quando contei a ideia a um colega, ele resumiu o projeto como <strong>“reinventar a roda”</strong>. A observação fazia sentido do ponto de vista prático. Um CI 555 pronto é barato, estável e compacto. Mas a intenção era outra.</p>
 					<div class="quote">“Às vezes não basta usar a roda. É preciso entender como ela foi construída.”</div>
 					<p>O objetivo não era substituir o circuito integrado, e sim ampliar sua estrutura até que comparadores, latch, descarga e estágio de saída pudessem ser vistos, montados e medidos individualmente.</p>
-					<EditorialImage src="/images/555-discreto/esquematico.jpg" alt="Esquemático completo do temporizador 555 redesenhado com transistores discretos" caption="Esquemático redesenhado no Fritzing a partir do circuito usado como referência." variant="detail" />
+					<p>A inspiração física e conceitual veio do <strong>Three Fives</strong>, uma reprodução do 555 em escala de transistores criada por Eric Schlaepfer em colaboração com a Evil Mad Scientist Laboratories. A placa fotografada em fevereiro de 2020 transformava os blocos internos, os oito sinais e até a forma do encapsulamento em algo que podia ser observado diretamente.</p>
+					<EditorialImage src="/images/555-discreto/inspiracao-three-fives.webp" alt="Placa Three Fives montada, com os blocos internos do temporizador 555 expostos" caption="22/02/2020 — a placa Three Fives que ajudou a dar origem ao projeto, tornando visíveis, em escala física, os blocos internos e os oito sinais do temporizador 555." variant="detail" />
+					<p>Essa referência definiu a ideia e a presença física do projeto, mas não o esquema elétrico da versão que construí. Para o redesenho, usei como referência o circuito publicado pela Creative Engineering e o reorganizei no Fritzing.</p>
+					<EditorialImage src="/images/555-discreto/esquematico.jpg" alt="Esquemático completo do temporizador 555 redesenhado com transistores discretos" caption="Esquemático redesenhado no Fritzing a partir do circuito da Creative Engineering usado como referência elétrica." variant="detail" />
 				</div>
 			</div>
 		</section>
@@ -139,7 +142,6 @@ const nationalQuotes = [
 						<EditorialImage src="/images/555-discreto/layout-superior.png" alt="Vista superior do layout didático da PCB do 555 discreto" caption="Camada superior e serigrafia com os blocos funcionais." variant="detail" />
 						<EditorialImage src="/images/555-discreto/layout-inferior.png" alt="Vista inferior do layout da PCB do 555 discreto" caption="Camada inferior do roteamento desenvolvido no Fritzing." variant="detail" />
 					</div>
-					<EditorialImage src="/images/555-discreto/pcb-sem-componentes.jpg" alt="PCB preta do 555 discreto ainda sem componentes" caption="Placa fabricada, ainda vazia, com os blocos e sinais identificados na serigrafia." variant="portrait" position="center" />
 				</div>
 			</div>
 		</section>
@@ -147,21 +149,44 @@ const nationalQuotes = [
 		<section class="content">
 			<div class="container section-grid">
 				<div class="section-label">[ CUSTO / 2020 ]</div>
-				<div class="prose">
-					<h2>O PREÇO DE UMA IDEIA DIDÁTICA.</h2>
-					<p>Uma cotação nacional feita em 2020 registrou os valores abaixo para placas de 75 × 100 mm e prazo informado de cinco dias. São valores nominais da época, sem correção monetária. A cotação não foi contratada.</p>
-					<div class="budget" role="table" aria-label="Cotação nacional de placas em 2020">
-						<div class="budget-row budget-head" role="row"><span>QUANTIDADE</span><span>VALOR UNITÁRIO</span><span>TOTAL</span></div>
-						{nationalQuotes.map((quote) => <div class:list={["budget-row", { selected: quote.selected }]} role="row"><span>{quote.quantity}</span><span>{quote.unit}</span><span>{quote.total}</span></div>)}
+				<div>
+					<div class="prose">
+						<h2>O PREÇO DE UMA IDEIA DIDÁTICA.</h2>
+						<p>Uma cotação nacional feita em 2020 registrou os valores abaixo para placas de 75 × 100 mm e prazo informado de cinco dias. São valores nominais da época, sem correção monetária. A cotação não foi contratada.</p>
+						<div class="budget" role="table" aria-label="Cotação nacional de placas em 2020">
+							<div class="budget-row budget-head" role="row"><span>QUANTIDADE</span><span>VALOR UNITÁRIO</span><span>TOTAL</span></div>
+							{nationalQuotes.map((quote) => <div class:list={["budget-row", { selected: quote.selected }]} role="row"><span>{quote.quantity}</span><span>{quote.unit}</span><span>{quote.total}</span></div>)}
+						</div>
+						<div class="callout"><div class="note-label">REGISTRO HISTÓRICO</div><p>A alternativa escolhida foi fabricar dez PCBs na JLCPCB. O documento preservado registra aproximadamente <strong>R$ 81,61</strong> pela fabricação e cerca de <strong>R$ 15</strong> de liberação ou importação. Esses números descrevem aquela compra em 2020 e não representam condições comerciais atuais.</p></div>
 					</div>
-					<div class="callout"><div class="note-label">REGISTRO HISTÓRICO</div><p>A alternativa escolhida foi fabricar dez PCBs na JLCPCB. O documento preservado registra aproximadamente <strong>R$ 81,61</strong> pela fabricação e cerca de <strong>R$ 15</strong> de liberação ou importação. Esses números descrevem aquela compra em 2020 e não representam condições comerciais atuais.</p></div>
+					<EditorialImage src="/images/555-discreto/chegada-das-placas-2020.webp" alt="Conjunto das PCBs do 555 discreto ainda embalado" caption="02/04/2020 — as dez PCBs chegaram embaladas, marcando a passagem dos arquivos de fabricação para a primeira revisão física." variant="detail" />
+					<EditorialImage src="/images/555-discreto/pcb-rev1-vazia-2020.webp" alt="Exemplar vazio da primeira revisão da PCB do 555 discreto" caption="02/04/2020 — um exemplar ainda vazio da Rev. 1, com os blocos funcionais e os sinais do 555 expostos na serigrafia." variant="detail" />
 				</div>
 			</div>
 		</section>
 
 		<section class="content">
 			<div class="container section-grid">
-				<div class="section-label">[ MONTAGEM ]</div>
+				<div class="section-label">[ MONTAGEM / 2020 ]</div>
+				<div>
+					<div class="prose">
+						<h2>TRANSISTOR POR TRANSISTOR.</h2>
+						<p>Reconstruir o 555 discretamente também significava trocar um único encapsulamento por dezenas de componentes individuais. O estojo ajudou na separação dos transistores antes da montagem, embora nem todos os modelos presentes nele tenham sido usados nesta placa.</p>
+					</div>
+					<EditorialImage src="/images/555-discreto/estojo-transistores-2020.webp" alt="Estojo organizador com diferentes modelos de transistores" caption="08/04/2020 — o estojo de transistores usado durante a separação dos componentes; nem todos os modelos visíveis foram empregados no circuito." variant="detail" />
+					<EditorialImage src="/images/555-discreto/montagem-em-casa-2020.webp" alt="Bancada doméstica com notebook, PCB, ferro de solda e ferramentas" caption="10/04/2020 — montagem em casa, com a PCB, os componentes e as ferramentas distribuídos pela bancada." variant="detail" />
+					<div class="media-pair">
+						<EditorialImage src="/images/555-discreto/soldagem-transistores-etapa-1.webp" alt="Primeira etapa da instalação dos transistores na PCB" caption="10/04/2020 — início da montagem dos transistores, preenchendo os blocos do circuito por etapas." variant="detail" />
+						<EditorialImage src="/images/555-discreto/soldagem-transistores-etapa-2.webp" alt="Etapa posterior da montagem com mais transistores soldados na PCB" caption="10/04/2020 — etapa posterior da montagem, com mais transistores soldados e parte da placa ainda vazia." variant="detail" />
+					</div>
+					<EditorialImage src="/images/555-discreto/placa-montada.jpg" alt="Placa do 555 discreto montada sobre a bancada" caption="Uma das unidades montadas para os testes funcionais." variant="portrait" />
+				</div>
+			</div>
+		</section>
+
+		<section class="content">
+			<div class="container section-grid">
+				<div class="section-label">[ ESTRUTURA ]</div>
 				<div>
 					<div class="prose">
 						<h2>O 555 GIGANTE.</h2>
@@ -172,10 +197,6 @@ const nationalQuotes = [
 					<div class="media-pair">
 						<EditorialImage src="/images/555-discreto/comparacao-ci-e-pernas-3d.jpg" alt="Circuito integrado de oito pinos diante da placa com pernas impressas em 3D" caption="A escala do CI original comparada à estrutura mecânica da placa." variant="portrait" />
 						<EditorialImage src="/images/555-discreto/pernas-3d-vista-lateral.jpg" alt="Vista lateral das pernas impressas em 3D montadas sob a PCB" caption="Vista lateral da tentativa de reproduzir as pernas de um encapsulamento DIP." variant="detail" />
-					</div>
-					<div class="media-pair">
-						<EditorialImage src="/images/555-discreto/montagem-parcial.jpg" alt="PCB do 555 discreto parcialmente montada" caption="Montagem parcial com resistores, transistores e bornes banana." variant="portrait" />
-						<EditorialImage src="/images/555-discreto/placa-montada.jpg" alt="Placa do 555 discreto montada sobre a bancada" caption="Uma das unidades montadas para os testes funcionais." variant="portrait" />
 					</div>
 				</div>
 			</div>
@@ -242,7 +263,8 @@ const nationalQuotes = [
 				<div class="section-label">[ REFERÊNCIAS ]</div>
 				<div class="prose">
 					<h2>FONTES E INSPIRAÇÃO.</h2>
-					<p><a href="https://0creativeengineering0.blogspot.com/2018/12/discrete-555.html" rel="external noreferrer">Creative Engineering — Discrete 555 Using Transistors</a><br />Circuito que serviu de inspiração e referência para o redesenho. A autoria do esquema original não é reivindicada por este projeto.</p>
+					<p><strong>Three Fives Kit Datasheet — Rev A3, agosto de 2013</strong><br />Documentação da referência física e conceitual criada por Eric Schlaepfer em colaboração com a Evil Mad Scientist Laboratories. As especificações desse kit não descrevem a Rev. 1 construída neste projeto.</p>
+					<p><a href="https://0creativeengineering0.blogspot.com/2018/12/discrete-555.html" rel="external noreferrer">Creative Engineering — Discrete 555 Using Transistors</a><br />Esquema elétrico usado como referência para o redesenho da versão construída. A autoria do esquema original não é reivindicada por este projeto.</p>
 					<p><a href="https://www.computerhistory.org/revolution/digital-logic/12/281/1476" rel="external noreferrer">Computer History Museum — NE555 timer and multivibrator, Signetics, 1971</a><br />Registro histórico do componente e de seu projetista, Hans Camenzind.</p>
 				</div>
 			</div>
