@@ -13,6 +13,23 @@ export type WorkshopEntry = {
 
 export const workshop: WorkshopEntry[] = [
 	{
+		id: "caixa-cristian-220v",
+		type: "OFICINA",
+		subtype: "REPARO",
+		code: "CAIXA ATIVA / 120 V → 220 V",
+		title: "A CAIXA LIGADA EM 220 V — E O SHOW CONTINUOU",
+		description: "Uma ligação acidental em 220 V, três capacitores danificados, uma substituição fora do valor original — e a mesma caixa ainda tocando mais de dois anos depois.",
+		image: "/images/oficina/caixa-cristian-220v/hero.webp",
+		path: "/oficina/caixa-cristian-220v/",
+		areas: [
+			{ label: "REPARO", tone: "reparo" },
+			{ label: "DIAGNÓSTICO", tone: "diagnostico" },
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "ÁUDIO", tone: "audio" },
+		],
+		keywords: ["caixa ativa", "caixa de som", "120 V", "220 V", "sobretensão", "capacitor eletrolítico", "3300 µF", "2200 µF", "330 µF", "fonte simétrica", "amplificador Classe D", "reparo", "áudio", "PD-01"],
+	},
+	{
 		id: "sma-sunny-tripower-solarview",
 		type: "OFICINA",
 		subtype: "DIAGNÓSTICO",

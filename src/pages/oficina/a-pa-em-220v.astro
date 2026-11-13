@@ -1,0 +1,185 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { workshop } from "../../data/workshop";
+
+const entry = workshop.find(({ id }) => id === "caixa-cristian-220v");
+if (!entry) throw new Error("Registro da Oficina não encontrado.");
+
+const imageRoot = "/images/oficina/caixa-cristian-220v";
+const status = [
+	{ label: "OCORRÊNCIA", value: "27/06/2024" },
+	{ label: "REPARO", value: "~10–11/07/2024" },
+	{ label: "SUBSTITUIÇÃO", value: "3300 → 2 × 2200 µF" },
+	{ label: "REGISTRO POSTERIOR", value: "● EM USO EM 31/10/2026", tone: "audio" },
+];
+---
+
+<BaseLayout title="A caixa ligada em 220 V — e o show continuou — Galeria -2048" description={entry.description} image={entry.image} type="article" keywords={entry.keywords}>
+	<style is:global>
+		body { background: radial-gradient(circle at 84% 8%, rgba(255,32,199,.055), transparent 560px), linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px), var(--bg); background-size: auto, 42px 42px, 42px 42px, auto; font-family: Arial, Helvetica, sans-serif; }
+		.hero { padding: 90px 0 70px; border-bottom: 1px solid var(--line); }
+		.code, .section-label, .note-label { color: var(--audio); font-family: monospace; font-size: .875rem; line-height: 1.5; letter-spacing: .08em; }
+		h1 { max-width: 1120px; margin: 25px 0 0; font-size: clamp(3rem, 7.3vw, 6.7rem); line-height: .9; letter-spacing: -.06em; }
+		.subtitle { max-width: 920px; margin-top: 35px; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.2rem, 2vw, 1.55rem); line-height: 1.65; }
+		.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+		.status { margin-top: 50px; }
+		.status .status-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+		.content { padding: 85px 0; border-bottom: 1px solid var(--line); }
+		.section-grid { display: grid; grid-template-columns: 225px minmax(0, 1fr); gap: 70px; }
+		h2 { max-width: 930px; margin: 0 0 32px; font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: .96; letter-spacing: -.05em; }
+		h3 { margin: 42px 0 16px; font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.15; }
+		.prose { max-width: 850px; }
+		.prose p, .prose li { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.125rem; line-height: 1.8; }
+		.prose p { margin: 0 0 22px; }
+		.prose strong { color: var(--text); }
+		.prose ul { padding-left: 24px; }
+		.prose a { color: var(--programacao); text-underline-offset: 4px; }
+		.prose a:hover { color: var(--text); }
+		.callout { margin: 34px 0; padding: 28px; border: 1px solid var(--line); border-left: 2px solid var(--audio); background: rgba(255,32,199,.028); }
+		.callout p:last-child { margin-bottom: 0; }
+		.safety { border-left-color: var(--reparo); background: rgba(255,92,122,.035); }
+		.safety .note-label { color: var(--reparo); font-weight: bold; }
+		.voltage-panel { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1px; margin: 36px 0; border: 1px solid var(--line); background: var(--line); }
+		.voltage-panel div { padding: 25px; background: var(--surface); }
+		.voltage-panel span { display: block; margin-bottom: 8px; color: var(--muted); font: .8rem/1.4 monospace; letter-spacing: .07em; }
+		.voltage-panel strong { color: var(--text); font: bold clamp(1.55rem,3vw,2.5rem)/1 monospace; }
+		.media-pair { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+		.media-pair .editorial-image { margin: 20px 0 35px; }
+		.equation { margin: 36px 0; padding: 30px; border: 1px solid var(--eletronica); background: rgba(207,255,0,.025); color: var(--text); text-align: center; font: bold clamp(1.35rem,4vw,2.4rem)/1.35 monospace; }
+		.video-figure { margin: 38px 0; border: 1px solid var(--line); background: var(--surface); }
+		.video-figure video { display: block; width: 100%; max-height: 72vh; background: #000; object-fit: contain; }
+		.video-figure figcaption { padding: 15px 18px; border-top: 1px solid var(--line); color: var(--muted); font: .875rem/1.65 monospace; }
+		.result { margin: 40px 0; padding: 34px; border: 1px solid var(--audio); background: rgba(255,32,199,.035); color: var(--text); font: bold clamp(1.35rem, 3vw, 2.2rem)/1.25 monospace; }
+		.final { font-size: clamp(1.6rem, 3vw, 2.5rem) !important; color: var(--text) !important; line-height: 1.45 !important; }
+		@media (max-width: 800px) {
+			.hero { padding: 65px 0 55px; }
+			.content { padding: 65px 0; }
+			.section-grid, .media-pair, .voltage-panel { grid-template-columns: 1fr; }
+			.section-grid { gap: 26px; }
+			.status .status-grid { grid-template-columns: 1fr; }
+			.video-figure video { max-height: 60vh; }
+		}
+	</style>
+
+	<SiteHeader accent="var(--audio)" />
+	<main>
+		<section class="hero"><div class="container">
+			<p class="code">[ OFICINA / REPARO / {entry.code} ]</p>
+			<h1>A CAIXA LIGADA<br />EM 220 V.<br />E O SHOW CONTINUOU.</h1>
+			<p class="subtitle">Uma ligação acidental em 220 V, três capacitores danificados, uma substituição fora do valor original — e a mesma caixa ainda tocando mais de dois anos depois.</p>
+			<div class="tags">{entry.areas.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+			<div class="status"><StatusGrid items={status} /></div>
+			<EditorialImage src={`${imageRoot}/hero.webp`} alt="Caixa de som ativa preta fotografada depois do reparo" caption="A caixa ativa depois do reparo. O que começou como uma falha no início de um show terminou com o equipamento de volta ao uso." eager variant="portrait" fit="contain" />
+		</div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">01 / O SHOW QUE JÁ COMEÇOU DANDO ERRADO</p><div class="prose">
+			<h2>CHUVA, ATRASO, UMA PELE ROMPIDA E EQUIPAMENTO PARA MONTAR.</h2>
+			<p>Em 27 de junho de 2024, eu e meus companheiros de banda fomos tocar na escola onde eu cursava o técnico. Eu estava no baixo, João Pedro na bateria e Cristian na guitarra e na voz. Havíamos ensaiado cerca de uma semana antes, e o equipamento de som ficou comigo até o dia da apresentação.</p>
+			<p>Naquele dia aconteceu de tudo. A banda estava atrasada, a parte elétrica precisou ser improvisada, a montagem dos instrumentos foi feita com pressa e ainda choveu durante o transporte. A pele da caixa da bateria de João Pedro rompeu, mas eu havia levado a minha própria caixa e ela entrou como substituta.</p>
+			<p>Era o tipo de sequência em que cada problema resolvido apenas abria espaço para o seguinte. O erro que originou este caso aconteceu justamente durante essa montagem apressada.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">02 / O CHEIRO DE AMENDOIM QUEIMADO</p><div class="prose">
+			<h2>O SELETOR ESTAVA EM 120 V. A TOMADA, EM 220 V.</h2>
+			<p>A caixa ativa estava configurada para <strong>120 V</strong> quando foi conectada à alimentação de <strong>220 V</strong>. Antes de entendermos o que havia acontecido, surgiu um cheiro amendoado, parecido com amendoim queimado. Logo depois, a caixa parou de funcionar e foi desligada.</p>
+			<div class="voltage-panel" aria-label="Condição elétrica no momento do acidente">
+				<div><span>SELETOR DA CAIXA</span><strong>120 V</strong></div>
+				<div><span>ALIMENTAÇÃO</span><strong>220 V</strong></div>
+			</div>
+			<p>O cheiro fez parte da lembrança daquele instante, mas o dado concreto veio depois, quando a caixa foi aberta e os componentes puderam ser observados.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">03 / AINDA TINHA UM SHOW PARA FAZER</p><div class="prose">
+			<h2>A CAIXA PAROU. A APRESENTAÇÃO, NÃO.</h2>
+			<p>Levamos o equipamento ao laboratório de elétrica, mas não havia tempo para abrir, diagnosticar e reparar tudo antes da apresentação. Uma caixa da escola ocupou o lugar da que havia falhado, e o show continuou.</p>
+			<p>A preocupação com o equipamento permaneceu, mas a apresentação acabou sendo divertida e memorável. Meu pedal caseiro de fuzz também apareceu ligado ao baixo — o mesmo protótipo documentado na Galeria como <a href="/projetos/pd-01/">PD-01 — Mini Fuzz do Bertola</a>.</p>
+			<figure class="video-figure">
+				<video controls preload="metadata" playsinline poster={`${imageRoot}/poster-show-2024.webp`} src={`${imageRoot}/show-escola-2024.mp4`}>Seu navegador não consegue reproduzir este vídeo.</video>
+				<figcaption>Apresentação escolar de 27/06/2024. O registro mostra o trio já tocando e preserva o contexto daquele dia, não o instante da falha.</figcaption>
+			</figure>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">04 / TRÊS CAPACITORES ESTOURADOS</p><div class="prose">
+			<h2>O DANO VISÍVEL ESTAVA NA FONTE.</h2>
+			<p>O reparo foi feito por volta dos dias 10 e 11 de julho de 2024. Ao abrir a caixa, encontrei três capacitores eletrolíticos visivelmente danificados na placa da fonte, depois da retificação e na entrada dos circuitos de regulação:</p>
+			<ul>
+				<li>um capacitor de <strong>3300 µF / 50 V</strong>;</li>
+				<li>dois capacitores de <strong>220 µF / 50 V</strong>.</li>
+			</ul>
+			<p>Por ter recebido tensão acima da condição selecionada, essa região era uma suspeita evidente. A inspeção confirmou o dano visível nos três eletrolíticos. Nenhum outro componente defeituoso foi identificado durante o reparo, e a substituição deles restaurou o funcionamento.</p>
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/placa-antes.webp`} alt="Face de solda da placa da fonte antes da troca dos capacitores" caption="Face de solda da placa da fonte antes da substituição dos componentes danificados." fit="contain" />
+				<EditorialImage src={`${imageRoot}/capacitores-queimados.webp`} alt="Placa da fonte com três capacitores eletrolíticos danificados destacados por círculos vermelhos" caption="A placa aberta com os três eletrolíticos visivelmente danificados destacados: um de 3300 µF e dois de 220 µF." fit="contain" />
+			</div>
+			<div class="callout safety"><p class="note-label">REDE ELÉTRICA / CARGA RESIDUAL</p><p>Equipamentos ligados à rede podem manter tensões perigosas mesmo depois de desconectados. Este registro documenta o reparo realizado; não é um roteiro para trabalhar com o equipamento energizado.</p></div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">05 / FONTE E AMPLIFICADOR</p><div class="prose">
+			<h2>O REPARO FOI NA FONTE. O CLASSE D ESTAVA EM OUTRA PLACA.</h2>
+			<p>A placa fotografada e reparada era a fonte. O circuito do amplificador Classe D ficava junto da placa que reunia potenciômetros, conectores, display e Bluetooth. Separar essas funções é importante: os capacitores trocados pertenciam à alimentação, não ao estágio de saída de áudio.</p>
+			<p>Um amplificador Classe D não deve ser resumido como um “amplificador digital”. Seu estágio de potência trabalha por chaveamento: os transistores de saída alternam rapidamente entre estados de condução e corte, em vez de permanecerem continuamente em uma região linear. O sinal de áudio controla essa comutação e, em uma implementação típica, um filtro de saída atenua a frequência de chaveamento para entregar ao alto-falante a forma de onda de áudio.</p>
+			<p>Como os dispositivos passam menos tempo dissipando potência em estados intermediários, essa arquitetura pode alcançar alta eficiência e exigir menos dissipação térmica do que estágios lineares equivalentes. Isso não impede boa fidelidade: projetos Classe D modernos podem apresentar excelente desempenho de áudio.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">06 / NÃO TINHA O VALOR CERTO</p><div class="prose">
+			<h2>A LOJA NÃO TINHA 3300 µF NEM 220 µF.</h2>
+			<p>Nem eu nem o lojista tínhamos os valores originais disponíveis. A solução adotada foi usar dois capacitores de <strong>2200 µF / 50 V</strong> em paralelo no lugar do componente de 3300 µF e capacitores de <strong>330 µF</strong> nas posições originalmente ocupadas pelos de 220 µF.</p>
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/capacitores-substitutos.webp`} alt="Conjunto de capacitores escolhido para substituir os componentes danificados" caption="O conjunto de reposição escolhido: dois capacitores de 2200 µF para trabalhar em paralelo e dois de 330 µF para as posições originalmente ocupadas por 220 µF." variant="portrait" fit="contain" />
+				<EditorialImage src={`${imageRoot}/capacitores-2200uf.webp`} alt="Dois capacitores eletrolíticos de 2200 microfarads e 50 volts" caption="Os dois capacitores de 2200 µF / 50 V usados na adaptação da posição originalmente ocupada por 3300 µF." variant="portrait" fit="contain" />
+			</div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">07 / DOIS DE 2200 µF VIRAM UM</p><div class="prose">
+			<h2>A CONTA FECHAVA EM 4400 µF — NÃO EM 3300 µF.</h2>
+			<div class="equation">2200 µF + 2200 µF = 4400 µF</div>
+			<p>Em paralelo, as capacitâncias se somam. A adaptação, portanto, não reproduzia o valor original: aumentava a posição de 3300 µF para 4400 µF. Na época, eu enxerguei principalmente a possibilidade de obter mais filtragem e manter a fonte funcionando com as peças disponíveis.</p>
+			<p>Foi depois, estudando esse e outros casos, que passei a olhar para a troca de maneira menos simples. Mais capacitância <em>pode</em> reduzir ripple em determinadas condições, mas também <em>pode</em> aumentar a corrente de carga na partida e alterar o comportamento transitório da fonte. O resultado depende do restante do circuito.</p>
+			<p>Hoje eu também verificaria ESR, capacidade de corrente de ripple, temperatura, tensão nominal, esforço sobre retificação e transformador, além do comportamento dos trilhos da fonte. A passagem de 220 µF para 330 µF merece o mesmo tipo de avaliação: funcionou neste reparo, mas não transforma um valor maior em substituto universal.</p>
+			<EditorialImage src={`${imageRoot}/preparando-paralelo.webp`} alt="Dois capacitores sendo preparados para ligação em paralelo sobre a placa da fonte" caption="Preparação mecânica da associação em paralelo antes da instalação na placa." variant="portrait" fit="contain" />
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">08 / SOLDA, TESTE E... VOLTOU</p><div class="prose">
+			<h2>A ADAPTAÇÃO SAIU DA MÃO E ENTROU NA PLACA.</h2>
+			<p>Os capacitores foram posicionados, ligados e soldados na placa da fonte. A montagem precisou acomodar fisicamente dois componentes onde antes havia apenas um, preservando a polaridade e as conexões da posição original.</p>
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/soldagem.webp`} alt="Terminais dos capacitores sendo soldados na face inferior da placa" caption="A adaptação sendo soldada na face inferior da placa." fit="contain" />
+				<EditorialImage src={`${imageRoot}/placa-apos-solda.webp`} alt="Face inferior da placa depois da soldagem dos capacitores substitutos" caption="Face de solda depois da instalação dos componentes substitutos." fit="contain" />
+			</div>
+			<EditorialImage src={`${imageRoot}/capacitores-instalados.webp`} alt="Capacitores eletrolíticos substitutos instalados na placa da fonte" caption="Os novos eletrolíticos montados. A adaptação resolveu a indisponibilidade dos valores originais, mas alterou a capacitância prevista no circuito." variant="portrait" fit="contain" />
+			<div class="result">FONTE REPARADA → PAINEL LIGADO → ÁUDIO DE VOLTA</div>
+			<EditorialImage src={`${imageRoot}/primeiro-teste.webp`} alt="Painel traseiro da caixa ativa ligado depois da troca dos capacitores" caption="Primeira energização depois da troca: painel e indicador ligados durante o retorno da caixa à operação." variant="portrait" fit="contain" />
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">09 / MAIS DE DOIS ANOS DEPOIS</p><div class="prose">
+			<h2>O REPARO NÃO FICOU RESTRITO AO TESTE DE BANCADA.</h2>
+			<p>Em 31 de outubro de 2026, mais de dois anos depois do acidente e do reparo, a mesma caixa voltou a aparecer em uma apresentação. No vídeo, ela pode ser reconhecida pelo emblema vermelho no canto inferior direito.</p>
+			<p>A gravação registra algo direto e suficiente para esta história: o equipamento reparado continua participando do uso real.</p>
+			<figure class="video-figure">
+				<video controls preload="metadata" playsinline poster={`${imageRoot}/poster-show-2026.webp`} src={`${imageRoot}/show-estudio-2026.mp4`}>Seu navegador não consegue reproduzir este vídeo.</video>
+				<figcaption>Apresentação de 31/10/2026. A caixa reparada aparece no canto inferior direito, reconhecível pelo emblema vermelho, ainda em uso mais de dois anos depois.</figcaption>
+			</figure>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">10 / O QUE EU FARIA DIFERENTE HOJE</p><div class="prose">
+			<h2>FUNCIONAR NÃO TRANSFORMA UMA ESCOLHA EM REGRA.</h2>
+			<p>Na época, a necessidade era recuperar a caixa com os componentes disponíveis. O reparo funcionou e sua duração posterior mostrou que aquela montagem continuou útil. Ainda assim, os anos seguintes mudaram a maneira como eu avaliaria a mesma substituição.</p>
+			<ul>
+				<li>Eu procuraria primeiro os valores originais ou equivalentes tecnicamente mais próximos.</li>
+				<li>Compararia ESR, corrente de ripple, temperatura e tensão nominal.</li>
+				<li>Avaliaria a corrente de partida e o esforço imposto à retificação e à fonte.</li>
+				<li>Observaria a simetria e o comportamento dos trilhos sob carga.</li>
+				<li>Registraria medições antes e depois da troca, em vez de depender apenas do teste funcional.</li>
+			</ul>
+			<p class="final">A caixa sobreviveu ao erro de 2024, voltou a tocar e ainda estava em uso em 2026. O que tornou esse reparo mais valioso, porém, foi poder olhar para ele depois e reconhecer tanto aquilo que funcionou quanto tudo o que eu aprenderia a verificar melhor.</p>
+		</div></div></section>
+	</main>
+	<SiteFooter rightText="OFICINA / CAIXA ATIVA 120 V → 220 V" />
+	<ImageLightbox />
+</BaseLayout>
