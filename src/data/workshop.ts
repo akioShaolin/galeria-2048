@@ -13,14 +13,14 @@ export type WorkshopEntry = {
 
 export const workshop: WorkshopEntry[] = [
 	{
-		id: "caixa-cristian-220v",
+		id: "a-pa-em-220v",
 		type: "OFICINA",
 		subtype: "REPARO",
 		code: "CAIXA ATIVA / 120 V → 220 V",
 		title: "A CAIXA LIGADA EM 220 V — E O SHOW CONTINUOU",
 		description: "Uma ligação acidental em 220 V, três capacitores danificados, uma substituição fora do valor original — e a mesma caixa ainda tocando mais de dois anos depois.",
-		image: "/images/oficina/caixa-cristian-220v/hero.webp",
-		path: "/oficina/caixa-cristian-220v/",
+		image: "/images/oficina/a-pa-em-220v/hero.webp",
+		path: "/oficina/a-pa-em-220v/",
 		areas: [
 			{ label: "REPARO", tone: "reparo" },
 			{ label: "DIAGNÓSTICO", tone: "diagnostico" },

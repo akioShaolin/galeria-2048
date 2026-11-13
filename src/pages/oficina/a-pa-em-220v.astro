@@ -8,10 +8,10 @@ import EditorialImage from "../../components/EditorialImage.astro";
 import ImageLightbox from "../../components/ImageLightbox.astro";
 import { workshop } from "../../data/workshop";
 
-const entry = workshop.find(({ id }) => id === "caixa-cristian-220v");
+const entry = workshop.find(({ id }) => id === "a-pa-em-220v");
 if (!entry) throw new Error("Registro da Oficina não encontrado.");
 
-const imageRoot = "/images/oficina/caixa-cristian-220v";
+const imageRoot = "/images/oficina/a-pa-em-220v";
 const status = [
 	{ label: "OCORRÊNCIA", value: "27/06/2024" },
 	{ label: "REPARO", value: "~10–11/07/2024" },
