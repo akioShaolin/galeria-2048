@@ -1,0 +1,184 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import { workshop } from "../../data/workshop";
+
+const entry = workshop.find(({ id }) => id === "sma-sunny-tripower-solarview");
+if (!entry) throw new Error("Registro da Oficina não encontrado.");
+
+const imageRoot = "/images/oficina/sma-sunny-tripower-solarview";
+const status = [
+	{ label: "REGISTRO", value: "ATENDIMENTO DE CAMPO" },
+	{ label: "EQUIPAMENTO", value: "SUNNY TRIPOWER / 15 kW" },
+	{ label: "PROTOCOLO", value: "MODBUS TCP / PORTA 502" },
+	{ label: "RESULTADO", value: "● MONITORAMENTO ESTÁVEL", tone: "diagnostico" },
+];
+---
+
+<BaseLayout title="SMA Sunny Tripower: quando o bloqueio estava só no HTML — Galeria -2048" description={entry.description} image={entry.image} type="article" keywords={entry.keywords}>
+	<style is:global>
+		body { background: radial-gradient(circle at 82% 8%, rgba(0,217,255,.05), transparent 540px), linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px), var(--bg); background-size: auto, 42px 42px, 42px 42px, auto; font-family: Arial, Helvetica, sans-serif; }
+		.hero { padding: 90px 0 70px; border-bottom: 1px solid var(--line); }
+		.code, .section-label, .note-label { color: var(--programacao); font-family: monospace; font-size: .875rem; line-height: 1.5; letter-spacing: .08em; }
+		h1 { max-width: 1120px; margin: 25px 0 0; font-size: clamp(3rem, 7.3vw, 6.7rem); line-height: .9; letter-spacing: -.06em; }
+		.subtitle { max-width: 920px; margin-top: 35px; color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.2rem, 2vw, 1.55rem); line-height: 1.65; }
+		.subtitle code { color: var(--text); font: .9em monospace; }
+		.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+		.status { margin-top: 50px; } .status .status-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+		.content { padding: 85px 0; border-bottom: 1px solid var(--line); }
+		.section-grid { display: grid; grid-template-columns: 225px minmax(0, 1fr); gap: 70px; }
+		h2 { max-width: 930px; margin: 0 0 32px; font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: .96; letter-spacing: -.05em; }
+		h3 { margin: 42px 0 16px; font-size: clamp(1.35rem, 2.5vw, 2rem); line-height: 1.15; }
+		.prose { max-width: 850px; }
+		.prose p, .prose li { color: var(--muted); font-family: Georgia, "Times New Roman", serif; font-size: 1.125rem; line-height: 1.8; }
+		.prose p { margin: 0 0 22px; } .prose strong { color: var(--text); } .prose ul { padding-left: 24px; }
+		.callout { margin: 34px 0; padding: 28px; border: 1px solid var(--line); border-left: 2px solid var(--programacao); background: rgba(0,217,255,.025); }
+		.callout p:last-child { margin-bottom: 0; }
+		.authorized { border-left-color: var(--automacao); background: rgba(255,138,0,.045); }
+		.authorized .note-label { color: var(--automacao); font-weight: bold; }
+		.flow { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); align-items: stretch; gap: 20px; margin: 38px 0; }
+		.flow-step { position: relative; min-height: 126px; padding: 20px; border: 1px solid var(--line); background: var(--surface); }
+		.flow-step:not(:last-child)::after { content: "→"; position: absolute; top: 50%; right: -18px; color: var(--programacao); font: bold 1.15rem monospace; transform: translateY(-50%); }
+		.flow-step strong { display: block; margin-bottom: 10px; color: var(--text); font: bold .82rem/1.4 monospace; }
+		.flow-step p { margin: 0; color: var(--muted); font: .92rem/1.55 monospace; }
+		.media-pair { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+		.media-pair .editorial-image { margin: 20px 0 35px; }
+		.command-panel { margin: 34px 0; border: 1px solid var(--line); background: #06090a; }
+		.command-panel figcaption { padding: 12px 16px; border-bottom: 1px solid var(--line); color: var(--programacao); font: .8125rem/1.5 monospace; letter-spacing: .06em; }
+		.command-panel pre { margin: 0; padding: 24px; overflow-x: auto; color: var(--text); font: .9rem/1.75 monospace; }
+		.command-panel .redacted { color: var(--reparo); }
+		.hack-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1px; margin: 36px 0; border: 1px solid var(--line); background: var(--line); }
+		.hack-steps div { padding: 24px; background: var(--surface); }
+		.hack-steps span { display: block; margin-bottom: 10px; color: var(--programacao); font: bold .8rem/1.4 monospace; }
+		.hack-steps p { margin: 0; color: var(--muted); font: 1rem/1.65 Georgia, "Times New Roman", serif; }
+		.result { margin: 40px 0; padding: 34px; border: 1px solid var(--programacao); background: rgba(0,217,255,.035); color: var(--text); font: bold clamp(1.35rem, 3vw, 2.2rem)/1.25 monospace; }
+		.final { font-size: clamp(1.6rem, 3vw, 2.5rem) !important; color: var(--text) !important; line-height: 1.45 !important; }
+		@media (max-width: 950px) { .flow { grid-template-columns: 1fr; } .flow-step:not(:last-child)::after { top: auto; right: 50%; bottom: -22px; transform: translateX(50%) rotate(90deg); } }
+		@media (max-width: 800px) {
+			.hero { padding: 65px 0 55px; } .content { padding: 65px 0; }
+			.section-grid, .media-pair, .hack-steps { grid-template-columns: 1fr; }
+			.section-grid { gap: 26px; } .status .status-grid { grid-template-columns: 1fr; }
+			.command-panel pre { padding: 18px; font-size: .82rem; }
+		}
+	</style>
+
+	<SiteHeader accent="var(--programacao)" />
+	<main>
+		<section class="hero"><div class="container">
+			<p class="code">[ OFICINA / DIAGNÓSTICO / {entry.code} ]</p>
+			<h1>QUANDO O BLOQUEIO ESTAVA SÓ NO HTML.</h1>
+			<p class="subtitle">Uma configuração de campo que passou pelo Sunny Explorer, por IP fixo, ping, ARP e Modbus TCP — e só terminou quando removi um <code>disabled</code> do HTML do SolarView.</p>
+			<div class="tags">{entry.areas.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+			<div class="status"><StatusGrid items={status} /></div>
+			<EditorialImage src={`${imageRoot}/hero.webp`} alt="Inversor Sunny Tripower de 15 kW instalado em uma parede azul" caption="O Sunny Tripower já instalado. A parte elétrica correu normalmente; a investigação começou quando chegou a hora de colocá-lo na rede e no monitoramento." eager variant="portrait" fit="contain" />
+		</div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">01 / UM INVERSOR DIFERENTE</p><div class="prose">
+			<h2>A INSTALAÇÃO TERMINOU. O TRABALHO, NÃO.</h2>
+			<p>Um colega me convidou para acompanhar a instalação de um inversor com o qual ainda não tínhamos trabalhado: um Sunny Tripower trifásico de 15 kW. A montagem física correu bem. O equipamento estava no lugar, as conexões estavam feitas e parecia que faltava apenas configurar o acesso à internet.</p>
+			<p>Foi justamente nessa parte aparentemente simples que o atendimento mudou de natureza. Em vez de continuar olhando para cabos de potência, passei a procurar roteador, endereço IP, dispositivo na rede e porta TCP.</p>
+			<EditorialImage src={`${imageRoot}/inversor-lateral.webp`} alt="Vista lateral do Sunny Tripower instalado, com a identificação individual ocultada" caption="Vista lateral do equipamento instalado. A identificação individual foi ocultada antes da publicação." variant="portrait" fit="contain" />
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">02 / DESSA VEZ NÃO ERA RS485</p><div class="prose">
+			<h2>O CAMINHO ATÉ A NUVEM PASSAVA PELA REDE LOCAL.</h2>
+			<p>Eu já estava acostumado a instalar dataloggers SolarView ligados a inversores por RS485. Neste caso, porém, o monitoramento dependia de Modbus TCP. O inversor precisava entrar na rede Ethernet com um endereço conhecido, enquanto o SolarView se conectaria à mesma rede por Wi-Fi e buscaria os dados naquele endereço.</p>
+			<div class="flow" aria-label="Caminho do monitoramento do Sunny Tripower">
+				<div class="flow-step"><strong>SUNNY TRIPOWER</strong><p>Fonte dos dados de geração.</p></div>
+				<div class="flow-step"><strong>SUNNY EXPLORER</strong><p>Acesso e configuração local.</p></div>
+				<div class="flow-step"><strong>IP FIXO</strong><p>Referência estável na rede.</p></div>
+				<div class="flow-step"><strong>SOLARVIEW</strong><p>Consulta via Modbus TCP.</p></div>
+				<div class="flow-step"><strong>MONITORAMENTO</strong><p>Envio e visualização remota.</p></div>
+			</div>
+			<p>O problema deixou de ser “ligar dois fios” e virou uma sequência de dependências: primeiro tornar o inversor visível, depois garantir que seu endereço não mudasse, então confirmar a rede e, por fim, fazer o datalogger chegar à porta correta.</p>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">03 / SUNNY EXPLORER</p><div class="prose">
+			<h2>ANTES DO SOLARVIEW, EU PRECISAVA ENXERGAR O INVERSOR.</h2>
+			<p>O SMA Sunny Explorer foi a primeira ponte direta entre o computador e o inversor. Por ele consegui visualizar o equipamento localmente, acompanhar informações e configurar um endereço IP fixo. Não era um detalhe burocrático: o SolarView precisava encontrar o mesmo destino sempre que fosse buscar os dados.</p>
+			<p>O registro preserva o papel da ferramenta sem transformar a experiência em um roteiro de menus. O que importava naquela etapa era estabelecer um ponto fixo e verificável dentro da rede.</p>
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/sunny-explorer-ip-fixo.webp`} alt="Tela do Sunny Explorer com a configuração de endereço IP fixo do inversor, parcialmente ocultado" caption="Sunny Explorer durante a configuração local. O último campo do endereço foi ocultado; permanece apenas o contexto de uma configuração com IP fixo." fit="contain" />
+				<EditorialImage src={`${imageRoot}/sunny-explorer-curva-16-07.webp`} alt="Curva de potência do Sunny Tripower exibida localmente em 16 de julho de 2026" caption="Registro local de 16/07/2026: o computador já conseguia visualizar a produção do inversor pelo Sunny Explorer." fit="contain" />
+			</div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">04 / CADÊ O ROTEADOR?</p><div class="prose">
+			<h2>SEM UM TI AO LADO, A REDE VIROU PARTE DO CAMPO.</h2>
+			<p>O cliente forneceu a senha do Wi-Fi e voltou às próprias atividades. Não havia alguém de TI para explicar a topologia, indicar o gateway ou apontar onde cada equipamento estava. Até alcançar fisicamente o TP-Link EX220 exigiu uma combinação pouco elegante de escada e cadeira para conferir sua etiqueta.</p>
+			<p>Em 16/07/2026, testei os candidatos autorizados para registro — <code>192.168.0.1</code> até <code>192.168.0.4</code> — e também outros endereços que pertenciam ao inversor e ao SolarView. Esses últimos continuam omitidos. A pergunta prática era simples: <em>o que existe nesta rede e quem está respondendo?</em></p>
+			<EditorialImage src={`${imageRoot}/roteador-tp-link-ex220.webp`} alt="Tela de autenticação do roteador TP-Link EX220 sem credenciais preenchidas" caption="O TP-Link EX220 finalmente acessível. Nenhuma credencial aparece no registro." fit="contain" />
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/ping-192-168-0-1.webp`} alt="Prompt de comando mostrando respostas ao ping para 192.168.0.1" caption="O ping respondia à primeira pergunta: havia algo ativo em 192.168.0.1." fit="contain" />
+				<EditorialImage src={`${imageRoot}/varredura-powershell.webp`} alt="PowerShell executando uma varredura por Test-Connection e listando os endereços autorizados de 192.168.0.1 a 192.168.0.4" caption="Trecho da varredura com Test-Connection. O comando ajudou a encontrar hosts ativos; não identificava sozinho a função de cada um." fit="contain" />
+			</div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">05 / ALCANÇAR NÃO É CONVERSAR</p><div class="prose">
+			<h2>UM IP RESPONDER NÃO SIGNIFICAVA QUE O MODBUS ESTAVA PRONTO.</h2>
+			<p><code>ping</code> serviu para verificar se havia um dispositivo respondendo em determinado endereço. <code>arp -a</code> mostrou as associações entre IPs recentemente vistos e seus endereços físicos na tabela local do computador. Ele não era um scanner completo, mas ajudava a responder quais participantes aquela máquina realmente havia encontrado.</p>
+			<p>O PowerShell também permitiu testar portas específicas. A fotografia abaixo registra uma tentativa na porta 80: o host respondeu ao ping, mas não aceitou a conexão TCP naquela porta. Para o caminho do SolarView, repeti o raciocínio com os endereços candidatos e a porta 502, associada ao Modbus TCP.</p>
+			<figure class="command-panel">
+				<figcaption>COMANDOS CONFIRMADOS NO ATENDIMENTO — ENDEREÇOS NÃO PUBLICÁVEIS FORAM SUBSTITUÍDOS</figcaption>
+				<pre><code>ping 192.168.0.1
+arp -a
+Test-NetConnection 192.168.0.1 -Port 80
+Test-NetConnection <span class="redacted">[IP REDACTED]</span> -Port 502</code></pre>
+			</figure>
+			<EditorialImage src={`${imageRoot}/test-netconnection-porta-80.webp`} alt="PowerShell mostrando ping bem-sucedido e falha de conexão TCP na porta 80 para 192.168.0.1" caption="Chegar ao endereço e alcançar uma porta eram verificações diferentes. Nesta tentativa, o ping respondeu e a porta 80 não." fit="contain" />
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">06 / SOLARVIEW 0.77</p><div class="prose">
+			<h2>A VERSÃO COMPATÍVEL AINDA TRAZIA OS CAMPOS BLOQUEADOS.</h2>
+			<p>Antes de chegar à solução, houve tentativas de atualização e downgrade. Para aquele Sunny Tripower e aquele datalogger, a versão que se mostrou compatível foi a <strong>0.77</strong>. Isso é um dado deste atendimento.</p>
+			<p>Mesmo na versão correta, o cadastro do inversor mostrava os campos de IP e porta como indisponíveis. A família SMA podia ser selecionada, mas justamente os parâmetros necessários para a conexão TCP apareciam desabilitados na interface.</p>
+			<div class="media-pair">
+				<EditorialImage src={`${imageRoot}/solarview-077.webp`} alt="Página de configuração do SolarView mostrando firmware 0.77 e informações sensíveis ocultadas" caption="SolarView 0.77 em 16/07/2026. Serial, rede e identificadores individuais foram ocultados no registro original." variant="portrait" fit="contain" />
+				<EditorialImage src={`${imageRoot}/solarview-campos-bloqueados.webp`} alt="Página do SolarView com os campos de IP do inversor e porta exibindo N/A e desabilitados" caption="A contradição que travou a configuração: a família Sunny Tripower estava disponível, mas IP e porta permaneciam como N/A." fit="contain" />
+			</div>
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">07 / POR TRÁS DA INTERFACE</p><div class="prose">
+			<h2>FOI AÍ QUE EU REALMENTE ME SENTI UM HACKER.</h2>
+			<p>Sem acreditar muito que daria certo, abri a opção <em>Inspecionar</em> do navegador. Nos elementos da página, os inputs de IP e porta carregavam o atributo HTML <code>disabled</code>. Removi o atributo, os campos ficaram editáveis e pude preencher a configuração TCP.</p>
+			<p>O truque não invadiu outro sistema nem contornou autenticação. Eu estava configurando um equipamento autorizado. Tecnicamente, a alteração apenas retirava uma restrição do front-end no navegador. O servidor ainda poderia rejeitar os valores. A surpresa foi justamente descobrir que, naquela versão, ele os aceitou.</p>
+			<div class="callout authorized"><p class="note-label">CONFIGURAÇÃO AUTORIZADA / NÃO FOI UMA FALHA DE SEGURANÇA</p><p>Editar o DOM tornou o campo localmente preenchível. Isso não prova uma vulnerabilidade e não garante que qualquer backend aceite dados enviados dessa maneira. Neste atendimento específico, o envio foi aceito e resolveu a configuração.</p></div>
+			<div class="hack-steps">
+				<div><span>01 / IDENTIFICAR</span><p>Os campos necessários existiam no HTML, mas estavam marcados como desabilitados.</p></div>
+				<div><span>02 / EDITAR</span><p>O atributo <code>disabled</code> foi removido pelo painel de elementos do navegador.</p></div>
+				<div><span>03 / ENVIAR</span><p>IP e porta 502 foram preenchidos e submetidos pela própria interface.</p></div>
+			</div>
+			<EditorialImage src={`${imageRoot}/devtools-disabled.webp`} alt="DevTools aberto ao lado da página do SolarView, destacando o atributo disabled em um campo de configuração" caption="O ponto de virada: o atributo disabled aparecia diretamente no input da interface." fit="contain" />
+			<EditorialImage src={`${imageRoot}/solarview-ip-porta-preenchidos.webp`} alt="Página do SolarView com os campos de IP e porta 502 preenchidos após a alteração local do HTML" caption="Depois da alteração, os campos aceitaram o endereço do inversor — ocultado na imagem — e a porta 502." fit="contain" />
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">08 / E FUNCIONOU</p><div class="prose">
+			<h2>O BACKEND ACEITOU AQUILO QUE A TELA NÃO DEIXAVA DIGITAR.</h2>
+			<p>A configuração foi aplicada, o SolarView passou a conversar com o inversor e o monitoramento entrou em operação. O sistema permaneceu estável depois do atendimento.</p>
+			<p>Não houve uma grande mudança física no campo. O que resolveu foi entender cada camada separadamente: primeiro o inversor, depois o endereço fixo, a rede, a porta TCP e, por último, a diferença entre o que a interface permitia editar e o que o equipamento realmente aceitava receber.</p>
+			<div class="result">SUNNY TRIPOWER → MODBUS TCP → SOLARVIEW → MONITORAMENTO ATIVO</div>
+			<EditorialImage src={`${imageRoot}/monitoramento-estavel.webp`} alt="Painel de monitoramento mostrando a usina produzindo e uma curva de potência ao longo do dia" caption="Registro posterior do monitoramento em funcionamento." fit="contain" />
+		</div></div></section>
+
+		<section class="content"><div class="container section-grid"><p class="section-label">09 / O QUE FICOU</p><div class="prose">
+			<h2>O CAMPO TAMBÉM PODE VIRAR UMA AULA DE REDE.</h2>
+			<ul>
+				<li>Sunny Explorer e SolarView tinham papéis diferentes na mesma cadeia.</li>
+				<li>Um IP fixo era necessário para oferecer um destino estável ao datalogger.</li>
+				<li><code>ping</code>, ARP e testes de porta respondiam perguntas diferentes.</li>
+				<li>Alcançar um host não comprovava que o serviço Modbus TCP estava disponível.</li>
+				<li>A versão 0.77 foi a compatível com aquela combinação específica.</li>
+				<li>Uma restrição na interface não significava necessariamente uma rejeição no backend.</li>
+				<li>Inspecionar como o sistema funcionava foi mais útil do que aceitar a tela como um limite absoluto.</li>
+			</ul>
+			<p class="final">Eu fui instalar um inversor e terminei editando HTML ao lado de uma escada, testando IPs no PowerShell e esperando que um campo impossível aceitasse a configuração. Naquele dia, funcionou — e foi um dos momentos em que eu realmente me senti um hacker.</p>
+		</div></div></section>
+	</main>
+	<SiteFooter rightText="OFICINA / SMA SUNNY TRIPOWER" />
+	<ImageLightbox />
+</BaseLayout>

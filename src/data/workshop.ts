@@ -13,6 +13,23 @@ export type WorkshopEntry = {
 
 export const workshop: WorkshopEntry[] = [
 	{
+		id: "sma-sunny-tripower-solarview",
+		type: "OFICINA",
+		subtype: "DIAGNÓSTICO",
+		code: "SMA / SUNNY TRIPOWER 15 kW",
+		title: "SMA SUNNY TRIPOWER — QUANDO O BLOQUEIO ESTAVA SÓ NO HTML",
+		description: "Uma configuração de campo que passou pelo Sunny Explorer, por IP fixo, ping, ARP e Modbus TCP — e só terminou quando um campo desabilitado no HTML deixou de ser uma barreira.",
+		image: "/images/oficina/sma-sunny-tripower-solarview/hero.webp",
+		path: "/oficina/sma-sunny-tripower-solarview/",
+		areas: [
+			{ label: "DIAGNÓSTICO", tone: "diagnostico" },
+			{ label: "AUTOMAÇÃO", tone: "automacao" },
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["SMA", "Sunny Tripower", "15 kW", "SolarView", "Sunny Explorer", "Modbus TCP", "porta 502", "IP fixo", "rede local", "PowerShell", "ping", "ARP", "Test-NetConnection", "DevTools", "HTML", "disabled", "monitoramento fotovoltaico", "diagnóstico"],
+	},
+	{
 		id: "dolce-gusto-pj2401b1",
 		type: "OFICINA",
 		subtype: "REPARO",
