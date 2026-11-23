@@ -5,7 +5,6 @@ import {
 	getInfluenceRelations,
 	getParallelRelations,
 	getRelatedArchiveItem,
-	relationships,
 	type ContentRelationship,
 } from "../data/relationships";
 
@@ -18,20 +17,12 @@ const influences = getInfluenceRelations(currentId);
 const parallel = getParallelRelations(currentId);
 const hasRelations = Boolean(current && (ancestors.length || descendants.length || parallel.length || influences.length));
 
-if (import.meta.env.DEV) {
-	for (const relation of relationships) {
-		if (!getRelatedArchiveItem(relation.from) || !getRelatedArchiveItem(relation.to)) {
-			console.warn(`[linhagem] Relação ignorada por referenciar conteúdo não publicado: ${relation.from} → ${relation.to}`);
-		}
-	}
-}
-
-const relationItem = (relation: ContentRelationship, side: "from" | "to") =>
+const relationItem = (relation: ContentRelationship, side: "source" | "target") =>
 	getRelatedArchiveItem(relation[side]);
 const parallelItem = (relation: ContentRelationship) =>
-	getRelatedArchiveItem(relation.from === currentId ? relation.to : relation.from);
+	getRelatedArchiveItem(relation.source === currentId ? relation.target : relation.source);
 const influenceLabel = (relation: ContentRelationship) =>
-	relation.from === currentId ? "INFLUENCIOU" : "INFLUÊNCIA RECEBIDA";
+	relation.source === currentId ? "INFLUENCIOU" : "INFLUÊNCIA RECEBIDA";
 ---
 
 {hasRelations && current && (
@@ -40,10 +31,10 @@ const influenceLabel = (relation: ContentRelationship) =>
 		<div class="lineage-label">[ LINHAGEM / RAMIFICAÇÕES ]</div>
 		<h2 id={`lineage-${currentId}`}>CAMINHOS RELACIONADOS</h2>
 		<div class="lineage-sections">
-			{ancestors.length > 0 && <div class="lineage-group"><h3>ASCENDENTES</h3><ul>{ancestors.map((relation) => { const item = relationItem(relation, "from"); return item && <li><a class="lineage-node" href={item.url}><span>{item.type}</span><strong>{item.title}</strong>{item.code && <small>{item.code}</small>}<em>ASCENDENTE</em></a></li>; })}</ul></div>}
+			{ancestors.length > 0 && <div class="lineage-group"><h3>ASCENDENTES</h3><ul>{ancestors.map((relation) => { const item = relationItem(relation, "source"); return item && <li><a class="lineage-node" href={item.url}><span>{item.type}</span><strong>{item.title}</strong>{item.code && <small>{item.code}</small>}<em>{relation.label ?? "ASCENDENTE"}</em></a></li>; })}</ul></div>}
 			{parallel.length > 0 && <div class="lineage-group"><h3>PARALELOS</h3><ul>{parallel.map((relation) => { const item = parallelItem(relation); return item && <li><a class="lineage-node" href={item.url}><span>{item.type}</span><strong>{item.title}</strong>{item.code && <small>{item.code}</small>}<em>PARALELO</em></a></li>; })}</ul></div>}
 			{influences.length > 0 && <div class="lineage-group influence-group"><h3>INFLUÊNCIAS</h3><ul>{influences.map((relation) => { const item = parallelItem(relation); return item && <li><a class="lineage-node" href={item.url}><span>{item.type}</span><strong>{item.title}</strong>{item.code && <small>{item.code}</small>}<em>{relation.label ?? influenceLabel(relation)}</em></a></li>; })}</ul></div>}
-			{descendants.length > 0 && <div class="lineage-group"><h3>DESCENDENTES</h3><ul>{descendants.map((relation) => { const item = relationItem(relation, "to"); return item && <li><a class="lineage-node" href={item.url}><span>{item.type}</span><strong>{item.title}</strong>{item.code && <small>{item.code}</small>}<em>DESCENDENTE</em></a></li>; })}</ul></div>}
+			{descendants.length > 0 && <div class="lineage-group"><h3>DESCENDENTES</h3><ul>{descendants.map((relation) => { const item = relationItem(relation, "target"); return item && <li><a class="lineage-node" href={item.url}><span>{item.type}</span><strong>{item.title}</strong>{item.code && <small>{item.code}</small>}<em>{relation.label ?? "DESCENDENTE"}</em></a></li>; })}</ul></div>}
 		</div>
 		</div>
 	</section>

@@ -41,6 +41,48 @@ export type Project = {
 
 export const projects: Project[] = [
 	{
+		id: "wattimetro-wireless",
+		type: "PROJETO",
+		number: "021",
+		title: "WATTÍMETRO WIRELESS",
+		description: "Um TCC de 2020 que reuniu medição elétrica, placa de circuito impresso, ESP8266 e interface web em um protótipo acadêmico construído do zero.",
+		image: "/images/wattimetro-wireless/capa-wattimetro-wireless.webp",
+		path: "/projetos/wattimetro-wireless/",
+		categories: [
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "AUTOMAÇÃO", tone: "automacao" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["Wattímetro Wireless", "TCC", "ESP8266", "NodeMCU", "ESP-12E", "CD4051", "LM358", "LM311", "ACS758", "SCT-013", "ZMPT101B", "SPIFFS", "EEPROM", "Gerber", "medição elétrica"],
+		page: {
+			code: "TCC / 2020",
+			subtitle: "Da instrumentação analógica à interface web: um TCC construído durante a pandemia para medir, calcular e publicar grandezas elétricas em tempo real.",
+			status: [
+				{ label: "STATUS", value: "● CONCLUÍDO COMO PROJETO ACADÊMICO", tone: "eletronica" },
+				{ label: "PERÍODO", value: "2020" },
+				{ label: "FIRMWARE FINAL", value: "firmware_Watt_Wireless_1606" },
+			],
+			timeline: [
+				{ year: "FEV 2020", title: "Da proposta à bancada", text: "O trabalho começou como Projeto Integrador e cresceu até se tornar o TCC, com os primeiros testes de sensores, transformador e condicionamento analógico." },
+				{ year: "FEV–MAR", title: "Medição e validação", text: "Retificadores de precisão, ganho, filtragem e marcadores de passagem por zero foram prototipados e observados no osciloscópio." },
+				{ year: "MAR", title: "A placa tomou forma", text: "O circuito foi desenhado no Fritzing, transferido para uma placa dupla face, corroído, furado e montado manualmente." },
+				{ year: "ABR", title: "Dez comparadores e um impasse", text: "As dez unidades de LM311 compradas no mesmo lote se comportaram de forma inesperada; o trabalho continuou depois que um professor forneceu outro componente." },
+				{ year: "MAI", title: "A interface saiu do código", text: "HTML, CSS e JavaScript migraram para SPIFFS, enquanto EEPROM, quatro canais analógicos e atualização assíncrona amadureciam." },
+				{ year: "JUN", title: "Gabinete e firmware 1606", text: "A integração física foi concluída e a versão firmware_Watt_Wireless_1606 consolidou a entrega acadêmica." },
+				{ year: "2020", title: "Apresentação do TCC", text: "O protótipo físico, a interface em tempo real e o processo de desenvolvimento encerraram o objetivo acadêmico daquele ciclo." },
+			],
+			specifications: [
+				{ name: "Controlador", value: "NodeMCU / ESP8266 / ESP-12E" },
+				{ name: "Aquisição", value: "4 canais analógicos via CD4051" },
+				{ name: "Tensão interna", value: "Transformador 220/9 V" },
+				{ name: "Corrente", value: "Família ACS758 e sensor externo SCT-013" },
+				{ name: "Condicionamento", value: "LM358 / retificação de precisão / ganho / filtro" },
+				{ name: "Interface", value: "HTTP local / SPIFFS / atualização assíncrona" },
+			],
+		},
+	},
+	{
 		id: "horwin-qbd1-can",
 		type: "PROJETO",
 		number: "020",

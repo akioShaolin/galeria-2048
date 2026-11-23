@@ -1,3 +1,26 @@
+# 0. Regras obrigatórias para agentes
+
+Estas regras têm precedência operacional dentro deste repositório.
+
+1. O conteúdo público da Galeria é escrito em **português do Brasil**, mesmo quando prompts, READMEs técnicos ou instruções de trabalho estiverem em inglês.
+2. Antes de escrever ou editar conteúdo público, leia `docs/AI_EDITORIAL_GUIDE.md`.
+3. Leia também qualquer documentação específica da feature/projeto envolvido, quando existir.
+4. Não invente fatos, datas, medições, cronologias, relações ou causalidades.
+5. Se um fato importante estiver incerto, resolva antes da publicação perguntando ao autor. Se não for necessário, omita. Não use o texto público para narrar a incerteza do agente.
+6. Evite linguagem de auditoria/IA na Galeria, como “com base nas evidências”, “não foi possível confirmar”, “minha impressão”, “segundo o usuário” ou equivalentes, salvo quando o próprio processo de verificação for o assunto da página.
+7. Sem autorização explícita no prompt atual: **não fazer commit, push, pull request, tag, release ou deploy**.
+8. Preserve alterações do usuário e não refatore conteúdo fora do escopo.
+9. Use os arquivos centrais de `src/data/` como fonte de verdade antes de duplicar metadados.
+10. Quando a tarefa exigir planejamento ou contiver um approval gate, pare após a proposta e aguarde aprovação. Quando a tarefa mandar implementar diretamente, não invente burocracia adicional.
+11. Depois de implementar código, execute as validações aplicáveis e nunca afirme ter testado algo que não foi testado.
+12. O agente organiza e implementa a história de akioShaolin; não se torna coautor factual dela.
+
+A orientação editorial completa está em:
+
+```text
+docs/AI_EDITORIAL_GUIDE.md
+```
+
 # 1. Sobre o projeto
 
 A **Galeria -2048** é um acervo pessoal e público mantido por **akioShaolin**.

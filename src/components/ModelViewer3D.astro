@@ -1,0 +1,257 @@
+---
+interface Props {
+	src: string;
+	alt: string;
+	downloadHref?: string;
+	downloadLabel?: string;
+}
+
+const {
+	src,
+	alt,
+	downloadHref,
+	downloadLabel = "BAIXAR ARQUIVO",
+} = Astro.props;
+---
+
+<div class="model-viewer" data-model-viewer-3d>
+	<div class="model-viewer__toolbar">
+		<span>[ MODELO 3D / PLACA SEM COMPONENTES ]</span>
+		{downloadHref && <a href={downloadHref} download>{downloadLabel} ↓</a>}
+	</div>
+
+	<div class="model-viewer__stage">
+		<model-viewer
+			data-model
+			src={src}
+			alt={alt}
+			camera-controls
+			touch-action="pan-y"
+			interaction-prompt="auto"
+			camera-target="auto auto auto"
+			camera-orbit="-26deg 58deg 92%"
+			field-of-view="28deg"
+			min-field-of-view="18deg"
+			max-field-of-view="55deg"
+			min-camera-orbit="auto auto 35%"
+			max-camera-orbit="auto auto 500%"
+			shadow-intensity="0.22"
+			shadow-softness="1"
+			exposure="1"
+			environment-image="neutral"
+			loading="lazy"
+			reveal="auto"
+		>
+			<div class="model-viewer__poster" slot="poster">
+				<span>CARREGANDO MODELO 3D…</span>
+			</div>
+			<div class="model-viewer__progress" slot="progress-bar" aria-hidden="true">
+				<span data-model-progress></span>
+			</div>
+		</model-viewer>
+
+		<div class="model-viewer__controls" role="group" aria-label="Vistas da placa 3D">
+			<button type="button" data-view="top">VISTA SUPERIOR</button>
+			<button type="button" data-view="bottom">VISTA INFERIOR</button>
+			<button type="button" data-view="reset">REENQUADRAR</button>
+		</div>
+	</div>
+
+	<p class="model-viewer__help">
+		[ ARRASTE PARA GIRAR / SCROLL OU PINÇA PARA ZOOM / DOIS DEDOS PARA MOVER ]
+	</p>
+	<p class="model-viewer__error" data-model-error hidden>
+		O modelo 3D não pôde ser carregado neste navegador. O arquivo Gerber permanece disponível para download.
+	</p>
+</div>
+
+<script>
+	import "@google/model-viewer";
+
+	const cameraPresets = {
+		top: { target: "auto auto auto", orbit: "0deg 12deg 104%", fieldOfView: "28deg" },
+		bottom: { target: "auto auto auto", orbit: "180deg 168deg 104%", fieldOfView: "28deg" },
+		reset: { target: "auto auto auto", orbit: "-26deg 58deg 92%", fieldOfView: "28deg" },
+	} as const;
+
+	document.querySelectorAll<HTMLElement>("[data-model-viewer-3d]").forEach((root) => {
+		const viewer = root.querySelector<any>("[data-model]");
+		const progress = root.querySelector<HTMLElement>("[data-model-progress]");
+		const progressBar = progress?.parentElement;
+		const error = root.querySelector<HTMLElement>("[data-model-error]");
+
+		if (!viewer) return;
+
+		viewer.addEventListener("progress", (event: CustomEvent) => {
+			const value = Number(event.detail?.totalProgress ?? 0);
+			if (progress) progress.style.transform = `scaleX(${Math.min(Math.max(value, 0), 1)})`;
+		});
+
+		viewer.addEventListener("load", () => {
+			if (progressBar) progressBar.hidden = true;
+		});
+
+		viewer.addEventListener("error", () => {
+			if (error) error.hidden = false;
+		});
+
+		root.querySelectorAll<HTMLButtonElement>("[data-view]").forEach((button) => {
+			button.addEventListener("click", () => {
+				const view = button.dataset.view as keyof typeof cameraPresets;
+				const preset = cameraPresets[view] ?? cameraPresets.reset;
+				viewer.cameraTarget = preset.target;
+				viewer.cameraOrbit = preset.orbit;
+				viewer.fieldOfView = preset.fieldOfView;
+				viewer.jumpCameraToGoal?.();
+			});
+		});
+	});
+</script>
+
+<style>
+	.model-viewer {
+		border: 1px solid var(--line);
+		background: var(--surface);
+	}
+
+	.model-viewer__toolbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20px;
+		padding: 16px 18px;
+		border-bottom: 1px solid var(--line);
+		font-family: monospace;
+		font-size: .875rem;
+		line-height: 1.45;
+	}
+
+	.model-viewer__toolbar span { color: var(--eletronica); }
+
+	.model-viewer__toolbar a {
+		color: var(--programacao);
+		text-decoration: none;
+	}
+
+	.model-viewer__toolbar a:hover { text-decoration: underline; }
+
+	.model-viewer__toolbar a:focus-visible,
+	.model-viewer__controls button:focus-visible {
+		outline: 2px solid var(--white-neon);
+		outline-offset: 3px;
+	}
+
+	.model-viewer__stage {
+		position: relative;
+		min-height: clamp(440px, 67vw, 720px);
+		background:
+			radial-gradient(circle at 50% 45%, rgba(255, 255, 255, .055), transparent 45%),
+			#050708;
+	}
+
+	model-viewer {
+		display: block;
+		width: 100%;
+		height: clamp(440px, 67vw, 720px);
+		--poster-color: transparent;
+		--progress-bar-color: var(--eletronica);
+		--progress-bar-height: 3px;
+	}
+
+	.model-viewer__poster {
+		display: grid;
+		place-items: center;
+		width: 100%;
+		height: 100%;
+		color: var(--muted);
+		font-family: monospace;
+		font-size: .875rem;
+		letter-spacing: .04em;
+	}
+
+	.model-viewer__progress {
+		position: absolute;
+		inset: auto 0 0;
+		height: 3px;
+		overflow: hidden;
+		background: rgba(255, 255, 255, .08);
+	}
+
+	.model-viewer__progress span {
+		display: block;
+		width: 100%;
+		height: 100%;
+		background: var(--eletronica);
+		transform: scaleX(0);
+		transform-origin: left center;
+		transition: transform 120ms linear;
+	}
+
+	.model-viewer__controls {
+		position: absolute;
+		right: 14px;
+		bottom: 14px;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 8px;
+		max-width: calc(100% - 28px);
+	}
+
+	.model-viewer__controls button {
+		min-height: 42px;
+		padding: 10px 12px;
+		border: 1px solid var(--line);
+		border-radius: 0;
+		background: rgba(5, 7, 8, .9);
+		color: var(--text);
+		font: 700 .75rem/1.2 monospace;
+		cursor: pointer;
+	}
+
+	.model-viewer__controls button:hover {
+		border-color: var(--eletronica);
+		color: var(--eletronica);
+	}
+
+	.model-viewer__help,
+	.model-viewer__error {
+		margin: 0;
+		padding: 12px 18px;
+		border-top: 1px solid var(--line);
+		color: var(--muted);
+		font-family: monospace;
+		font-size: .875rem;
+		line-height: 1.55;
+	}
+
+	.model-viewer__error { color: #ff7b93; }
+
+	@media (max-width: 600px) {
+		.model-viewer__toolbar {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.model-viewer__stage,
+		model-viewer {
+			min-height: 470px;
+			height: 470px;
+		}
+
+		.model-viewer__controls {
+			left: 10px;
+			right: 10px;
+			bottom: 10px;
+			justify-content: stretch;
+			max-width: none;
+		}
+
+		.model-viewer__controls button { flex: 1 1 110px; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.model-viewer__progress span { transition: none; }
+	}
+</style>

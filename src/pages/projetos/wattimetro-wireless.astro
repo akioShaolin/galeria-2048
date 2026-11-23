@@ -1,0 +1,754 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import ModelViewer3D from "../../components/ModelViewer3D.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("wattimetro-wireless");
+if (!project?.page) throw new Error("Dados do Wattímetro Wireless não encontrados.");
+const page = project.page;
+const gerberPath = "/downloads/wattimetro-wireless/gerber.zip";
+const modelPath = "/models/wattimetro-wireless/pcb.glb?v=drill-geometry-2";
+---
+
+<BaseLayout
+	title="Wattímetro Wireless — TCC de medição elétrica | Galeria -2048"
+	description={project.description}
+	image={project.image}
+	type="article"
+	keywords={project.keywords}
+>
+	<SiteHeader accent="var(--eletronica)" />
+
+	<main class="project-page">
+		<div class="container">
+			<section class="hero">
+				<div class="hero-copy">
+					<p class="code">{project.type} / {project.number} / {page.code}</p>
+					<h1>WATTÍMETRO<br /><span>WIRELESS</span></h1>
+					<p class="subtitle">{page.subtitle}</p>
+					<div class="tags">
+						{project.categories.map(({ label, tone }) => <Tag label={label} tone={tone} />)}
+					</div>
+				</div>
+
+				<div class="hero-media">
+					<EditorialImage
+						src={project.image}
+						alt="Placa montada do Wattímetro Wireless ligada sobre a bancada"
+						caption="A placa que virou a capa do trabalho: aquisição analógica, ESP8266 e condicionamento reunidos no mesmo protótipo."
+						fit="cover"
+						position="center 56%"
+						eager
+					/>
+				</div>
+			</section>
+
+			<div class="status"><StatusGrid items={page.status} /></div>
+
+			<section class="content opening">
+				<div class="section-grid">
+					<div class="section-label">01 / UM TCC FEITO NA BANCADA</div>
+					<div>
+						<h2>Medir a rede, construir o instrumento e publicar o resultado.</h2>
+						<div class="prose">
+							<p>A proposta inicial tinha como tema: Grandes Desafios na Engenharia. Meu grupo pensou em Consumo Consciente de Energia Elétrica e como proposta, decidimos fazer um protótipo capaz de entregar ao usuário grandezas para consciencizá-lo sobre o seu próprio consumo de energia elétrica.</p>
+							<p>O Wattímetro Wireless começou como Projeto Integrador e cresceu até se tornar meu TCC da faculdade em 2020. A proposta era reunir, em um único equipamento, a leitura de grandezas elétricas e uma interface acessível pelo navegador.</p>
+							<p>O trabalho foi realizado em equipe. A maior parte da eletrônica e da programação ficou sob minha responsabilidade, mas o resultado acadêmico pertence ao esforço coletivo. A pandemia levou boa parte da construção para uma bancada doméstica: protótipos, corrosão da placa, montagem, firmware e gabinete avançaram no mesmo espaço.</p>
+							<p>Antes de utilizamos as IAs para quase tudo era necessário pesquisar em blogs, sites, consultar outros profissionais para obter informações. Tenho certeza que meus professores de antigamente ainda devem se lembrar... Minha irmã que o diga, e até mesmo outros alunos mais antigos do meu professor orientador, que passaram meses tirando minhas dúvidas de boa vontade.</p>
+							<p>O objetivo não era apresentar um instrumento comercial pronto. Era atravessar o caminho completo — do sinal analógico à página web — e entregar um protótipo físico capaz de demonstrar esse percurso. O protótipo tinha sido pensado para medir o consumo de uma residência e por isso que foi considerado um sensor de 50A.</p>
+						</div>
+						<div class="scope-grid">
+							<article><span>ENTRADA</span><strong>TENSÃO E CORRENTE</strong><small>do sensor ao condicionamento</small></article>
+							<article><span>PROCESSAMENTO</span><strong>ESP8266</strong><small>aquisição, cálculo e configuração</small></article>
+							<article><span>SAÍDA</span><strong>INTERFACE WEB</strong><small>consulta local em tempo real</small></article>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">02 / ARQUITETURA</div>
+					<div>
+						<h2>Quatro caminhos analógicos chegando a uma única entrada.</h2>
+						<div class="prose">
+							<p>O NodeMCU baseado no ESP8266 possuía uma única entrada analógica disponível. Um CD4051 passou a selecionar quatro canais: tensão interna, tensão externa, corrente interna e corrente externa. Três multiplexadores foram comprados; apenas um entrou no equipamento e os outros dois ficaram como reserva.</p>
+							<p>Antes de chegar ao A0, cada sinal atravessava sua própria cadeia de adaptação. O circuito usava retificação de precisão com LM358, ganho, filtragem e uma calibração linear para converter a leitura bruta em uma grandeza útil.</p>
+						</div>
+
+						<div class="signal-flow" aria-label="Fluxo do sinal no Wattímetro Wireless">
+							<div><span>GRANDEZA</span><strong>REDE ELÉTRICA</strong></div>
+							<b>→</b>
+							<div><span>TRANSDUTOR</span><strong>SENSOR / TRAFO</strong></div>
+							<b>→</b>
+							<div><span>ANALÓGICO</span><strong>RETIFICAR + FILTRAR</strong></div>
+							<b>→</b>
+							<div><span>SELEÇÃO</span><strong>CD4051 → A0</strong></div>
+							<b>→</b>
+							<div><span>RESULTADO</span><strong>CALIBRAR + EXIBIR</strong></div>
+						</div>
+
+						<div class="media-pair">
+							<EditorialImage
+								src="/images/wattimetro-wireless/transformador-220v-9v.webp"
+								alt="Transformador de 220 para 9 volts usado no canal interno de tensão"
+								caption="O canal interno de tensão partia de um transformador 220/9 V."
+								fit="contain"
+								variant="detail"
+							/>
+							<EditorialImage
+								src="/images/wattimetro-wireless/retificador-precisao-prototipo.webp"
+								alt="Protótipo em placa perfurada do retificador de precisão"
+								caption="O retificador de precisão com LM358 sendo validado antes da placa definitiva."
+								fit="contain"
+								variant="detail"
+							/>
+						</div>
+
+						<div class="sensor-grid">
+							<article><span>TENSÃO INTERNA</span><strong>Transformador 220/9 V</strong><p>Fonte do sinal usado pela medição interna.</p></article>
+							<article><span>TENSÃO EXTERNA</span><strong>ZMPT101B planejado</strong><p>O canal foi previsto, mas sua calibração externa não chegou a ser usada.</p></article>
+							<article><span>CORRENTE INTERNA</span><strong>Família ACS758</strong><p>Sensor Hall instalado no caminho interno de corrente.</p></article>
+							<article><span>CORRENTE EXTERNA</span><strong>SCT-013</strong><p>Entrada prevista para um transformador de corrente não invasivo.</p></article>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">03 / DO SINAL AO CÁLCULO</div>
+					<div>
+						<h2>O osciloscópio mostrava o que o navegador ainda não podia contar.</h2>
+						<div class="prose">
+							<p>Os testes em bancada serviram para conferir amplitude, forma de onda e resposta do condicionamento. Comparadores LM311 geravam marcadores de passagem por zero. A diferença de tempo entre os eventos de tensão e corrente era usada como aproximação do ângulo de fase e, a partir dele, do fator de potência e das potências ativa e reativa.</p>
+							<p>O modo normal priorizava tensão, corrente e potência aparente. O modo avançado acrescentava frequência, potência ativa, potência reativa e fator de potência às grandezas básicas.</p>
+						</div>
+						<EditorialImage
+							src="/images/wattimetro-wireless/validacao-osciloscopio.webp"
+							alt="Osciloscópio exibindo dois sinais senoidais durante a validação"
+							caption="A validação analógica aconteceu primeiro na bancada: observar o sinal era parte do processo de entender a medição."
+							fit="contain"
+						/>
+					</div>
+				</div>
+			</section>
+
+			<section class="content fabrication">
+				<div class="section-grid">
+					<div class="section-label">04 / A PLACA DE CIRCUITO</div>
+					<div>
+						<h2>Fritzing, transferência térmica e corrosão dentro de casa.</h2>
+						<div class="prose">
+							<p>A placa dupla face foi desenhada no Fritzing. O processo passou pela impressão das camadas, preparação do cobre, transferência por toner, proteção de uma das faces, corrosão caseira com vinagre, água oxigenada e sal, furação, montagem de componentes SMD e THT e várias rodadas de retrabalho.</p>
+							<p>A revisão de março foi a placa realmente fabricada e usada no protótipo. Uma revisão de abril preservada no acervo contém correções de apoio, mas não chegou a ser produzida e não possui roteamento de plano de terra.</p>
+						</div>
+						<div class="media-pair">
+							<EditorialImage
+								src="/images/wattimetro-wireless/camadas-pci-impressas.webp"
+								alt="Camadas da placa impressas em folhas para transferência"
+								caption="As duas faces impressas antes da transferência para o cobre."
+								fit="contain"
+								variant="detail"
+							/>
+							<EditorialImage
+								src="/images/wattimetro-wireless/pci-apos-corrosao.webp"
+								alt="Placa de circuito após o processo de corrosão do cobre"
+								caption="A placa após a corrosão: o desenho digital começava a existir como objeto."
+								fit="contain"
+								variant="detail"
+							/>
+						</div>
+
+						<figure class="video-block">
+							<video controls preload="metadata" playsinline>
+								<source src="/images/wattimetro-wireless/corrosao-pci-timelapse.mp4" type="video/mp4" />
+								Seu navegador não oferece suporte à reprodução deste vídeo.
+							</video>
+							<figcaption>Timelapse montado a partir dos registros da corrosão. Os quadros individuais permanecem no acervo privado; aqui, somente o vídeo consolidado.</figcaption>
+						</figure>
+					</div>
+				</div>
+			</section>
+
+			<section class="content gerber-section" id="gerber-viewer">
+				<div class="section-grid">
+					<div class="section-label">05 / PLACA 3D INTERATIVA</div>
+					<div>
+						<h2>A revisão fabricada pode ser observada pelos dois lados.</h2>
+						<div class="prose">
+							<p>Esta visualização foi gerada atualmente a partir do pacote Gerber histórico da placa de março. Ela não é um modelo produzido em 2020: é uma nova forma de consultar o contorno, a furação, o cobre, a máscara e a serigrafia preservados naquele arquivo.</p>
+							<p>A placa aparece sem componentes para manter o foco no desenho fabricado. O modelo e suas texturas ficam hospedados na própria Galeria -2048; depois do carregamento, a inspeção não depende de um visualizador externo.</p>
+						</div>
+
+						<ModelViewer3D
+							src={modelPath}
+							alt="Modelo tridimensional sem componentes da placa de circuito do Wattímetro Wireless"
+							downloadHref={gerberPath}
+							downloadLabel="BAIXAR GERBER.ZIP"
+						/>
+						<p class="viewer-note">O pacote Gerber original permanece disponível acima.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">06 / MONTAGEM E RETRABALHO</div>
+					<div>
+						<h2>A primeira placa não encerrou a investigação. Ela abriu outra.</h2>
+						<div class="prose">
+							<p>Depois da corrosão vieram a soldagem, os testes de continuidade e a procura por falhas. Um curto entre alimentação e terra precisou ser localizado e corrigido. A disposição física também revelou interferências mecânicas entre componentes e trimpots, além de contatos ruins no soquete do ESP8266 que apareciam como comunicação serial ilegível ou corrompida.</p>
+							<p>Os resistores associados aos LM311 foram ajustados ao longo dos ensaios. Esses problemas foram parte do caminho que transformou um esquema em um equipamento montado.</p>
+						</div>
+						<EditorialImage
+							src="/images/wattimetro-wireless/montagem-componentes.webp"
+							alt="Placa do Wattímetro Wireless parcialmente montada"
+							caption="Montagem em andamento: cada estágio novo também criava uma nova rodada de verificações."
+							fit="contain"
+						/>
+					</div>
+				</div>
+			</section>
+
+			<section class="content incident-section">
+				<div class="section-grid">
+					<div class="section-label">07 / DEZ LM311</div>
+					<div>
+						<h2>Um lote inteiro se comportou de uma forma que eu não esperava.</h2>
+						<div class="prose">
+							<p>Dez unidades de LM311 foram compradas no mesmo lote. Todas apresentaram um comportamento diferente do esperado durante os testes. Entrei em contato com o vendedor, mostrei a diferença entre o resultado esperado e o observado e recebi um reembolso parcial.</p>
+							<p>Próximo da apresentação, às pressas, sem como conseguir os CIs em uma loja física por conta da pandemia ou online por conta do prazo, um professor forneceu outros LM311 e o trabalho pôde continuar.</p>
+						</div>
+						<EditorialImage
+							src="/images/wattimetro-wireless/lote-dez-lm311.webp"
+							alt="Dez circuitos integrados LM311 alinhados sobre uma superfície clara"
+							caption="As dez unidades compradas pertenciam ao mesmo lote e repetiram o comportamento inesperado."
+							fit="contain"
+							variant="detail"
+						/>
+					</div>
+				</div>
+			</section>
+
+			<section class="content firmware-section">
+				<div class="section-grid">
+					<div class="section-label">08 / O FIRMWARE CRESCEU</div>
+					<div>
+						<h2>Da página presa ao código ao firmware_Watt_Wireless_1606.</h2>
+						<div class="prose">
+							<p>O histórico preserva várias versões. Em vez de uma linha reta, ele mostra uma sucessão de mudanças: HTML embutido no firmware, parâmetros na EEPROM, aquisição de quatro canais pelo CD4051, divisão da interface em arquivos, migração para SPIFFS e atualização assíncrona pelo navegador.</p>
+							<p>Uma tentativa de gravar o histórico de medições no sistema de arquivos não funcionou como planejado. Depois de uma ramificação problemática na versão 1006, o desenvolvimento foi retomado a partir da 0906. A versão <strong>firmware_Watt_Wireless_1606</strong> é a mais recente e a referência oficial do trabalho.</p>
+						</div>
+
+						<div class="version-rail" aria-label="Evolução resumida do firmware">
+							<span>BASE</span><b>→</b><span>3105</span><b>→</b><span>0106–0706</span><b>→</b><span>0906</span><b>↺</b><span>1006</span><b>→</b><span>1106–1606</span>
+						</div>
+
+						<div class="code-grid">
+							<article>
+								<div class="code-title">[ VARREDURA DOS CANAIS ]</div>
+								<pre><code>digitalWrite(selectA, HIGH);
+digitalWrite(selectB, LOW);
+digitalWrite(selectC, LOW);
+delay(1);
+tensao_int_analog = analogRead(A0);</code></pre>
+								<p>O CD4051 mudava o sinal apresentado ao único A0 do ESP8266.</p>
+							</article>
+							<article>
+								<div class="code-title">[ INTERFACE EM SPIFFS ]</div>
+								<pre><code>if (SPIFFS.exists("/pageHome.htm")) &#123;
+  File page = SPIFFS.open("/pageHome.htm", "r");
+  while (page.available())
+    client.print(page.readStringUntil('\n'));
+&#125;</code></pre>
+								<p>A página deixou de ocupar um grande bloco dentro do código principal.</p>
+							</article>
+							<article>
+								<div class="code-title">[ ATUALIZAÇÃO ASSÍNCRONA ]</div>
+								<pre><code>request.open("GET", "req_variaveis" + nocache, true);
+request.send(null);
+setTimeout("main()", 2000);</code></pre>
+								<p>O navegador buscava novas leituras sem recarregar a página inteira.</p>
+							</article>
+						</div>
+
+						<div class="archive-notice">
+							<strong>ACERVO DE CÓDIGO</strong>
+							<p>O firmware completo e suas versões intermediárias permanecem preservados, mas ainda precisam ser organizados e sanitizados antes de uma publicação responsável. Os trechos acima não contêm credenciais nem dados de rede.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content web-section">
+				<div class="section-grid">
+					<div class="section-label">09 / A INTERFACE WEB</div>
+					<div>
+						<h2>O navegador virou o painel do instrumento.</h2>
+						<div class="prose">
+							<p>A página local separava os dois conjuntos de entrada e permitia alternar os dispositivos exibidos. A tela de parâmetros concentrava nomes, coeficientes de calibração e acompanhamento das leituras analógicas brutas; a EEPROM mantinha configurações entre reinicializações.</p>
+							<p>O SPIFFS conseguiu servir a interface. A tentativa de usar o mesmo armazenamento para manter um histórico de medições não chegou ao mesmo resultado. O Zabbix também foi estudado, mas não foi integrado ao protótipo entregue.</p>
+						</div>
+						<EditorialImage
+							src="/images/wattimetro-wireless/interface-web-modo-avancado.webp"
+							alt="Interface web do Wattímetro Wireless em modo avançado"
+							caption="Tensão, corrente, potência aparente. Os valores desta captura pertencem à etapa de desenvolvimento da tela."
+							fit="contain"
+						/>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="section-grid">
+					<div class="section-label">10 / INTEGRAÇÃO NO GABINETE</div>
+					<div>
+						<h2>A bancada precisava virar um equipamento apresentável.</h2>
+						<div class="prose">
+							<p>Em junho, placa, fonte, sensores, terminais e chicotes começaram a ocupar um único gabinete. A montagem ainda exigiu ajustes de fixação, passagem de cabos e acesso aos canais externos. A integração física deixou visível uma parte do trabalho que o firmware sozinho não mostrava.</p>
+						</div>
+						<div class="media-pair">
+							<EditorialImage
+								src="/images/wattimetro-wireless/integracao-gabinete.webp"
+								alt="Primeira fase de integração da placa no gabinete"
+								caption="A integração começou com a distribuição dos módulos dentro da caixa."
+								fit="contain"
+								variant="detail"
+							/>
+							<EditorialImage
+								src="/images/wattimetro-wireless/interior-final.webp"
+								alt="Interior do gabinete com placa principal e conexões instaladas"
+								caption="O conjunto final reuniu a placa principal e as conexões de medição no mesmo gabinete."
+								fit="contain"
+								variant="detail"
+							/>
+						</div>
+						<EditorialImage
+							src="/images/wattimetro-wireless/prototipo-final-ligado.webp"
+							alt="Wattímetro Wireless ligado durante os testes finais"
+							caption="O protótipo ligado durante a fase final de integração, ainda com o gabinete aberto para acesso à bancada - repare que o ambiente contém coisas doméstias, pois foi um trabalho feito em casa."
+							fit="contain"
+						/>
+					</div>
+				</div>
+			</section>
+
+			<section class="content result-section">
+				<div class="section-grid">
+					<div class="section-label">11 / RESULTADO ACADÊMICO</div>
+					<div>
+						<h2>Concluído não significa que todas as ideias chegaram ao fim.</h2>
+						<div class="prose">
+							<p>O Wattímetro Wireless foi concluído como projeto acadêmico. Houve uma placa fabricada e montada, um gabinete funcional, aquisição em tempo real, configuração persistente e uma interface web servida pelo próprio ESP8266. Esse conjunto foi o resultado apresentado em 2020.</p>
+							<p>Algumas frentes permaneceram abertas: armazenamento histórico, integração com Zabbix, o display OLED abandonado, validação prolongada e ensaios com cargas maiores, ruído e estabilidade. A calibração do canal externo de tensão também não foi utilizada. No firmware final, o endereço associado a ela provavelmente contém erros, mas isso não é tratado aqui ainda.</p>
+						</div>
+						<div class="result-grid">
+							<article><span>ENTREGUE</span><strong>PROTÓTIPO FÍSICO</strong><p>placa, gabinete e aquisição em operação</p></article>
+							<article><span>ENTREGUE</span><strong>INTERFACE LOCAL</strong><p>visualização e parâmetros pelo navegador</p></article>
+							<article><span>NÃO CONCLUÍDO</span><strong>HISTÓRICO E ZABBIX</strong><p>frentes estudadas, sem integração final</p></article>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content retrospective">
+				<div class="section-grid">
+					<div class="section-label">12 / O QUE EU FARIA DIFERENTE</div>
+					<div>
+						<h2>Dois limites ficaram mais claros quando revi o trabalho anos depois.</h2>
+						<div class="lesson-grid">
+							<article>
+								<span>01 / TRANSFORMADOR</span>
+								<h3>Alimentar e medir não são exatamente o mesmo problema.</h3>
+								<p>Hoje eu não assumiria que um transformador comum usado como transdutor de tensão teria linearidade adequada em toda a faixa. Eu trataria essa resposta como algo a caracterizar, não como uma propriedade garantida.</p>
+							</article>
+							<article>
+								<span>02 / FATOR DE POTÊNCIA</span>
+								<h3>Um marcador de tempo não descreve toda a forma de onda.</h3>
+								<p>O intervalo entre os pulsos dos LM311 era uma maneira prática de estimar defasagem, mas oferecia precisão limitada para fator de potência. Uma revisão moderna exigiria uma estratégia de amostragem e cálculo mais completa.</p>
+							</article>
+						</div>
+						<div class="prose conclusion">
+							<p>Esses limites não apagam o resultado de 2020. Eles mostram exatamente por que o projeto ainda vale como registro: eu construí uma cadeia completa, encontrei as fronteiras dela e hoje consigo nomear melhor o que precisaria mudar.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="history">
+				<div class="section-label">13 / LINHA DO TEMPO</div>
+				<div class="timeline">
+					{page.timeline.map((item) => (
+						<article>
+							<div class="timeline-year">{item.year}</div>
+							<h3>{item.title}</h3>
+							<p>{item.text}</p>
+						</article>
+					))}
+				</div>
+			</section>
+
+			<section class="specs">
+				<div class="section-label">14 / FICHA DO PROTÓTIPO</div>
+				<div class="spec-grid">
+					{page.specifications.map((item) => (
+						<div><span>{item.name}</span><strong>{item.value}</strong></div>
+					))}
+				</div>
+			</section>
+		</div>
+	</main>
+
+	<ImageLightbox />
+	<SiteFooter />
+</BaseLayout>
+
+<style>
+	.project-page {
+		background:
+			radial-gradient(circle at 78% 8%, rgba(207, 255, 0, .045), transparent 26%),
+			linear-gradient(rgba(255, 255, 255, .018) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255, 255, 255, .018) 1px, transparent 1px);
+		background-size: auto, 40px 40px, 40px 40px;
+	}
+
+	.container {
+		width: min(1180px, calc(100% - 48px));
+		margin: 0 auto;
+	}
+
+	.hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(360px, .78fr);
+		gap: 54px;
+		align-items: center;
+		padding: 86px 0 64px;
+	}
+
+	.hero > * { min-width: 0; }
+
+	.code,
+	.section-label,
+	.viewer-note {
+		font-family: monospace;
+	}
+
+	.code,
+	.section-label {
+		color: var(--programacao);
+		font-size: .875rem;
+		letter-spacing: .04em;
+	}
+
+	h1,
+	h2,
+	h3 {
+		font-family: Arial, Helvetica, sans-serif;
+	}
+
+	h1 {
+		margin: 18px 0 22px;
+		font-size: clamp(3.8rem, 8vw, 7.5rem);
+		line-height: .82;
+		letter-spacing: -.075em;
+	}
+
+	h1 span { color: var(--eletronica); }
+
+	.subtitle {
+		max-width: 670px;
+		margin: 0;
+		color: var(--muted);
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.25rem;
+		line-height: 1.7;
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 28px;
+	}
+
+	.hero-media :global(.editorial-image) { margin: 0; }
+	.hero-media :global(.editorial-image__trigger img) { height: clamp(420px, 42vw, 590px); }
+
+	.status { margin-bottom: 92px; }
+
+	.content,
+	.history,
+	.specs {
+		padding: 88px 0;
+		border-top: 1px solid var(--line);
+	}
+
+	.section-grid {
+		display: grid;
+		grid-template-columns: 190px minmax(0, 1fr);
+		gap: 52px;
+	}
+
+	.section-grid > * { min-width: 0; }
+
+	h2 {
+		max-width: 820px;
+		margin: 0 0 30px;
+		font-size: clamp(2.25rem, 5vw, 4.9rem);
+		line-height: .98;
+		letter-spacing: -.05em;
+		overflow-wrap: anywhere;
+	}
+
+	.prose {
+		max-width: 760px;
+		font-family: Georgia, "Times New Roman", serif;
+		font-size: 1.125rem;
+		line-height: 1.82;
+	}
+
+	.prose p { margin: 0 0 22px; }
+	.prose strong { color: var(--text); }
+	.prose code { font-family: monospace; font-size: .94em; }
+
+	.scope-grid,
+	.sensor-grid,
+	.result-grid {
+		display: grid;
+		gap: 1px;
+		margin-top: 38px;
+		background: var(--line);
+		border: 1px solid var(--line);
+	}
+
+	.scope-grid,
+	.result-grid { grid-template-columns: repeat(3, 1fr); }
+	.sensor-grid { grid-template-columns: repeat(2, 1fr); }
+
+	.scope-grid article,
+	.sensor-grid article,
+	.result-grid article {
+		padding: 24px;
+		background: var(--surface);
+	}
+
+	.scope-grid span,
+	.sensor-grid span,
+	.result-grid span,
+	.lesson-grid span {
+		display: block;
+		margin-bottom: 12px;
+		color: var(--programacao);
+		font-family: monospace;
+		font-size: .875rem;
+	}
+
+	.scope-grid strong,
+	.sensor-grid strong,
+	.result-grid strong {
+		display: block;
+		font-family: monospace;
+		font-size: 1rem;
+		line-height: 1.45;
+	}
+
+	.scope-grid small,
+	.sensor-grid p,
+	.result-grid p {
+		display: block;
+		margin: 9px 0 0;
+		color: var(--muted);
+		font-family: monospace;
+		font-size: .875rem;
+		line-height: 1.55;
+	}
+
+	.signal-flow {
+		display: grid;
+		grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto 1fr;
+		gap: 12px;
+		align-items: center;
+		margin: 42px 0 14px;
+	}
+
+	.signal-flow div {
+		min-height: 105px;
+		padding: 18px 14px;
+		border: 1px solid var(--line);
+		background: var(--surface);
+		font-family: monospace;
+	}
+
+	.signal-flow span { display: block; margin-bottom: 12px; color: var(--muted); font-size: .75rem; }
+	.signal-flow strong { font-size: .875rem; line-height: 1.45; }
+	.signal-flow b { color: var(--eletronica); font-family: monospace; }
+
+	.media-pair {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 18px;
+	}
+
+	.media-pair :global(.editorial-image) { margin-bottom: 28px; }
+
+	.video-block {
+		margin: 24px 0 0;
+	}
+
+	.video-block video {
+		display: block;
+		width: 100%;
+		max-height: 680px;
+		border: 1px solid var(--line);
+		background: #000;
+	}
+
+	.video-block figcaption,
+	.viewer-note {
+		margin-top: 10px;
+		color: var(--muted);
+		font-size: .875rem;
+		line-height: 1.55;
+	}
+
+	.gerber-section :global(.model-viewer) { margin-top: 38px; }
+
+	.version-rail {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+		align-items: center;
+		margin: 36px 0;
+		font-family: monospace;
+		font-size: .875rem;
+	}
+
+	.version-rail span { padding: 10px 12px; border: 1px solid var(--line); background: var(--surface); }
+	.version-rail b { color: var(--eletronica); }
+
+	.code-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 14px;
+	}
+
+	.code-grid article {
+		min-width: 0;
+		border: 1px solid var(--line);
+		background: var(--surface);
+	}
+
+	.code-title {
+		padding: 14px 16px;
+		border-bottom: 1px solid var(--line);
+		color: var(--programacao);
+		font-family: monospace;
+		font-size: .8125rem;
+	}
+
+	pre {
+		max-width: 100%;
+		margin: 0;
+		padding: 18px;
+		overflow-x: auto;
+		color: var(--text);
+		font-size: .78rem;
+		line-height: 1.65;
+	}
+
+	.code-grid p {
+		margin: 0;
+		padding: 0 18px 18px;
+		color: var(--muted);
+		font-family: monospace;
+		font-size: .8125rem;
+		line-height: 1.55;
+	}
+
+	.archive-notice {
+		margin-top: 22px;
+		padding: 24px;
+		border-left: 2px solid var(--experimentacao);
+		background: var(--surface);
+	}
+
+	.archive-notice strong { font-family: monospace; font-size: .875rem; }
+	.archive-notice p { max-width: 760px; margin: 12px 0 0; color: var(--muted); font-family: Georgia, serif; line-height: 1.7; }
+
+	.lesson-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 18px;
+	}
+
+	.lesson-grid article {
+		padding: 30px;
+		border: 1px solid var(--line);
+		background: var(--surface);
+	}
+
+	.lesson-grid h3 { margin: 0 0 18px; font-size: 1.55rem; line-height: 1.15; }
+	.lesson-grid p { margin: 0; color: var(--muted); font-family: Georgia, serif; font-size: 1.05rem; line-height: 1.75; }
+	.conclusion { margin-top: 34px; }
+
+	.history > .section-label,
+	.specs > .section-label { margin-bottom: 32px; }
+
+	.timeline {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1px;
+		background: var(--line);
+		border: 1px solid var(--line);
+	}
+
+	.timeline article { padding: 28px; background: var(--surface); }
+	.timeline-year { color: var(--eletronica); font-family: monospace; font-size: .875rem; }
+	.timeline h3 { margin: 12px 0; font-size: 1.4rem; }
+	.timeline p { margin: 0; color: var(--muted); font-family: Georgia, serif; line-height: 1.7; }
+
+	.spec-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		border: 1px solid var(--line);
+	}
+
+	.spec-grid div { padding: 24px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+	.spec-grid div:nth-child(3n) { border-right: 0; }
+	.spec-grid div:nth-last-child(-n + 3) { border-bottom: 0; }
+	.spec-grid span { display: block; margin-bottom: 10px; color: var(--muted); font-family: monospace; font-size: .875rem; }
+	.spec-grid strong { font-family: monospace; font-size: .9375rem; line-height: 1.5; }
+
+	@media (max-width: 950px) {
+		.hero { grid-template-columns: 1fr; padding-top: 64px; }
+		.hero-media { max-width: 760px; }
+		.signal-flow { grid-template-columns: 1fr; }
+		.signal-flow b { transform: rotate(90deg); text-align: center; }
+		.code-grid { grid-template-columns: 1fr; }
+	}
+
+	@media (max-width: 800px) {
+		.hero { gap: 34px; }
+		.hero-media :global(.editorial-image__trigger img) { height: clamp(320px, 78vw, 520px); }
+		.status { margin-bottom: 66px; }
+		.content, .history, .specs { padding: 66px 0; }
+		.section-grid { grid-template-columns: 1fr; gap: 24px; }
+		.scope-grid, .sensor-grid, .result-grid, .media-pair, .lesson-grid, .timeline, .spec-grid { grid-template-columns: 1fr; }
+		.spec-grid div, .spec-grid div:nth-child(3n), .spec-grid div:nth-last-child(-n + 3) { border-right: 0; border-bottom: 1px solid var(--line); }
+		.spec-grid div:last-child { border-bottom: 0; }
+	}
+
+	@media (max-width: 600px) {
+		.container { width: calc(100% - 48px); }
+		h1 { max-width: 100%; font-size: clamp(2.25rem, 10.8vw, 4rem); letter-spacing: -.055em; }
+		.subtitle { font-size: 1.08rem; }
+		.scope-grid article, .sensor-grid article, .result-grid article { padding: 20px; }
+	}
+</style>

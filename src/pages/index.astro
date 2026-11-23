@@ -252,7 +252,7 @@ import { workshop } from "../data/workshop";
 				align-items: center;
 				justify-content: center;
 
-				gap: clamp(24px, 4.2vw, 68px);
+				gap: clamp(20px, 3vw, 48px);
 			}
 
 			.nav-inner a {
@@ -819,6 +819,14 @@ import { workshop } from "../data/workshop";
 			   MOBILE
 			========================= */
 
+			@media (max-width: 1180px) {
+				.nav-inner {
+					overflow-x: auto;
+					justify-content: flex-start;
+					padding: 0 20px;
+				}
+			}
+
 			@media (max-width: 950px) {
 				.container {
 					width: min(100% - 36px, 1380px);
@@ -833,13 +841,6 @@ import { workshop } from "../data/workshop";
 
 				.neon {
 					font-size: clamp(3rem, 15vw, 7rem);
-				}
-
-				.nav-inner {
-					overflow-x: auto;
-					justify-content: flex-start;
-
-					padding: 0 20px;
 				}
 
 				.home-search { grid-template-columns: 1fr; }
@@ -912,6 +913,10 @@ import { workshop } from "../data/workshop";
 
 					<a href="/fontes-e-inspiracoes/">
 						FONTES
+					</a>
+
+					<a href="/monster-hub/">
+						MONSTER HUB
 					</a>
 
 					<a href="/sobre/">
