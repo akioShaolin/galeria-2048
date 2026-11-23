@@ -21,7 +21,10 @@ const {
 				mode === "error" ? (
 					<div class="status">{statusText}</div>
 				) : (
-					<a class="back" href="/">← VOLTAR AO ACERVO</a>
+					<a class="back" href="/">
+						<span class="back-full">← VOLTAR AO ACERVO</span>
+						<span class="back-short">← ACERVO</span>
+					</a>
 				)
 			}
 		</nav>
@@ -65,5 +68,23 @@ const {
 	.status {
 		font-weight: bold;
 		letter-spacing: .08em;
+	}
+
+	.back-short {
+		display: none;
+	}
+
+	@media (max-width: 600px) {
+		nav {
+			gap: 14px;
+		}
+
+		.back-full {
+			display: none;
+		}
+
+		.back-short {
+			display: inline;
+		}
 	}
 </style>
