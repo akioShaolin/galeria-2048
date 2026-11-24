@@ -10,10 +10,17 @@ const compareId = (a: string, b: string) => a.localeCompare(b, "pt-BR") || (a < 
 type Point = { x: number; y: number };
 type Edge = MonsterHubGraph["edges"][number]["data"];
 type LaneLink = { left: string; right: string };
-type Score = [crossings: number, parentLength: number, secondaryLength: number];
+const isLane = (id: string) => id.startsWith("\0");
 
-const better = (a: Score, b: Score) => a[0] < b[0] ||
-	(a[0] === b[0] && (a[1] < b[1] || (a[1] === b[1] && a[2] < b[2])));
+const better = (a: number[], b: number[]) => {
+	const firstDifference = a.findIndex((value, i) => value !== b[i]);
+	return firstDifference >= 0 && a[firstDifference] < b[firstDifference];
+};
+
+function median(values: number[]) {
+	const sorted = [...values].sort((a, b) => a - b);
+	return (sorted[Math.floor((sorted.length - 1) / 2)] + sorted[Math.floor(sorted.length / 2)]) / 2;
+}
 
 function connectedComponents(ids: string[], links: Map<string, Set<string>>) {
 	const seen = new Set<string>();
@@ -104,21 +111,60 @@ const rowCoordinates = (layers: string[][]) => new Map(layers.flatMap((layer) =>
 	layer.map((id, index) => [id, index - (layer.length - 1) / 2] as const),
 ));
 
-function orderRows(layers: string[][], boundaries: LaneLink[][], secondary: Edge[]) {
-	const score = (candidate: string[][]): Score => {
+function indexParentage(boundaries: LaneLink[][]) {
+	const incoming = new Map<string, string[]>();
+	const outgoing = new Map<string, string[]>();
+	for (const { left, right } of boundaries.flat()) {
+		incoming.set(right, [...(incoming.get(right) ?? []), left]);
+		outgoing.set(left, [...(outgoing.get(left) ?? []), right]);
+	}
+	return { incoming, outgoing };
+}
+
+function orderRows(layers: string[][], boundaries: LaneLink[][], { incoming, outgoing }: ReturnType<typeof indexParentage>) {
+	const families = layers.slice(0, -1).map((layer) => layer.filter((id) => !isLane(id)).flatMap((parent) => {
+		const children = (outgoing.get(parent) ?? []).filter((id) => !isLane(id));
+		return children.length ? [{ parent, children, exclusive: children.filter((id) => incoming.get(id)!.length === 1) }] : [];
+	}));
+	const score = (candidate: string[][]) => {
 		const rows = rowCoordinates(candidate);
+		const visibleOrder = new Map(candidate.flatMap((layer) => layer.filter((id) => !isLane(id))
+			.map((id, index) => [id, index] as const)));
 		let crossings = 0;
-		let parentLength = 0;
+		let inversions = 0;
+		let familyGaps = 0;
+		let parentDrift = 0;
+		let routeLength = 0;
 		for (const links of boundaries) {
 			for (const [i, a] of links.entries()) {
-				parentLength += Math.abs(rows.get(a.left)! - rows.get(a.right)!);
+				const drift = ROW_STEP * (rows.get(a.left)! - rows.get(a.right)!);
+				parentDrift += Math.abs(drift);
+				routeLength += Math.hypot(COLUMN_STEP - HUB_NODE_WIDTH, drift);
 				for (const b of links.slice(i + 1)) {
 					if ((rows.get(a.left)! - rows.get(b.left)!) * (rows.get(a.right)! - rows.get(b.right)!) < 0) crossings++;
 				}
 			}
 		}
-		const secondaryLength = secondary.reduce((sum, { source, target }) => sum + Math.abs(rows.get(source)! - rows.get(target)!), 0);
-		return [crossings, parentLength, secondaryLength];
+		// Each route crosses intermediate columns only inside its own reserved lane,
+		// so box intersections are excluded by construction.
+		const gaps = (ids: string[]) => {
+			if (ids.length < 2) return 0;
+			const indices = ids.map((id) => visibleOrder.get(id)!);
+			return Math.max(...indices) - Math.min(...indices) + 1 - indices.length;
+		};
+		for (const boundary of families) {
+			for (const family of boundary) familyGaps += gaps(family.children) + gaps(family.exclusive);
+			const exclusive = boundary.filter((family) => family.exclusive.length).map(({ parent, exclusive }) => ({
+				parent: visibleOrder.get(parent)!,
+				center: median(exclusive.map((id) => visibleOrder.get(id)!)),
+			}));
+			for (const [i, a] of exclusive.entries()) {
+				for (const b of exclusive.slice(i + 1)) {
+					if ((a.parent - b.parent) * (a.center - b.center) < 0) inversions++;
+				}
+			}
+		}
+		return [crossings, inversions, familyGaps, parentDrift, routeLength];
 	};
 
 	let best = layers.map((layer) => [...layer]);
@@ -130,25 +176,73 @@ function orderRows(layers: string[][], boundaries: LaneLink[][], secondary: Edge
 			bestScore = cost;
 		}
 	};
+	const sweepLayer = (candidate: string[][], index: number, forward: boolean, groupFamilies: boolean) => {
+		const rows = rowCoordinates(candidate);
+		const neighbors = forward ? incoming : outgoing;
+		const weight = (id: string) => {
+			const ids = neighbors.get(id) ?? [];
+			return ids.length ? median(ids.map((peer) => rows.get(peer)!)) : rows.get(id)!;
+		};
+		const siblingBlocks = groupFamilies && index > 0
+			? families[index - 1].filter(({ exclusive }) => exclusive.length > 1).map(({ exclusive }) => exclusive)
+			: [];
+		const grouped = new Set(siblingBlocks.flat());
+		const comparator = (a: string, b: string) => weight(a) - weight(b) || compareId(a, b);
+		const blocks = [...siblingBlocks.map((siblings) => [...siblings].sort(comparator)),
+			...candidate[index].filter((id) => !grouped.has(id)).map((id) => [id])];
+		const weighted = blocks.map((ids) => ({ ids, weight: median(ids.map(weight)) }));
+		weighted.sort((a, b) => a.weight - b.weight || compareId(a.ids[0], b.ids[0]));
+		candidate[index] = weighted.flatMap(({ ids }) => ids);
+	};
 
-	// Follow connected lanes in alternating sweeps; only keep layouts that improve the score.
-	const candidate = layers.map((layer) => [...layer]);
-	const columns = [...candidate.keys()];
-	for (let pass = 0; pass < 8; pass++) {
-		const forward = pass % 2 === 0;
-		for (const index of forward ? columns.slice(1) : columns.slice(0, -1).reverse()) {
-			const rows = rowCoordinates(candidate);
-			const links = boundaries[forward ? index - 1 : index];
-			const weight = (id: string) => {
-				const neighbors = links.filter((link) => (forward ? link.right : link.left) === id);
-				return neighbors.length
-					? neighbors.reduce((sum, link) => sum + rows.get(forward ? link.left : link.right)!, 0) / neighbors.length
-					: rows.get(id)!;
-			};
-			const weights = new Map(candidate[index].map((id) => [id, weight(id)]));
-			candidate[index].sort((a, b) => weights.get(a)! - weights.get(b)! || rows.get(a)! - rows.get(b)!);
+	// Compare grouped and unconstrained median sweeps. Shared children are never
+	// assigned to one family arbitrarily; on conflict they follow all their parents.
+	for (const groupFamilies of [true, false]) {
+		const candidate = best.map((layer) => [...layer]);
+		const columns = [...candidate.keys()];
+		const seen = new Set<string>();
+		for (let round = 0; round < 8; round++) {
+			const signature = JSON.stringify(candidate);
+			if (seen.has(signature)) break;
+			seen.add(signature);
+			for (const forward of [true, false]) {
+				for (const index of forward ? columns.slice(1) : columns.slice(0, -1).reverse()) {
+					sweepLayer(candidate, index, forward, groupFamilies);
+					keepBest(candidate);
+				}
+			}
 		}
-		keepBest(candidate);
+	}
+
+	// A family can be split even in a layout with zero crossings. Closing the
+	// gap may need its neighbors to move together, so try coordinated proposals.
+	for (let pass = 0; pass < 4; pass++) {
+		const previousBest = bestScore;
+		for (const [boundary, groups] of families.entries()) {
+			const index = boundary + 1;
+			for (const family of groups) {
+				for (const memberIds of [family.exclusive, family.children]) {
+					if (memberIds.length < 2) continue;
+					const members = new Set(memberIds);
+					const before = best[index];
+					const siblings = before.filter((id) => members.has(id));
+					const visible = before.filter((id) => !isLane(id));
+					if (visible.indexOf(siblings.at(-1)!) - visible.indexOf(siblings[0]) === siblings.length - 1) continue;
+					const others = before.filter((id) => !members.has(id));
+					const first = before.indexOf(siblings[0]);
+					const last = before.indexOf(siblings.at(-1)!);
+					for (const at of new Set([first, last - siblings.length + 1])) {
+						const candidate = best.map((layer) => [...layer]);
+						candidate[index] = [...others.slice(0, at), ...siblings, ...others.slice(at)];
+						keepBest(candidate);
+						for (let i = index + 1; i < layers.length; i++) sweepLayer(candidate, i, true, true);
+						for (let i = index - 1; i >= 0; i--) sweepLayer(candidate, i, false, true);
+						keepBest(candidate);
+					}
+				}
+			}
+		}
+		if (bestScore === previousBest) break;
 	}
 
 	// Fix local inversions that survived the sweeps without giving up any primary improvement.
@@ -170,6 +264,67 @@ function orderRows(layers: string[][], boundaries: LaneLink[][], secondary: Edge
 		if (!improved) break;
 	}
 	return refined;
+}
+
+// Fit each node or lane as close to its preferred Y as possible without changing
+// the column order or reducing clearance. Merge neighboring groups that collide;
+// fitting their median in offset-free coordinates preserves the minimum spacing.
+function fitColumn(targets: number[]) {
+	type Pack = { first: number; values: number[]; center: number };
+	const packs: Pack[] = [];
+	for (const [index, target] of targets.entries()) {
+		const value = target - index * ROW_STEP;
+		packs.push({ first: index, values: [value], center: value });
+		while (packs.length > 1 && packs.at(-2)!.center > packs.at(-1)!.center) {
+			const bottom = packs.pop()!;
+			const top = packs.at(-1)!;
+			top.values.push(...bottom.values);
+			top.center = median(top.values);
+		}
+	}
+	return packs.flatMap(({ first, center, values }) => values.map((_, i) => center + (first + i) * ROW_STEP));
+}
+
+function alignRows(layers: string[][], boundaries: LaneLink[][], { incoming, outgoing }: ReturnType<typeof indexParentage>) {
+	const closeNeighbors = (ids: string[] = []) => {
+		const real = ids.filter((id) => !isLane(id));
+		return real.length ? real : ids;
+	};
+	const rows = new Map([...rowCoordinates(layers)].map(([id, row]) => [id, row * ROW_STEP]));
+	const links = boundaries.flat();
+	const families = layers.flat().filter((id) => !isLane(id)).map((id) => ({
+		id, children: closeNeighbors(outgoing.get(id)),
+	})).filter(({ children }) => children.length);
+	const score = () => [
+		families.reduce((sum, { id, children }) => sum + Math.abs(rows.get(id)! - median(children.map((child) => rows.get(child)!))), 0),
+		links.reduce((sum, { left, right }) => sum + Math.abs(rows.get(left)! - rows.get(right)!), 0),
+		links.reduce((sum, { left, right }) => sum + Math.hypot(COLUMN_STEP - HUB_NODE_WIDTH, rows.get(left)! - rows.get(right)!), 0),
+	];
+	let best = new Map(rows);
+	let bestScore = score();
+	for (let round = 0; round < 16; round++) {
+		const previous = new Map(rows);
+		for (const forward of [true, false]) {
+			for (const layer of forward ? layers : [...layers].reverse()) {
+				const targets = layer.map((id) => {
+					const parents = closeNeighbors(incoming.get(id));
+					const children = closeNeighbors(outgoing.get(id));
+					const primary = forward ? parents : children;
+					const fallback = forward ? children : parents;
+					const neighbors = primary.length ? primary : fallback;
+					return neighbors.length ? median(neighbors.map((neighbor) => rows.get(neighbor)!)) : rows.get(id)!;
+				});
+				fitColumn(targets).forEach((row, i) => rows.set(layer[i], row));
+			}
+			const cost = score();
+			if (better(cost, bestScore)) {
+				best = new Map(rows);
+				bestScore = cost;
+			}
+		}
+		if ([...rows].every(([id, row]) => Math.abs(row - previous.get(id)!) < 0.01)) break;
+	}
+	return best;
 }
 
 function layoutComponent(ids: string[], edges: Edge[]) {
@@ -198,11 +353,13 @@ function layoutComponent(ids: string[], edges: Edge[]) {
 		laneIds.set(id, lanes);
 	}
 
-	const ordered = orderRows(layers, boundaries, edges.filter(({ kind }) => kind !== "parentesco"));
-	const height = HUB_NODE_HEIGHT + (Math.max(...ordered.map((layer) => layer.length)) - 1) * ROW_STEP;
-	const rows = rowCoordinates(ordered);
+	const parentage = indexParentage(boundaries);
+	const ordered = orderRows(layers, boundaries, parentage);
+	const rows = alignRows(ordered, boundaries, parentage);
+	const top = Math.min(...rows.values());
+	const height = HUB_NODE_HEIGHT + Math.max(...rows.values()) - top;
 	const positions = new Map(ordered.flatMap((layer, index) => layer.map((id) => [
-		id, { x: HUB_NODE_WIDTH / 2 + index * COLUMN_STEP, y: height / 2 + rows.get(id)! * ROW_STEP },
+		id, { x: HUB_NODE_WIDTH / 2 + index * COLUMN_STEP, y: HUB_NODE_HEIGHT / 2 + rows.get(id)! - top },
 	] as const)));
 
 	const bends = [...laneIds].map(([id, lanes]) => [id, lanes.flatMap((lane) => {

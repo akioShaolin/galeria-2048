@@ -1,0 +1,48 @@
+---
+interface Props {
+	caption: string;
+	fields: {
+		label: string;
+		bytes: string;
+		detail: string;
+		tone: string;
+		highlight?: boolean;
+	}[];
+}
+
+const { caption, fields } = Astro.props;
+---
+
+<figure class="frame-panel">
+	<figcaption>{caption}</figcaption>
+	<ol class="frame-fields">
+		{fields.map(({ label, bytes, detail, tone, highlight }) => (
+			<li style={`--field-accent: var(--${tone})`}>
+				<span>{label}</span>
+				<code>{highlight ? <mark>{bytes}</mark> : bytes}</code>
+				<p>{detail}</p>
+			</li>
+		))}
+	</ol>
+</figure>
+
+<style>
+	.frame-panel { margin: 32px 0; }
+	figcaption, .frame-fields span { font: .875rem/1.55 monospace; }
+	figcaption { color: var(--muted); margin-bottom: 8px; }
+	.frame-fields {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(125px, 100%), 1fr));
+		gap: 1px;
+		margin: 0;
+		padding: 0;
+		border: 1px solid var(--line);
+		background: var(--line);
+		list-style: none;
+	}
+	li { padding: 16px; border-top: 2px solid var(--field-accent); background: var(--surface); }
+	span { display: block; color: var(--muted); }
+	code { display: block; margin: 7px 0; font-size: 1.55rem; color: var(--field-accent); white-space: nowrap; }
+	mark { padding: 0 .12em; color: var(--bg); background: var(--field-accent); }
+	li p { margin: 0; color: var(--muted); font: .9rem/1.5 monospace; }
+</style>

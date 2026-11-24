@@ -39,7 +39,44 @@ export type Project = {
 	};
 };
 
-export const projects: Project[] = [
+export const projects: Project[] = ([
+	{
+		id: "modbus-reader-writer",
+		type: "PROJETO",
+		number: "022",
+		title: "MODBUS READER / WRITER",
+		description: "Do primeiro readHreg() à leitura e à escrita de registradores no RS485: a etapa que transformou o uBox em bancada de estudos Modbus.",
+		image: "/images/modbus-reader-writer/primeiro-teste.webp",
+		path: "/projetos/modbus-reader-writer/",
+		categories: [
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "AUTOMAÇÃO", tone: "automacao" },
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["Modbus RTU", "RS485", "ESP8266", "SolarView uBox", "CRC16", "FC03", "FC06", "leitor de registradores"],
+		page: {
+			code: "MODBUS RTU / CHECKPOINT",
+			subtitle: "O objetivo era controlar a injeção de energia por horário. Antes disso, precisei sair do primeiro readHreg(), passar pelos bytes no barramento e chegar a um leitor Modbus no navegador.",
+			status: [
+				{ label: "STATUS", value: "● CHECKPOINT CONCLUÍDO", tone: "programacao" },
+				{ label: "PERÍODO", value: "26/09/2025 — 09/03/2026" },
+				{ label: "PLATAFORMA", value: "SOLARVIEW UBOX / ESP-07" },
+			],
+			timeline: [
+				{ year: "26–30 SET 2025", title: "Da biblioteca ao quadro manual", text: "Busca por uma biblioteca para ESP8266, primeiro sketch com readHreg() e ensaios de FC03 montado byte a byte." },
+				{ year: "OUT 2025", title: "Leituras e escritas em equipamentos reais", text: "Os rascunhos exploraram leitura em dois endereços, escrita FC06 e troca de direção no RS485." },
+				{ year: "NOV 2025", title: "Ramificações", text: "Um rascunho esboçou uma fila e separou estados de erro e novas tentativas; outro voltou à leitura periódica com a escrita desativada." },
+				{ year: "09 MAR 2026", title: "Leitor web genérico", text: "O endereço e a quantidade passaram a ser escolhidos no navegador. O mesmo pedido a dois medidores CHINT retornou valores diferentes." },
+			],
+			specifications: [
+				{ name: "Barramento", value: "Modbus RTU / RS485 half-duplex" },
+				{ name: "Depuração nos ensaios manuais", value: "SoftwareSerial separada da UART0" },
+				{ name: "Funções ensaiadas", value: "FC03 / FC06" },
+				{ name: "Interface do leitor", value: "HTTP local / WebSocket" },
+			],
+		},
+	},
 	{
 		id: "wattimetro-wireless",
 		type: "PROJETO",
@@ -893,7 +930,7 @@ export const projects: Project[] = [
 			specifications: [],
 		},
 	},
-].sort((first, second) => Number(second.number) - Number(first.number));
+] satisfies Project[]).sort((first, second) => Number(second.number) - Number(first.number));
 
 export function getProject(id: string): Project | undefined {
 	return projects.find((project) => project.id === id);

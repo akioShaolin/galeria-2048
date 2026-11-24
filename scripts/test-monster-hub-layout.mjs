@@ -51,3 +51,62 @@ test("uma relação longa usa um corredor fora da caixa intermediária", () => {
 		(value) => value.split(" ").length === 2 && value.split(" ").every((number) => Number.isFinite(Number(number))),
 	));
 });
+
+const columnOrder = (positions, id) => Object.keys(positions)
+	.filter((member) => positions[id].x === positions[member].x)
+	.sort((a, b) => positions[a].y - positions[b].y);
+
+test("irmãos de duas famílias ficam contíguos, ordenados pelos pais e alinhados pelas medianas", () => {
+	const { positions } = buildMonsterHubLayout(graph(
+		["pai-a", "pai-b", "a", "b", "c", "d", "e", "destino-comum"],
+		[["pai-a", "a"], ["pai-b", "b"], ["pai-a", "c"], ["pai-b", "d"], ["pai-a", "e"],
+			...["a", "b", "c", "d", "e"].map((id) => [id, "destino-comum"])],
+	));
+	const column = columnOrder(positions, "a");
+	const siblings = ["a", "c", "e"].map((id) => column.indexOf(id)).sort((a, b) => a - b);
+	const otherSiblings = ["b", "d"].map((id) => column.indexOf(id)).sort((a, b) => a - b);
+	assert.equal(siblings[2] - siblings[0], 2);
+	assert.equal(otherSiblings[1] - otherSiblings[0], 1);
+	assert.equal(Math.sign(positions["pai-a"].y - positions["pai-b"].y), Math.sign(siblings[1] - otherSiblings[0]));
+	assert.equal(positions["pai-a"].y, positions[column[siblings[1]]].y);
+	assert.equal(positions["pai-b"].y, (positions.b.y + positions.d.y) / 2);
+	assert.equal(positions[column[siblings[1]]].y - positions[column[siblings[0]]].y,
+		positions[column[siblings[2]]].y - positions[column[siblings[1]]].y);
+});
+
+test("um descendente único preserva a linha do pai em uma coluna com outro bloco", () => {
+	const { positions } = buildMonsterHubLayout(graph(
+		["pai-a", "pai-b", "a", "b", "c", "d", "destino-comum"],
+		[["pai-a", "a"], ["pai-b", "b"], ["pai-a", "c"], ["pai-a", "d"],
+			...["a", "b", "c", "d"].map((id) => [id, "destino-comum"])],
+	));
+	assert.equal(positions["pai-b"].y, positions.b.y);
+});
+
+test("reagrupar irmãos pode deslocar um ramo com convergência e corredor em conjunto", () => {
+	const { positions, parentBends } = buildMonsterHubLayout(graph(
+		["raiz", "sniffer", "leitor", "referencia", "ponte", "logger", "monitor", "controle", "simulador"],
+		[["raiz", "sniffer"], ["raiz", "leitor"], ["raiz", "referencia", "influencia"],
+			["sniffer", "ponte"], ["referencia", "ponte"], ["referencia", "logger"],
+			["leitor", "monitor"], ["leitor", "controle"], ["leitor", "simulador"],
+			["monitor", "logger", "influencia"]],
+	));
+	const column = columnOrder(positions, "leitor");
+	assert.equal(Math.abs(column.indexOf("leitor") - column.indexOf("sniffer")), 1);
+	assert.equal(positions.raiz.y, (positions.leitor.y + positions.sniffer.y) / 2);
+	assert.equal(parentBends["referencia-logger"].length, 2);
+	const [lane] = parentBends["referencia-logger"];
+	for (const id of columnOrder(positions, "ponte")) assert.ok(Math.abs(lane.y - positions[id].y) > HUB_NODE_HEIGHT / 2);
+});
+
+test("relações secundárias não reordenam famílias quando as colunas já são as mesmas", () => {
+	const ids = ["pai-a", "pai-b", "a", "b", "c", "d", "destino-comum"];
+	const parentage = [["pai-a", "a"], ["pai-b", "b"], ["pai-a", "c"], ["pai-b", "d"],
+		...["a", "b", "c", "d"].map((id) => [id, "destino-comum"])];
+	const base = buildMonsterHubLayout(graph(ids, parentage));
+	const secondary = buildMonsterHubLayout(graph(ids, [
+		...parentage, ["pai-a", "d", "influencia"], ["b", "c", "paralelo"],
+	]));
+	assert.deepEqual(secondary.positions, base.positions);
+	assert.deepEqual(secondary.parentBends, base.parentBends);
+});

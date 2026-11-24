@@ -3,14 +3,32 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 
-// Avatares obtidos das páginas públicas dos canais no YouTube em 22/11/2026.
-// As cópias locais evitam depender das URLs temporárias do CDN da plataforma.
-const creators = [
+type CreatorLink = { label: string; href: string };
+
+type Creator = {
+	name: string;
+	publicName: string;
+	handle: string;
+	platform?: string;
+	externalLinks: CreatorLink[];
+	image: string;
+	alt: string;
+	focus: string;
+	story: string[];
+	links?: CreatorLink[];
+};
+
+// Avatares do YouTube obtidos das páginas públicas dos canais em 22/11/2026.
+// O retrato de Alan Baldo vem de https://alanbaldo.eng.br/esperapci/.
+const creators: Creator[] = [
 	{
 		name: "Professor Bairros",
 		publicName: "Professor Bairros (Pesquisar Eletrônica)",
 		handle: "@professorbairros",
-		url: "https://www.youtube.com/@professorbairros",
+		externalLinks: [
+			{ label: "VISITAR CANAL", href: "https://www.youtube.com/@professorbairros" },
+			{ label: "SITE ↗", href: "https://www.bairrospd.com/" },
+		],
 		image: "/images/fontes-inspiracoes/professor-bairros.webp",
 		alt: "Imagem de perfil do canal Professor Bairros no YouTube",
 		focus: "ELETRÔNICA / AULAS E PESQUISA",
@@ -27,7 +45,11 @@ const creators = [
 		name: "Freesia Gaul",
 		publicName: "Freesia Gaul",
 		handle: "@FreesiaG",
-		url: "https://www.youtube.com/@FreesiaG",
+		externalLinks: [
+			{ label: "VISITAR CANAL", href: "https://www.youtube.com/@FreesiaG" },
+			{ label: "INSTAGRAM ↗", href: "https://www.instagram.com/freesia.gaul/" },
+			{ label: "SITE ↗", href: "https://freesiagaul.com/" },
+		],
 		image: "/images/fontes-inspiracoes/freesia-gaul.webp",
 		alt: "Imagem de perfil do canal Freesia Gaul no YouTube",
 		focus: "ELETRÔNICA CRIATIVA / HARDWARE",
@@ -37,10 +59,30 @@ const creators = [
 		],
 	},
 	{
+		name: "Alan Baldo",
+		publicName: "Alan Baldo",
+		handle: "@alanhbaldo",
+		platform: "INSTAGRAM / SITE",
+		externalLinks: [
+			{ label: "INSTAGRAM ↗", href: "https://www.instagram.com/alanhbaldo/" },
+			{ label: "SITE / CURSOS ↗", href: "https://alanbaldo.eng.br/links/" },
+		],
+		image: "/images/fontes-inspiracoes/alan-baldo.webp",
+		alt: "Retrato de Alan Baldo usado no site oficial",
+		focus: "ELETRÔNICA / SISTEMAS EMBARCADOS / PROJETO DE HARDWARE",
+		story: [
+			"Comecei a acompanhar o Alan pelas dicas de eletrônica e sistemas embarcados. Lembro de vê-lo reconhecer um componente da Texas Instruments pelo padrão da marcação no encapsulamento. Até o jeito como o código estava impresso já era uma pista.",
+			"O que mais ficou comigo foram as dicas de projeto. O caminho de uma trilha, o limite de um componente ou uma condição de uso que não aparece no esquema podem mudar o que acontece quando a placa sai do papel. Passei a olhar para os meus circuitos com uma pergunta a mais: além de funcionar na bancada, em que condições isso pode falhar?",
+		],
+	},
+	{
 		name: "gabo5x",
 		publicName: "gabo5x",
 		handle: "@gabo5x",
-		url: "https://www.youtube.com/@gabo5x",
+		externalLinks: [
+			{ label: "VISITAR CANAL", href: "https://www.youtube.com/@gabo5x" },
+			{ label: "INSTAGRAM ↗", href: "https://www.instagram.com/gabo.5x/" },
+		],
 		image: "/images/fontes-inspiracoes/gabo5x.webp",
 		alt: "Identidade visual do canal gabo5x no YouTube",
 		focus: "REPARO DE PLACAS / DIAGNÓSTICO",
@@ -53,7 +95,7 @@ const creators = [
 		name: "Universo Programado",
 		publicName: "Universo Programado",
 		handle: "@UniversoProgramado",
-		url: "https://www.youtube.com/@UniversoProgramado",
+		externalLinks: [{ label: "VISITAR CANAL", href: "https://www.youtube.com/@UniversoProgramado" }],
 		image: "/images/fontes-inspiracoes/universo-programado.webp",
 		alt: "Imagem de perfil ilustrada do canal Universo Programado no YouTube",
 		focus: "PROGRAMAÇÃO / SIMULAÇÕES / IA",
@@ -66,7 +108,7 @@ const creators = [
 		name: "WR Kits",
 		publicName: "WR Kits",
 		handle: "@canalwrkits",
-		url: "https://www.youtube.com/@canalwrkits",
+		externalLinks: [{ label: "VISITAR CANAL", href: "https://www.youtube.com/@canalwrkits" }],
 		image: "/images/fontes-inspiracoes/wr-kits.webp",
 		alt: "Logotipo do canal WR Kits no YouTube",
 		focus: "ELETRÔNICA / ROBÓTICA / PROGRAMAÇÃO",
@@ -227,6 +269,10 @@ const creators = [
 			line-height: 1.4;
 		}
 
+		.channel-link + .channel-link {
+			margin-top: 10px;
+		}
+
 		.channel-link:hover,
 		.channel-link:focus-visible {
 			background: rgba(0, 217, 255, .08);
@@ -371,12 +417,14 @@ const creators = [
 						<div class="channel-card">
 							<img class="channel-image" src={creator.image} alt={creator.alt} width="360" height="360" loading={index === 0 ? "eager" : "lazy"} decoding="async" />
 							<div class="channel-info">
-								<p class="channel-platform">[ YOUTUBE / CANAL ]</p>
+								<p class="channel-platform">[ {creator.platform ?? "YOUTUBE / CANAL"} ]</p>
 								<h2>{creator.name}</h2>
 								{creator.publicName !== creator.name && <p class="channel-public-name">No YouTube: {creator.publicName}</p>}
 								<p class="channel-handle">{creator.handle}</p>
 								<p class="channel-focus">{creator.focus}</p>
-				<a class="channel-link" href={creator.url} target="_blank" rel="noopener noreferrer">VISITAR CANAL</a>
+								{creator.externalLinks.map((link) => (
+									<a class="channel-link" href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+								))}
 							</div>
 						</div>
 

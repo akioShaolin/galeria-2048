@@ -1,0 +1,391 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import ModbusFrame from "../../components/ModbusFrame.astro";
+import { getProject } from "../../data/projects";
+
+const project = getProject("modbus-reader-writer");
+if (!project?.page) throw new Error("Dados do projeto Modbus Reader / Writer não encontrados.");
+const page = project.page;
+const media = "/images/modbus-reader-writer";
+const repository = "https://github.com/akioShaolin/modbus-reader-writer";
+const repositoryFile = (path: string) => `${repository}/blob/main/${path}`;
+const sketchFile = (name: string) => repositoryFile(`sketches/${name}/${name}.ino`);
+const sketches = {
+	first: sketchFile("primeiro-teste-biblioteca"),
+	manual: sketchFile("quadro-rtu-manual"),
+	reads: sketchFile("requisicoes-de-leitura"),
+	write: sketchFile("ensaio-escrita-fc06"),
+	queue: sketchFile("rascunho-fila-e-retries"),
+	power: sketchFile("leitura-potencia-sem-escrita"),
+	web: sketchFile("leitor-web"),
+};
+const firstReadCode = `#include <ModbusRTU.h>
+
+#define SLAVE_ID  11  // ID do dispositivo
+#define REG_ADDR  17  // Endereço inicial
+#define REG_COUNT 10  // Quantidade a ler
+
+ModbusRTU mb; // Cria o objeto ModbusRTU
+
+uint16_t holdingRegisters[REG_COUNT];
+
+// No loop(): retorno diferente de zero se o pedido foi iniciado.
+const bool pedidoIniciado = mb.readHreg(
+  SLAVE_ID,
+  REG_ADDR,
+  holdingRegisters,  // Onde guardar os dados
+  REG_COUNT,
+  read_cb            // Função chamada ao terminar
+) != 0;`;
+const readRequest = [
+	{ label: "BYTE 1 / ID", bytes: "01", detail: "Dispositivo consultado.", tone: "programacao" },
+	{ label: "BYTE 2 / FUNÇÃO", bytes: "03", detail: "Ler holding registers.", tone: "experimentacao" },
+	{ label: "BYTES 3–4 / ENDEREÇO", bytes: "00 2B", detail: "Endereço inicial 0x002B.", tone: "eletronica" },
+	{ label: "BYTES 5–6 / QUANTIDADE", bytes: "00 01", detail: "Um registrador.", tone: "automacao" },
+	{ label: "BYTES 7–8 / CRC16", bytes: "F4 02", detail: "Byte baixo primeiro.", tone: "programacao" },
+];
+const powerReadRequest = [
+	{ label: "BYTE 1 / ID", bytes: "02", detail: "Dispositivo consultado.", tone: "programacao" },
+	{ label: "BYTE 2 / FUNÇÃO", bytes: "03", detail: "Ler holding registers.", tone: "experimentacao" },
+	{ label: "BYTES 3–4 / ENDEREÇO", bytes: "9C 8F", detail: "Endereço usado no sketch para ler a potência ativa.", tone: "eletronica", highlight: true },
+	{ label: "BYTES 5–6 / QUANTIDADE", bytes: "00 01", detail: "Um registrador.", tone: "automacao" },
+	{ label: "BYTES 7–8 / CRC16", bytes: "9B 82", detail: "CRC dos seis bytes anteriores, baixo antes do alto.", tone: "programacao" },
+];
+const readResponse = [
+	{ label: "BYTE 1 / ID", bytes: "02", detail: "Dispositivo que respondeu.", tone: "programacao" },
+	{ label: "BYTE 2 / FUNÇÃO", bytes: "03", detail: "Resposta à leitura de holding registers.", tone: "experimentacao" },
+	{ label: "BYTE 3 / CONTAGEM", bytes: "02", detail: "Dois bytes de dados, ou seja, um registrador.", tone: "automacao" },
+	{ label: "BYTES 4–5 / DADO", bytes: "02 93", detail: "Byte alto 02 e byte baixo 93: 0x0293, ou 659.", tone: "eletronica", highlight: true },
+	{ label: "BYTES 6–7 / CRC16", bytes: "BD 49", detail: "CRC dos cinco bytes anteriores, baixo antes do alto.", tone: "programacao" },
+];
+const writeRequest = [
+	{ label: "BYTE 1 / ID", bytes: "01", detail: "Dispositivo de exemplo.", reply: "ID do dispositivo que respondeu.", tone: "programacao" },
+	{ label: "BYTE 2 / FUNÇÃO", bytes: "06", detail: "Escrever um único holding register.", reply: "Repete a função do pedido em caso de sucesso.", tone: "experimentacao" },
+	{ label: "BYTES 3–4 / ENDEREÇO", bytes: "00 01", detail: "Byte alto 00 e baixo 01: offset 1.", reply: "Repete o endereço do registrador escrito.", tone: "eletronica" },
+	{ label: "BYTES 5–6 / VALOR", bytes: "00 2A", detail: "Byte alto 00 e baixo 2A: valor 42, não uma quantidade.", reply: "Repete o valor escrito: 42 em decimal.", tone: "automacao" },
+	{ label: "BYTES 7–8 / CRC16", bytes: "59 D5", detail: "CRC dos seis bytes anteriores: baixo 59 e alto D5.", reply: "Mesmo CRC: os seis bytes anteriores são idênticos.", tone: "programacao" },
+];
+const writeResponse = writeRequest.map(({ reply, ...field }) => ({ ...field, detail: reply }));
+const crcCode = `uint16_t crc16_modbus(const uint8_t *buf, uint8_t len) {
+  uint16_t crc = 0xFFFF;
+  for (uint8_t pos = 0; pos < len; pos++) {
+    crc ^= (uint16_t)buf[pos];
+    for (uint8_t i = 8; i != 0; i--) {
+      if ((crc & 0x0001) != 0) {
+        crc >>= 1;
+        crc ^= 0xA001;
+      } else {
+        crc >>= 1;
+      }
+    }
+  }
+  return crc;
+}`;
+const related = ["sniffer-rs485", "grid-export-lab", "modbus-rtu-slave-sim", "inverter-modbus-lib"]
+	.map(getProject)
+	.filter((entry): entry is NonNullable<typeof entry> & { path: string } => Boolean(entry?.path));
+---
+
+<BaseLayout title={`${project.title} — Galeria -2048`} description={page.subtitle} image={project.image} keywords={project.keywords}>
+	<SiteHeader accent="var(--programacao)" />
+	<main class="project-page">
+		<section class="hero">
+			<div>
+				<p class="signal">{project.type} / {project.number} / {page.code} / 2025–2026</p>
+				<h1>{project.title}</h1>
+				<p class="subtitle">{page.subtitle}</p>
+				<div class="tags">{project.categories.map(({ label, tone }) => <Tag label={label} tone={tone} />)}</div>
+				<StatusGrid items={page.status} />
+				<a class="repo-link" href={repository}>CÓDIGO NO GITHUB ↗</a>
+			</div>
+			<EditorialImage
+				src={project.image}
+				alt="Notebook, uBox e adaptador serial apoiados sobre uma bobina de cabos no local dos testes"
+				caption="26/09/2025 — naquele dia, meu laboratório era uma bobina de cabos sobre um palete com vidros. Foi ali, perto dos inversores, que começaram os testes."
+				fit="contain"
+				eager
+			/>
+		</section>
+
+		<section class="chapter">
+			<p class="signal">01 / O OBJETIVO ERA OUTRO</p>
+			<div>
+				<h2>Antes do controle, a conversa.</h2>
+				<p>Eu queria programar a injeção de energia solar por horário. Era uma demanda recorrente, pois algumas companhias já exigiam dos integradores um sistema para limitar a injeção de energia elétrica na rede. O sistema precisava controlar os inversores fotovoltaicos de maneira eficiente e segura.</p>
+				<p>Eu já tinha um <a href="/artigos/solarview-ubox/">SolarView uBox</a> com ESP-07 e interface RS485 para reaproveitar. O que faltava era entender como pedir um dado ao equipamento, conferir a resposta e, mais adiante, alterar um parâmetro. Foi esse trabalho que acabou virando um projeto à parte.</p>
+				<div class="chat-capture">
+					<EditorialImage src={`${media}/objetivo-inicial.webp`} alt="Pergunta sobre reaproveitar o datalogger e início da resposta da IA, que identifica o ESP-07 como um módulo ESP8266 compatível com o core Arduino" caption="A ideia era controlar a exportação por horário. A conversa começou por algo mais imediato: como regravar o ESP-07 pela Arduino IDE." fit="contain" variant="detail" />
+				</div>
+				<p>A fonte original deste uBox estava estragada. Tirei a fonte e passei a alimentar a placa pelo mesmo ponto que usava para gravar o firmware e me comunicar com ela. Com o ESP-07 de volta à bancada, deixei o agendamento para depois: antes de mandar o inversor fazer alguma coisa, eu queria que ele me respondesse.</p>
+				<EditorialImage src={`${media}/prototipo-ubox.webp`} alt="SolarView uBox modificado, com a tampa deslocada e parte da placa visível" caption="06/10/2025 — o protótipo era o próprio SolarView uBox, modificado para receber alimentação pelo mesmo ponto que eu usava para gravar o firmware e me comunicar com a placa." fit="contain" variant="detail" />
+			</div>
+		</section>
+
+		<section class="chapter">
+			<p class="signal">02 / COMEÇAR PELA BIBLIOTECA</p>
+			<div>
+				<h2>Primeiro, um <code>readHreg()</code>.</h2>
+				<p>Para não começar montando o protocolo inteiro, fui atrás de uma biblioteca. O Manus me apontou a <a href="https://github.com/emelianov/modbus-esp8266">modbus-esp8266, do Alexander Emelianov</a>.</p>
+				<div class="chat-capture">
+					<EditorialImage src={`${media}/descoberta-biblioteca.webp`} alt="Pergunta sobre Modbus RTU no ESP8266 e resposta do Manus indicando a biblioteca modbus-esp8266 de Alexander Emelianov" caption="26/09/2025 — na conversa, o Manus indicou a biblioteca do Emelianov. Foi com ela que fiz o primeiro sketch preservado." fit="contain" variant="detail" />
+				</div>
+				<p>No primeiro sketch, eu passava o ID do equipamento, o endereço, quantos registradores queria ler e onde guardar o resultado.</p>
+				<pre tabindex="0" aria-label="Parâmetros e chamada de leitura no primeiro sketch"><code>{firstReadCode}</code></pre>
+				<p class="note">Trecho adaptado do <a href={sketches.first}>primeiro sketch</a>, com ID e endereço de exemplo.</p>
+				<p>Em Modbus RTU, o retorno imediato de <code>readHreg()</code> só indicava se o pedido tinha sido iniciado. O resultado chegava depois. Só que, de tanto o chat falar em <em>callback</em>, tive de parar e perguntar: o que é isso? Era o “me avisa quando terminar”: eu entregava a função <code>read_cb</code> junto com o pedido. O <code>loop()</code> continuava chamando <code>mb.task()</code> para tocar a comunicação, e a biblioteca chamava <code>read_cb</code> quando a transação terminava, com resposta ou erro. Escrever a chamada era só metade da conversa. Restava descobrir por que o inversor não estava respondendo como eu esperava.</p>
+				<div class="chat-capture">
+					<EditorialImage src={`${media}/conversa-callback.webp`} alt="Pergunta sobre o que é um callback; a resposta compara a função a pedir que alguém ligue quando terminar um serviço" caption="De tanto a palavra aparecer nas respostas, uma hora eu fui perguntar o que ela queria dizer." fit="contain" variant="detail" />
+				</div>
+			</div>
+		</section>
+
+		<section class="chapter">
+			<p class="signal">03 / UMA SERIAL JÁ ESTAVA OCUPADA</p>
+			<div>
+				<h2>O esquema já tinha decidido.</h2>
+				<p>Para depurar um programa, eu usava a comunicação serial para descobrir o que o microcontrolador estava “pensando”, ou seja, em que ponto do código ele estava. Muitos dos sketches que eu pedia à IA usavam <code>Serial.print()</code> para mostrar isso.</p>
+				<p>Mas a placa com o ESP-07 já estava pronta: a UART0 era usada para gravar o firmware e se comunicar pelo RS485. Naquela placa, não havia outra porta serial de hardware disponível para a depuração. Como imprimir o que estava acontecendo sem mandar texto para o inversor? O primeiro sketch ainda misturava as duas coisas na mesma <code>Serial</code>. Nos testes manuais, separei as funções: UART0 para os quadros Modbus e <code>SoftwareSerial</code> para o computador. Assim eu podia olhar os bytes sem jogar mensagens de log no barramento.</p>
+				<dl class="facts">
+					<div><dt>UART0 / SERIAL</dt><dd>Quadros Modbus RTU pelo transceptor RS485.</dd></div>
+					<div><dt>SOFTWARESERIAL</dt><dd>Registro de TX, RX e mensagens para o PC.</dd></div>
+				</dl>
+				<div class="chat-capture">
+					<EditorialImage src={`${media}/serial-e-debug.webp`} alt="Mensagem esclarecendo que o hardware já estava pronto, seguida de uma tabela da IA com SoftwareSerial para o PC e UART0 para o RS485" caption="Trechos da conversa: depois que expliquei que a placa já estava pronta, o chat separou a depuração no PC dos quadros no RS485… por algumas horas. De tempos em tempos, eu precisava lembrar que a placa não ia mudar." fit="contain" variant="detail" />
+				</div>
+				<p>Num dos testes, passei horas sem entender por que o ESP-07 travava. Quando eu ligava a placa, o LED azul piscava, apagava e o ESP reiniciava. Li o código de cabo a rabo mais de uma vez, fui removendo trechos e acompanhei as mensagens da <code>SoftwareSerial</code> para ver em que ponto o programa parava. No fim, faltava chamar <code>Serial.begin()</code>. Depois de tanto procurar, o erro era tão banal que precisei sair da sala para respirar.</p>
+				<div class="chat-capture">
+					<EditorialImage src={`${media}/conversa-serial-begin.webp`} alt="Conversa sobre a linha rtu.begin e a descoberta de que faltava inicializar a UART com Serial.begin" caption="Até os erros mais simples nos ensinam coisas essenciais." fit="contain" variant="detail" />
+				</div>
+			</div>
+		</section>
+
+		<section class="chapter" id="quadro-rtu">
+			<p class="signal">04 / DESCER ATÉ OS BYTES</p>
+			<div>
+				<h2>A chamada virou oito bytes.</h2>
+				<p>Enquanto eu tentava fazer meus próprios pedidos, o <a href="/projetos/sniffer-rs485/">sniffer RS485</a> me deu outro jeito de investigar: escutar o que já circulava, sem transmitir nada. No dump aparecia <code>17</code> onde eu esperava reconhecer uma função. Eu nem sabia o que era aquilo. Era <code>0x17</code> — função 23 em decimal — para leitura e escrita de vários registradores na mesma transação.</p>
+				<figure class="dump">
+					<figcaption class="note">TRECHOS DO DUMP / FUNÇÃO E ENDEREÇO NO CABEÇALHO</figcaption>
+					<pre tabindex="0" aria-label="Trechos em hexadecimal do tráfego capturado"><code>02 <mark>17</mark> <mark>C3 4F</mark> 00 09 C3 4F 00 0A 14 …
+02 17 12 18 00 03 E8 00 38 D8 36 5E 47 …</code></pre>
+					<p class="note">Na primeira linha, só o cabeçalho do pedido; os valores de escrita e o CRC ficaram de fora. A segunda é um trecho do fluxo, não um quadro identificado.</p>
+				</figure>
+				<div class="chat-capture">
+					<EditorialImage src={`${media}/conversa-endereco-fora-do-mapa.webp`} alt="Pergunta ao chat sobre o endereço 0xC34F, escrito também como 49999 em decimal, que não constava no manual Modbus da WEG" caption="A dúvida surgiu ao comparar o dump do barramento reservado dos inversores com o mapa público." fit="contain" variant="detail" />
+				</div>
+				<p>Além da função que eu não conhecia, o primeiro endereço, <code>0xC34F</code>, não aparecia no manual Modbus que eu estava usando. Eu estava escutando uma das interfaces reservadas do inversor, não a porta à qual aquele mapa se referia. Entender essa diferença me deu um caminho para testar na interface pública sem tratar o tráfego que eu tinha capturado como se fosse o mapa dela.</p>
+				<p>No <a href={sketches.manual}><code>modbus_manual</code></a>, eu podia comparar os bytes observados com os que eu mesmo montava. Em vez de deixar a biblioteca construir o pedido, escrevi os campos de uma leitura FC03 e passei a imprimir o que enviava (TX) e o que recebia (RX). Um exemplo desse formato é o pedido de março de 2026 abaixo, reconstituído a partir da consulta no navegador.</p>
+				<ModbusFrame caption="REQUISIÇÃO FC03 / BYTES EM HEXADECIMAL" fields={readRequest} />
+				<p>Separar os quadros também virou parte do teste. Eu calculava o CRC sobre os bytes anteriores e comparava com os dois últimos. No RTU, o CRC vai com o byte menos significativo primeiro; no endereço e na quantidade desse pedido, a ordem é a inversa.</p>
+				<pre aria-label="Implementação histórica do CRC16 Modbus"><code>{crcCode}</code></pre>
+				<p class="note">Ver a <a href={`${sketches.manual}#L11`}>função de CRC16 no sketch</a>.</p>
+				<figure class="serial-video">
+					<video controls playsinline preload="none" poster={`${media}/registro-serial-fc03-poster.webp`} aria-label="Registro dos pedidos FC03 no monitor serial">
+						<source src={`${media}/registro-serial-fc03.mp4`} type="video/mp4" />
+						Seu navegador não consegue reproduzir este vídeo.
+					</video>
+					<figcaption class="note">29/09/2025 — no monitor serial da Arduino IDE, os pedidos FC03 aparecem em hexadecimal junto com os bytes recebidos. Registro sem áudio.</figcaption>
+				</figure>
+				<p>Naquele teste, eu ainda não conseguia ler a resposta de mais da metade das consultas. Eu não sabia se o problema estava no tempo de espera, em alguma distorção no barramento ou em outra parte da montagem. Levei um tempo para acertar a comunicação, mas ali já começavam a nascer outros projetos.</p>
+			</div>
+		</section>
+
+		<section class="chapter">
+			<p class="signal">05 / O TRANSCEPTOR TAMBÉM TEM TEMPO</p>
+			<div>
+				<h2>O último bit ainda importa.</h2>
+				<p>Com o pedido montado, ainda havia respostas que não chegavam. Será que o inversor recebia meu pedido inteiro? Eu precisava entender quando parar de transmitir e voltar à escuta.</p>
+				<p>No RS485 half-duplex, as duas coisas usam o mesmo par de fios. No sketch, eu colocava o transceptor em transmissão, enviava os bytes e chamava <code>Serial.flush()</code>. No <a href={`${sketches.reads}#L71`}>sketch de requisições</a>, ainda acrescentei um atraso calculado pela duração do quadro. Aí fui perguntar ao chat se não estava esperando duas vezes pela mesma coisa.</p>
+				<p>Era como conversar por walkie-talkie: “Shaolin na escuta. Você pode me ouvir? Câmbio.”</p>
+				<div class="chat-capture">
+					<EditorialImage src={`${media}/pergunta-sobre-flush.webp`} alt="Pergunta sobre Serial.flush, duração do quadro e momento de voltar a receber no RS485" caption="A dúvida na hora de escrever o código: quanto do tempo de transmissão o flush já cobria?" fit="contain" variant="detail" />
+				</div>
+				<p>No <a href="https://github.com/esp8266/Arduino/blob/master/cores/esp8266/HardwareSerial.cpp">core Arduino para ESP8266</a>, o <code>flush()</code> espera a fila de transmissão esvaziar e dá tempo para o último caractere sair. Não precisava esperar a duração de todo o quadro de novo como regra. Se eu voltasse a receber cedo demais, podia cortar o fim do pedido; se demorasse, podia perder o começo da resposta. Saber montar os bytes era uma coisa; dar tempo de eles passarem pelo fio era outra.</p>
+			</div>
+		</section>
+
+		<section class="chapter" id="leitura-registrador">
+			<p class="signal">06 / LER UM REGISTRADOR REAL</p>
+			<div>
+				<h2>O inversor respondeu.</h2>
+				<p>Na porta pública de um inversor WEG, a primeira consulta FC03 funcionava, mas as seguintes pareciam não receber nada. No diário de teste, associei o problema ao temporizador: se o início da espera fica em uma variável local <code>static</code>, <code>millis()</code> só inicializa esse valor na primeira chamada. Nas seguintes, a contagem pode começar com o prazo já vencido.</p>
+				<pre class="timeout-code" aria-label="Trecho do primeiro código de recepção, com static destacado"><code>{`void receiveResponse (){
+  uint8_t buffer[64];
+  uint8_t idx = 0;
+  `}<mark>static</mark>{` long start = millis();
+  // ...
+}`}</code></pre>
+				<p>Na <a href={`${sketches.manual}#L80`}>cópia preservada do sketch</a>, <code>start</code> é declarado, mas não é usado para medir a espera. Já na <a href={`${sketches.reads}#L82`}>versão posterior</a>, a rotina registra o valor de <code>millis()</code> a cada chamada e usa essa marca de tempo para limitar a espera. O diário registra que, depois de reiniciar a contagem a cada pedido, voltei a ver respostas com CRC válido.</p>
+				<p>A pergunta era: qual é a potência ativa agora? Reconstituí o pedido a partir dos parâmetros do sketch <a href={sketches.reads}><code>4.requisicao</code></a> e recalculei o CRC. A resposta vem do diário de teste.</p>
+				<ModbusFrame caption="PEDIDO FC03 / RECONSTITUÍDO A PARTIR DO SKETCH" fields={powerReadRequest} />
+				<ModbusFrame caption="RESPOSTA FC03 / QUADRO COMPLETO REGISTRADO NO DIÁRIO DE TESTE" fields={readResponse} />
+				<p>O terceiro byte, <code>02</code>, diz que vêm dois bytes de dados. Os dois seguintes, <code>02 93</code>, juntos valem <code>0x0293</code>, ou <code>659</code> em decimal. Pela escala do manual, cada unidade valia 100 W: a leitura dava 65,9 kW de potência ativa, um valor que batia com a condição do inversor. Foi aí que aqueles bytes deixaram de ser só uma prova de comunicação. Agora eu conseguia conferir uma grandeza real — e queria saber se também conseguiria alterar um parâmetro.</p>
+			</div>
+		</section>
+
+		<section class="chapter">
+			<p class="signal">07 / NÃO BASTAVA LER</p>
+			<div>
+				<h2>Do monitoramento à escrita.</h2>
+				<p>Depois de conferir uma leitura no inversor, passei da pergunta “quanto está gerando?” para “consigo mudar um parâmetro?”. O pedido ainda tinha oito bytes, como em <a href="#quadro-rtu">FC03</a>. O segundo byte virou <code>06</code> e, no lugar da quantidade, os bytes 5 e 6 passaram a carregar o valor a gravar. A função escreve um único registrador, então o pedido não precisa dizer quantos.</p>
+				<ModbusFrame caption="REQUISIÇÃO FC06 / EXEMPLO FICTÍCIO DE BANCADA EM HEXADECIMAL" fields={writeRequest} />
+				<p>Depois de gravar o registrador, o dispositivo devolve a função, o endereço e o valor que recebeu. Esse eco é a <a href="https://www.modbus.org/file/secure/modbusprotocolspecification.pdf#page=19">resposta normal da FC06, descrita na seção 6.6 da especificação Modbus</a>. Como o ID também é o mesmo, os oito bytes do quadro RTU ficam iguais aos do pedido.</p>
+				<ModbusFrame caption="RESPOSTA FC06 / ECO DO MESMO EXEMPLO FICTÍCIO" fields={writeResponse} />
+				<p>No <a href={sketches.write}>sketch do ensaio de escrita</a>, eu fazia a escrita no início e depois voltava a ler. Receber o eco era uma coisa; conferir o parâmetro no aplicativo do inversor era uma segunda checagem. E essa distinção só faz sentido se eu souber que escolhi o endereço certo: o número impresso no manual nem sempre entra no quadro do jeito que está.</p>
+			</div>
+		</section>
+
+		<section class="chapter" id="enderecos-modbus">
+			<p class="signal">08 / NOTAÇÃO DE ENDEREÇOS</p>
+			<div>
+				<h2>Hexadecimal não resolve o deslocamento.</h2>
+				<p>Eu misturava duas contas diferentes. Uma é decidir se estou falando da <strong>posição numa lista</strong> ou do <strong>deslocamento a partir do começo</strong>. A outra é escrever esse número em decimal ou hexadecimal. Trocar de base numérica não corrige a contagem.</p>
+				<p>Em uma lista <strong>1-based</strong>, o primeiro item é o número 1. O espaço de endereços do quadro Modbus é <strong>0-based</strong>: começa em 0, mesmo que o equipamento só use uma faixa mais alta. Alguns manuais usam a referência <code>4xxxx</code> para identificar <em>holding registers</em>. Na convenção da tabela abaixo, subtrair <code>40001</code> dá o endereço que vai no quadro. O <code>4</code> da referência é um rótulo: a própria função, como FC03 ou FC06, já indica a operação sobre <em>holding registers</em>.</p>
+				<table class="address-table">
+					<caption>O MESMO REGISTRADOR EM TRÊS NOTAÇÕES</caption>
+					<thead><tr><th scope="col">Posição (1-based)</th><th scope="col">Referência 4xxxx</th><th scope="col">Endereço no quadro (0-based)</th></tr></thead>
+					<tbody>
+						<tr><th scope="row">1º</th><td><code>40001</code></td><td><code>0</code> / <code>0x0000</code></td></tr>
+						<tr><th scope="row">2º</th><td><code>40002</code></td><td><code>1</code> / <code>0x0001</code></td></tr>
+						<tr><th scope="row">44º</th><td><code>40044</code></td><td><code>43</code> / <code>0x002B</code></td></tr>
+					</tbody>
+				</table>
+				<p>Por exemplo: se uma tabela diz “registrador 43” contando a partir de 1, envio o endereço 42, ou <code>0x002A</code>. Se ela já diz “endereço 43” contando a partir de 0, envio 43, ou <code>0x002B</code>, sem subtrair nada. É por isso que eu precisava entender a convenção do manual antes de fazer a conversão.</p>
+				<p><strong>Um endereço na faixa dos 40 mil também pode ir direto no quadro.</strong> Na <a href="#leitura-registrador">leitura de potência da seção 06</a>, o sketch usava <code>40079</code> como endereço e enviava <code>9C 8F</code>. Se o mesmo número fosse uma referência da tabela acima, o endereço seria <code>40079 − 40001 = 78</code>, ou <code>00 4E</code>: outro pedido. Não é o primeiro dígito que decide; é o que o fabricante documenta como endereço. O <a href="https://sunspec.org/wp-content/uploads/2025/01/SunSpec-Device-Information-Model-Specificiation-V1-2-1.pdf">SunSpec (§ 6.1.1)</a>, por exemplo, prevê mapas que começam no endereço literal <code>40000</code>.</p>
+				<p>Já uma referência de <a href="https://www.se.com/nl/en/faqs/FA401679/">seis dígitos, como <code>400001</code></a>, pode aparecer no manual ou na interface de um cliente. Nessa convenção, <code>400001</code> representa o endereço <code>0</code>. O número inteiro não vai no quadro: o <a href="https://www.modbus.org/file/secure/modbusprotocolspecification.pdf#page=15">campo de endereço tem 16 bits</a> e só comporta valores de <code>0</code> a <code>65535</code>.</p>
+			</div>
+		</section>
+
+		<section class="chapter" id="diagnostico-modbus">
+			<p class="signal">09 / QUANDO O SKETCH QUIS VIRAR SISTEMA</p>
+			<div>
+				<h2>Uma falha deixou de ser só “não respondeu”.</h2>
+				<p>Depois de encontrar uma porta errada, um prazo que não reiniciava e endereços escritos de jeitos diferentes, “não respondeu” já não dizia muito. No rascunho <a href={sketches.queue}><code>writer_modbus_reserved</code></a>, a rotina <a href={`${sketches.queue}#L187`}><code>receiveResponse()</code></a> devolvia um status para o próprio programa e mandava os detalhes para a serial de depuração. O status não era uma nova mensagem para o inversor, nem era o valor do registrador.</p>
+				<p>O ESP juntava os bytes durante a janela de espera. Primeiro via se tinha algo para analisar e se o quadro tinha tamanho mínimo. Depois calculava o CRC e comparava com o recebido. Só então conferia quem respondeu e o que veio na resposta:</p>
+				<table class="diagnostic-table">
+					<caption>COMO O SKETCH CLASSIFICAVA A RESPOSTA</caption>
+					<thead><tr><th scope="col">O que o ESP encontrou</th><th scope="col">Status devolvido ao programa</th></tr></thead>
+					<tbody>
+						<tr><th scope="row">Nenhum byte aproveitado até o fim da espera</th><td><code>RESPONSE_NO_RESPONSE</code></td></tr>
+						<tr><th scope="row">Menos de cinco bytes no buffer</th><td><code>RESPONSE_TOO_SHORT</code></td></tr>
+						<tr><th scope="row">CRC recebido diferente do calculado</th><td><code>RESPONSE_CRC_ERROR</code></td></tr>
+						<tr><th scope="row">ID diferente do que eu tinha consultado</th><td><code>RESPONSE_UNEXPECTED_ID</code></td></tr>
+						<tr><th scope="row">O equipamento respondeu com uma exceção</th><td><code>RESPONSE_EXCEPTION</code>; o código da exceção aparecia no log.</td></tr>
+						<tr><th scope="row">Outra função ou contagem de dados diferente da pedida</th><td><code>RESPONSE_UNEXPECTED_FUNCTION</code> ou <code>RESPONSE_UNEXPECTED_BYTE_COUNT</code>.</td></tr>
+						<tr><th scope="row">Passou pelas verificações do rascunho</th><td><code>RESPONSE_SUCCESS</code></td></tr>
+					</tbody>
+				</table>
+				<p>Na leitura, os dados iam para o buffer de registradores, separado do status. Na escrita, a rotina mostrava no log o endereço e o valor que vieram no eco, sem compará-los com os do pedido. As rotinas de novas tentativas registravam o status de cada falha e devolviam apenas <code>true</code> ou <code>false</code> no final. Cheguei a esboçar uma fila de pedidos, mas o programa ainda não usava essas funções. As rotinas de tentativa continuavam esperando pela resposta antes de seguir.</p>
+				<p>A biblioteca do Emelianov já devolvia parte desses diagnósticos. No <a href={`${sketches.first}#L28`}>primeiro sketch</a>, um zero no retorno imediato de <code>readHreg()</code> indicava que o pedido não tinha sido iniciado. O resultado da comunicação chegava depois, no parâmetro <code>event</code> de <code>read_cb()</code>. O <a href="https://github.com/emelianov/modbus-esp8266/blob/master/src/Modbus.h#L115-L135"><code>Modbus::ResultCode</code></a> documenta, por exemplo, <code>0xE4</code> para timeout, <code>0xE2</code> para tamanho de dados divergente e <code>0x02</code> para uma exceção de endereço inválido devolvida pelo equipamento.</p>
+				<p>A diferença estava no que eu conseguia ver durante o teste: a <a href="https://github.com/emelianov/modbus-esp8266/blob/master/src/ModbusRTU.cpp#L256-L306">biblioteca descarta quadros com CRC inválido</a>. Se a espera acabar sem outra resposta válida, o callback acusa timeout. Na rotina manual, eu conseguia registrar o CRC inválido como um caso separado.</p>
+				<p>Esse rascunho começava a juntar comunicação e controle. Em paralelo, no <a href={sketches.power}><code>leitura_reg_pot</code></a>, deixei o código de escrita no arquivo, mas com as chamadas comentadas. Assim eu podia voltar a medir sem mudar nada no inversor. Eram dois caminhos para perguntas diferentes, não duas versões que precisavam chegar ao mesmo lugar.</p>
+			</div>
+		</section>
+
+		<section class="chapter" id="leitor-web">
+			<p class="signal">10 / UM LEITOR NO NAVEGADOR</p>
+			<div>
+				<h2>A pergunta foi a mesma. As respostas, não.</h2>
+				<p>Em março de 2026, eu tinha dois medidores CHINT DTSU666 com comportamentos diferentes: um funcionava com certos modelos de inversor, o outro não. Nos dumps dos testes, vi que o inversor sempre pedia o conteúdo do registrador <code>0x002B</code>. Eu queria fazer a mesma pergunta aos dois medidores e comparar o que vinha de volta.</p>
+				<p>Para esse <a href={sketches.web}>leitor</a>, voltei à biblioteca do Emelianov. Depois de montar quadros, conferir o CRC e acertar a troca de direção no RS485, eu já sabia o que estava deixando por conta daquele <code>readHreg()</code>. Não precisava carregar junto a escrita nem a fila do rascunho. O endereço e a quantidade, antes fixos no sketch, viraram dois campos numa página servida pelo ESP8266.</p>
+				<p>Assim, eu podia repetir a consulta no outro medidor sem recompilar nada. Para o endereço inicial, digitar <code>43</code> ou <code>0x002B</code> dava no mesmo pedido Modbus. O leitor repetia a consulta e devolvia o valor bruto ao navegador por WebSocket, em decimal e em hexadecimal.</p>
+				<p>Em 09/03/2026, li um único registrador no endereço <code>0x002B</code> em cada medidor. Um devolveu <code>21320 / 0x5348</code>; o outro, <code>0 / 0x0000</code>. Na combinação que eu estava testando, o inversor não funcionava com o medidor quando a resposta era diferente de <code>0x5348</code>. O leitor deixou clara a diferença entre os dois; entender por que respondiam assim virou outra investigação.</p>
+				<div class="media-pair readings">
+					<EditorialImage src={`${media}/chint-resposta-5348.webp`} alt="Interface do leitor, com endereço 0x002B e quantidade 1, exibindo 21320 em decimal e 0x5348 em hexadecimal" caption="CHINT — resposta 21320 / 0x5348." fit="contain" variant="detail" />
+					<EditorialImage src={`${media}/chint-resposta-0000.webp`} alt="Interface do leitor, com endereço 0x002B e quantidade 1, exibindo zero em decimal e 0x0000 em hexadecimal" caption="Outro CHINT — resposta 0 / 0x0000." fit="contain" variant="detail" />
+				</div>
+				<h3 class="note">Resumo técnico dos ensaios do projeto</h3>
+				<p class="note">O leitor no navegador só faz leituras com FC03. A escrita com FC06 ficou nos outros ensaios.</p>
+				<StatusGrid items={page.specifications.map(({ name, value }) => ({ label: name, value }))} />
+			</div>
+		</section>
+
+		<section class="chapter">
+			<p class="signal">11 / CHECKPOINT</p>
+			<div>
+				<h2>Eu já sabia o que perguntar ao barramento.</h2>
+				<p>Entrei querendo programar a injeção de energia solar por horário e saí sabendo que só a conversa com o equipamento já era um projeto inteiro. Agora eu conseguia montar o pedido, ler, escrever e entender melhor por que uma tentativa falhava. O leitor no navegador era uma boa maneira de fechar essa etapa: não precisava transformar os sketches num firmware definitivo para aproveitar o que tinha aprendido. As perguntas maiores ganharam cadernos próprios.</p>
+				<p>Eu me divertia com isso. Quando um teste respondia à pergunta do dia, eu guardava o sketch e já tinha um motivo para abrir outro.</p>
+				<p class="note">Veja a <a href={repositoryFile("docs/cronologia.md")}>cronologia dos sketches no GitHub</a> para comparar os nomes históricos e as versões preservadas.</p>
+				<ol class="timeline">
+					{page.timeline.map(({ year, title, text }) => <li><span class="signal">{year}</span><h3>{title}</h3><p>{text}</p></li>)}
+				</ol>
+			</div>
+		</section>
+
+		<section class="chapter">
+			<p class="signal">12 / O QUE VEIO DEPOIS</p>
+			<div>
+				<h2>Outras perguntas da mesma bancada.</h2>
+				<p>Observar um barramento sem transmitir, simular respostas, reunir mapas e investigar controle de exportação renderam histórias próprias.</p>
+				<ul class="related">
+					{related.map(entry => <li><a href={entry.path}>{entry.title}</a></li>)}
+				</ul>
+				<p class="note">Referência de protocolo: <a href="https://www.modbus.org/modbus-specifications">especificações de aplicação e linha serial da Modbus Organization</a>.</p>
+			</div>
+		</section>
+	</main>
+	<ImageLightbox />
+	<SiteFooter />
+</BaseLayout>
+
+<style>
+	.project-page { width: min(1180px, calc(100% - 48px)); margin: auto; }
+	.hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: center; gap: 55px; padding: 92px 0 75px; }
+	.hero :global(figure) { margin: 0; }
+	.signal, .note, dt, .related, .address-table, .diagnostic-table { font: .875rem/1.55 monospace; }
+	.signal { color: var(--programacao); letter-spacing: .045em; }
+	h1 { margin: 18px 0 24px; font: 800 clamp(3rem, 6.65vw, 6.1rem)/.88 Arial, sans-serif; letter-spacing: -.065em; text-wrap: balance; }
+	.subtitle { font: clamp(1.15rem, 2vw, 1.375rem)/1.65 Georgia, serif; color: var(--muted); }
+	.tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 32px; }
+	.repo-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 20px; padding: 0 12px; border: 1px solid var(--line); font: .875rem/1.5 monospace; }
+	.chapter { display: grid; grid-template-columns: minmax(150px, .26fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 64px); padding: 74px 0; border-top: 1px solid var(--line); }
+	.chapter > .signal { margin: 6px 0 0; }
+	h2 { margin: 0 0 24px; max-width: 20ch; font: 800 clamp(2.2rem, 5.3vw, 4.2rem)/.97 Arial, sans-serif; letter-spacing: -.048em; text-wrap: balance; }
+	.chapter p:not(.signal, .note) { max-width: 760px; font: 1.125rem/1.8 Georgia, serif; color: var(--muted); }
+	h2 code { font-size: .8em; }
+	a { color: var(--programacao); text-underline-offset: .2em; }
+	a:focus-visible { outline: 2px solid var(--white-neon); outline-offset: 4px; }
+	pre { overflow-x: auto; margin: 24px 0; padding: 18px; border: 1px solid var(--line); background: var(--surface); font: .875rem/1.65 monospace; }
+	pre:focus-within { outline: 2px solid var(--white-neon); }
+	.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 24px 0; padding: 0; border: 1px solid var(--line); background: var(--line); }
+	.facts div { padding: 16px; background: var(--surface); }
+	dd { margin: 6px 0 0; color: var(--muted); line-height: 1.5; }
+	.dump { max-width: 760px; margin: 24px 0; }
+	.dump pre { margin: 8px 0; }
+	.dump pre:focus-visible { outline: 2px solid var(--programacao); outline-offset: 3px; }
+	.dump mark, .timeout-code mark { color: var(--bg); background: var(--eletronica); }
+	.serial-video { max-width: 24rem; margin: 32px 0 0; }
+	.serial-video video { display: block; width: 100%; aspect-ratio: 478 / 850; border: 1px solid var(--line); background: var(--surface); }
+	.serial-video figcaption { margin-top: 10px; }
+	.address-table, .diagnostic-table { width: 100%; max-width: 760px; margin: 28px 0; border-collapse: collapse; table-layout: fixed; background: var(--surface); }
+	:is(.address-table, .diagnostic-table) caption { margin-bottom: 8px; color: var(--muted); text-align: left; }
+	:is(.address-table, .diagnostic-table) :is(th, td) { padding: clamp(6px, 1.25vw, 14px); border: 1px solid var(--line); text-align: left; overflow-wrap: anywhere; }
+	:is(.address-table, .diagnostic-table) thead th { color: var(--programacao); }
+	.diagnostic-table thead th:first-child { width: 42%; }
+	.diagnostic-table tbody th { font-weight: normal; }
+	.chat-capture { max-width: 800px; }
+	.chapter .chat-capture :global(.editorial-image__trigger img) { height: auto; }
+	.media-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+	.media-pair :global(figure) { margin: 24px 0 0; }
+	.readings { max-width: 800px; }
+	.note { color: var(--muted); }
+	.timeline { margin-top: 28px; padding: 0; list-style: none; }
+	.timeline li { padding: 18px 0; border-top: 1px solid var(--line); }
+	.timeline h3, .timeline p { margin: 6px 0 0; }
+	.related { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 0; list-style: none; }
+	.related a { display: flex; align-items: center; min-height: 44px; padding: 12px; border: 1px solid var(--line); background: var(--surface); }
+	@media (max-width: 800px) {
+		.hero, .chapter { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 56px 0; }
+	}
+	@media (max-width: 600px) {
+		.media-pair, .facts, .related { grid-template-columns: minmax(0, 1fr); }
+		h1 { font-size: clamp(2.75rem, 11.5vw, 4.25rem); }
+	}
+</style>

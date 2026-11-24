@@ -370,7 +370,7 @@ const relationsByKind = {
 						"font-size": 14,
 						"font-weight": 600,
 						"text-wrap": "wrap",
-						"text-max-width": 198,
+						"text-max-width": "198px",
 						"text-halign": "center",
 						"text-valign": "center",
 						"line-height": 1.35,
@@ -395,6 +395,7 @@ const relationsByKind = {
 						"curve-style": "straight",
 						"source-endpoint": "50% 0%",
 						"target-endpoint": "-50% 0%",
+						// @ts-expect-error O Cytoscape aceita "endpoints" em execução, mas ainda não o declara no tipo.
 						"edge-distances": "endpoints",
 						"line-color": "#00d9ff",
 						"target-arrow-color": "#00d9ff",

@@ -82,7 +82,7 @@ Uma aresta representa uma relação cadastrada em `relationships.ts`.
 
 O Astro calcula as posições em `src/data/monsterHubLayout.ts` e as entrega ao Cytoscape como layout `preset`. As relações de `parentesco` determinam a ordem obrigatória das colunas, da esquerda (ascendentes) para a direita (descendentes). Uma `influencia` pode orientar a posição nesse mesmo sentido se não criar um ciclo. `paralelo` não impõe uma direção nem muda o parentesco.
 
-Dentro de cada coluna, o cálculo reorganiza as linhas para reduzir primeiro os cruzamentos de parentesco, depois os desvios verticais. Uma aresta de parentesco entre colunas vizinhas é reta; quando atravessa várias colunas, passa por espaços reservados, sem atravessar caixas. Influências e paralelos usam curvas e podem cruzar outras linhas. O método reduz cruzamentos, sem garantir uma solução ótima em toda topologia.
+Depois de atribuir as colunas, o cálculo ordena os blocos familiares e ajusta a altura dos nós. Uma aresta de parentesco entre colunas vizinhas é reta; quando atravessa várias colunas, passa por espaços reservados, sem atravessar caixas. Influências e paralelos usam curvas e podem cruzar outras linhas. O método reduz cruzamentos, sem garantir uma solução ótima em toda topologia.
 
 O cálculo é determinístico: IDs resolvem empates e os componentes desconectados são distribuídos em fileiras previsíveis. Filtros, seleção, zoom e redimensionamento não recalculam o layout. As caixas ficam fixas para preservar as passagens reservadas; arrastar move o mapa. Selecionar um nó destaca sua vizinhança e atualiza o painel lateral.
 
@@ -177,6 +177,26 @@ paralelo
 ```
 
 As coordenadas não devem ser cadastradas manualmente por projeto.
+
+### Blocos familiares entre colunas
+
+Não centralize cada nó só para equilibrar a coluna. Os descendentes diretos de um mesmo ascendente devem formar uma faixa vertical contínua na coluna seguinte, mesmo que isso deixe áreas vazias. Uma convergência de parentescos pode justificar exceções: um descendente com vários ascendentes não é atribuído arbitrariamente a uma única família.
+
+O ascendente deve ficar próximo da mediana vertical dos descendentes diretos. Com um único descendente, prefira a mesma linha horizontal; com vários, procure distribuir o bloco aproximadamente acima e abaixo do ascendente. Se A está acima de B, os descendentes exclusivos de A devem ficar, de preferência, acima dos de B. Essa ordem vale entre cada par de colunas, não apenas na primeira geração.
+
+Depois de fixar as colunas, avalie a ordem vertical nesta sequência:
+
+1. Reduzir cruzamentos entre relações de parentesco.
+2. Manter as linhas de parentesco fora das caixas. Os corredores reservados garantem isso no layout; não se aceita uma rota que corte uma caixa.
+3. Evitar inversões entre famílias e nós de outro ramo no meio dos irmãos.
+4. Aproximar ascendentes e descendentes na vertical.
+5. Reduzir o comprimento das ligações de parentesco.
+
+O algoritmo faz passagens de ordenação pela mediana da esquerda para a direita e no sentido inverso, comparando propostas com e sem blocos. Também tenta fechar lacunas deslocando um grupo e ajustando as colunas vizinhas em conjunto. Depois de escolhida a ordem, ajusta a posição vertical pelas medianas sem reduzir o espaçamento mínimo nem trocar os nós de lugar. IDs estáveis resolvem empates. Influência e paralelo se adaptam à ordem genealógica e não deslocam famílias para encurtar suas linhas.
+
+Não preencha uma lacuna se isso separar irmãos, cruzar um ramo ou criar uma diagonal longa. Relações que pulam colunas passam por corredores horizontais reservados nas colunas intermediárias, ligados por segmentos entre colunas. Trajetos de uma mesma família podem compartilhar parte de um corredor se as arestas ainda puderem ser distinguidas.
+
+O resultado deve deixar visível **quem gerou quem** antes mesmo da leitura dos rótulos. Uma coluna assimétrica é preferível a uma família espalhada.
 
 ### Determinismo
 

@@ -38,7 +38,7 @@ npm install
 npm run dev
 ```
 
-O servidor de desenvolvimento do Astro fica disponível normalmente em `http://localhost:4321`.
+O servidor de desenvolvimento do Astro fica disponível normalmente em `http://localhost:2048`.
 
 ## Comandos
 

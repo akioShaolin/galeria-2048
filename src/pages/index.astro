@@ -749,7 +749,7 @@ import { workshop } from "../data/workshop";
 
 			.quick-links {
 				display: grid;
-				grid-template-columns: repeat(4, 1fr);
+				grid-template-columns: repeat(5, minmax(0, 1fr));
 
 				border-top: 1px solid var(--line);
 				border-bottom: 1px solid var(--line);
@@ -777,8 +777,14 @@ import { workshop } from "../data/workshop";
 				border-right: 0;
 			}
 
-			.quick:hover {
+			.quick:hover,
+			.quick:focus-visible {
 				background: rgba(255,255,255,.025);
+			}
+
+			.quick:focus-visible {
+				outline: 2px solid var(--programacao);
+				outline-offset: -2px;
 			}
 
 			.quick-icon {
@@ -824,6 +830,21 @@ import { workshop } from "../data/workshop";
 					overflow-x: auto;
 					justify-content: flex-start;
 					padding: 0 20px;
+				}
+			}
+
+			@media (950px < width <= 1180px) {
+				.quick-links {
+					grid-template-columns: repeat(4, minmax(0, 1fr));
+				}
+
+				.quick:nth-child(4) {
+					border-right: 0;
+				}
+
+				.quick:last-child {
+					grid-column: 1 / -1;
+					border-top: 1px solid var(--line);
 				}
 			}
 
@@ -1136,6 +1157,21 @@ import { workshop } from "../data/workshop";
 								Sobre a galeria,
 								o propósito e o criador.
 							</div>
+						</div>
+					</a>
+
+					<a class="quick" href="/monster-hub/">
+						<div class="quick-icon programacao" aria-hidden="true">
+							<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+								<path d="M6.5 11 16 6m-9.5 7L16 18" />
+								<circle cx="4.5" cy="12" r="2.5" />
+								<circle cx="18.5" cy="5" r="2.5" />
+								<circle cx="18.5" cy="19" r="2.5" />
+							</svg>
+						</div>
+						<div>
+							<div class="quick-title">MONSTER HUB</div>
+							<div class="quick-description">Conexões entre projetos, artigos e casos de oficina.</div>
 						</div>
 					</a>
 

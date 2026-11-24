@@ -2,33 +2,56 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
-import { areas, getAreaPath } from "../data/areas";
+import { areas, getAreaPath, type AreaSlug } from "../data/areas";
+import { articles } from "../data/articles";
+import { getProject } from "../data/projects";
 
-const areaDescriptions = [
-	"Desenvolvimento, diagnóstico, reparo e experimentação com circuitos eletrônicos, sistemas embarcados, interfaces e instrumentação.",
-	"Software como ferramenta para fazer hardware conversar, automatizar processos, coletar dados e transformar experimentos em sistemas utilizáveis.",
-	"CLPs, comunicação industrial, Modbus, RS485, redes e integração entre equipamentos que nem sempre foram projetados para trabalhar juntos.",
-	"Pedais, amplificadores, pré-amplificadores e experiências em que o circuito deixa de ser apenas medido e também passa a ser ouvido.",
-	"Instrumentos como projetos em evolução: elétrica, captadores, peças, restauração, modificações e experimentação.",
-	"Construir para entender. Medir, desmontar, testar hipóteses, errar, modificar e tentar novamente.",
-];
+const ed100Article = articles.find(({ id }) => id === "ed100-hardware-rs485");
+const solarViewArticle = articles.find(({ id }) => id === "solarview-ubox");
+const musicProjects = ["gtr-01", "pd-01", "pd-02"].map(getProject);
+
+const areaDescriptions: Record<AreaSlug, string> = {
+	eletronica: "Desenvolvimento, diagnóstico, reparo e experimentação com circuitos eletrônicos, sistemas embarcados, interfaces e instrumentação.",
+	programacao: "Software como ferramenta para fazer hardware conversar, automatizar processos, coletar dados e transformar experimentos em sistemas utilizáveis.",
+	automacao: "CLPs, comunicação industrial, Modbus, RS485, redes e integração entre equipamentos que nem sempre foram projetados para trabalhar juntos.",
+	audio: "Pedais, amplificadores, pré-amplificadores e experiências em que o circuito deixa de ser apenas medido e também passa a ser ouvido.",
+	luthieria: "Instrumentos como projetos em evolução: elétrica, captadores, peças, restauração, modificações e experimentação.",
+	experimentacao: "Construir para entender. Medir, desmontar, testar hipóteses, errar, modificar e tentar novamente.",
+	reparo: "Colocar equipamentos de volta em funcionamento, refazendo conexões ou trocando peças. Quando o conserto não compensa, ainda dá para aproveitar componentes.",
+	diagnostico: "Investigar por que algo deixou de funcionar: observar os sintomas, medir e testar hipóteses antes de sair trocando peças.",
+};
 
 const ferramentas = [
 	"ESP8266",
 	"ESP32",
 	"Arduino",
-	"C / C++",
+	"C/C++",
 	"Python",
 	"Modbus RTU",
 	"Modbus TCP",
 	"RS485",
+	"CAN",
+	"UART",
 	"CLP",
+	"Wireshark",
+	"WebSocket",
+	"HTTP",
 	"Git",
 	"GitHub",
 	"Astro",
+	"Linux",
 	"Osciloscópio",
+	"Gerber",
+	"PCB",
 	"Eletrônica analógica",
+	"Eletrônica de potência",
 	"Sistemas embarcados",
+	"Engenharia reversa",
+	"Diagnóstico eletrônico",
+	"Instrumentação",
+	"Fotovoltaico",
+	"Mobilidade elétrica",
+	"BMS",
 ];
 ---
 
@@ -236,6 +259,12 @@ const ferramentas = [
 		.context-link:hover,
 		.context-link:focus-visible {
 			color: var(--text);
+		}
+
+		.context-links {
+			display: flex;
+			flex-wrap: wrap;
+			column-gap: 24px;
 		}
 
 		/* QUEM */
@@ -458,6 +487,12 @@ const ferramentas = [
 			padding-left: 35px;
 		}
 
+		.link.link-wide {
+			grid-column: 1 / -1;
+			padding-inline: 0;
+			border-right: 0;
+		}
+
 		.link span {
 			float: right;
 
@@ -466,6 +501,54 @@ const ferramentas = [
 
 		.link:hover {
 			color: var(--programacao);
+		}
+
+		.creator-channel {
+			display: grid;
+			grid-template-columns: auto minmax(0, 1fr);
+			align-items: start;
+			gap: 24px;
+			margin-top: 30px;
+			padding: clamp(20px, 3vw, 28px);
+			border: 1px solid var(--line);
+			background: var(--surface);
+		}
+
+		.creator-channel img {
+			display: block;
+			width: 104px;
+			height: auto;
+			border: 1px solid var(--line);
+		}
+
+		.creator-channel-meta {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px 14px;
+			font: .875rem/1.5 monospace;
+			color: var(--programacao);
+		}
+
+		.creator-channel-status {
+			color: var(--automacao);
+		}
+
+		.creator-channel h3 {
+			margin: 10px 0 14px;
+			font-size: clamp(1.5rem, 3vw, 2rem);
+		}
+
+		.creator-channel-description {
+			margin: 0 0 14px;
+			color: var(--muted);
+			font: 1.125rem/1.7 Georgia, "Times New Roman", serif;
+		}
+
+		@media (max-width: 600px) {
+			.creator-channel {
+				grid-template-columns: minmax(0, 1fr);
+				gap: 16px;
+			}
 		}
 
 		/* FOOTER */
@@ -652,7 +735,7 @@ const ferramentas = [
 						<p>
 							Aqui os projetos simplesmente acontecem.
 							Alguns chegam a uma versão estável; outros
-							continuam abertos. Ambos merecem registro.
+							continuam abertos -- e ambos os tipos merecem registro.
 						</p>
 
 					</div>
@@ -742,9 +825,25 @@ const ferramentas = [
 							o hardware em referência técnica.
 						</p>
 
-						<a class="context-link" href="/artigos/ed100-hardware-rs485/">
-							LER O ARTIGO DO ED100 <span>→</span>
-						</a>
+						<p>
+							Antes do ED100, reaproveitei um <strong>SolarView uBox</strong>.
+							Comecei tentando acender um LED com firmware próprio e cheguei
+							aos testes com Modbus. O que aprendi com esse datalogger ajudou
+							na investigação do ED100.
+						</p>
+
+						<nav class="context-links" aria-label="Artigos sobre hardware reaproveitado">
+							{ed100Article && (
+								<a class="context-link" href={ed100Article.path}>
+									LER O ARTIGO DO ED100 <span aria-hidden="true">→</span>
+								</a>
+							)}
+							{solarViewArticle && (
+								<a class="context-link" href={solarViewArticle.path}>
+									LER O ARTIGO DO SOLARVIEW UBOX <span aria-hidden="true">→</span>
+								</a>
+							)}
+						</nav>
 
 					</div>
 
@@ -787,9 +886,21 @@ const ferramentas = [
 							processo e não apresentada como peça definitiva.
 						</p>
 
-						<a class="context-link" href="/projetos/gtr-01/">
-							VER O PROJETO GTR-01 <span>→</span>
-						</a>
+						<p>
+							A curiosidade pelo som também foi parar nos pedais. O
+							<strong>PD-01</strong> foi meu primeiro pedal, um fuzz que
+							testei na guitarra e levei para o palco no baixo. Já o
+							<strong>PD-02</strong>, um pré-amplificador com JFET,
+							mudou a forma como eu ouvia a guitarra.
+						</p>
+
+						<nav class="context-links" aria-label="Projetos de música">
+							{musicProjects.map((project) => project?.path && (
+								<a class="context-link" href={project.path}>
+									VER O PROJETO {project.id.toUpperCase()} <span aria-hidden="true">→</span>
+								</a>
+							))}
+						</nav>
 
 					</div>
 
@@ -816,7 +927,7 @@ const ferramentas = [
 								<div class="area">
 									<div class="area-number">{(index + 1).toString().padStart(2, "0")}</div>
 									<div class={`area-name ${area.tone}`}><a href={getAreaPath(area)}>{area.label} →</a></div>
-									<div class="area-text">{areaDescriptions[index]}</div>
+									<div class="area-text">{areaDescriptions[area.slug]}</div>
 								</div>
 							))}
 						</div>
@@ -929,7 +1040,32 @@ const ferramentas = [
 								<span>→</span>
 							</a>
 
+							<a class="link link-wide" href="/monster-hub/">
+								MONSTER HUB
+								<span aria-hidden="true">→</span>
+							</a>
+
 						</div>
+
+						<article class="creator-channel" aria-labelledby="creator-channel-title">
+							<img src="/images/akio-shaolin-canal.svg" alt="" width="104" height="104" loading="lazy" decoding="async" />
+							<div>
+								<p class="creator-channel-meta">
+									<span>YOUTUBE / @akioshaolin</span>
+									<span class="creator-channel-status">EM DESENVOLVIMENTO</span>
+								</p>
+								<h3 id="creator-channel-title">Akio Shaolin</h3>
+								<p class="creator-channel-description">
+									Ainda estou montando o canal da Galeria -2048 no YouTube.
+									Quero reunir por lá vídeos sobre projetos, eletrônica, programação,
+									diagnóstico e experimentação, além de mostrar os bastidores do que
+									aparece aqui no site.
+								</p>
+								<a class="context-link" href="https://www.youtube.com/@akioshaolin" target="_blank" rel="noopener noreferrer">
+									VISITAR O CANAL NO YOUTUBE <span aria-hidden="true">↗</span>
+								</a>
+							</div>
+						</article>
 
 					</div>
 

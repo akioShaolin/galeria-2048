@@ -1,4 +1,5 @@
 ---
+import type { ComponentProps } from "astro/types";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import SiteHeader from "../../components/SiteHeader.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
@@ -12,7 +13,12 @@ const project = getProject("controle-iluminacao-bancada");
 if (!project?.page) throw new Error("Dados do projeto Controle de Iluminação da Bancada não encontrados.");
 const page = project.page;
 
-const firstDocumentation = [
+const firstDocumentation: {
+	part: string;
+	title: string;
+	text: string;
+	images: ComponentProps<typeof EditorialImage>[];
+}[] = [
 	{ part: "PARTE 1", title: "Testes iniciais", text: "Fontes e fitas de LED foram verificadas antes da integração com o NodeMCU e a placa de potência.", images: [{ src: "/images/controle-iluminacao-bancada/infinity-light-teste-fita.webp", alt: "Rolo de fita de LED aceso durante um teste inicial com fonte de 12 volts", caption: "Teste inicial da fita de LED e da fonte, antes da integração com o controle eletrônico.", variant: "portrait" }] },
 	{ part: "PARTE 2", title: "PWM com 555", text: "Um temporizador 555 simulou o PWM que depois seria produzido pelo sistema embarcado e aplicado ao driver de MOSFET.", images: [{ src: "/images/controle-iluminacao-bancada/infinity-light-pwm-555.webp", alt: "Fita de LED, protoboard com temporizador 555 e fonte durante o teste de PWM", caption: "Protótipo em protoboard usado para verificar o controle de brilho por PWM com um temporizador 555.", variant: "portrait" }] },
 	{ part: "PARTE 3", title: "Design no Fritzing", text: "O desenho da placa ajudou a lidar com pouco espaço, reduzir erros e sair da protoboard e da fiação solta.", images: [{ src: "/images/controle-iluminacao-bancada/infinity-light-esquema-fritzing.webp", alt: "Esquema elétrico histórico do controlador desenhado no Fritzing", caption: "Esquema elétrico elaborado no Fritzing como referência para a etapa de montagem.", fit: "contain" }, { src: "/images/controle-iluminacao-bancada/infinity-light-design-placa.webp", alt: "Desenho histórico da distribuição dos componentes e ligações da placa", caption: "Design final registrado em 2023 para organizar os componentes na placa de prototipagem.", fit: "contain" }] },

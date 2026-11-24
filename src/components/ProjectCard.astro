@@ -13,7 +13,9 @@ const coverStyle = containedCover
 	? "width:100%;height:100%;object-fit:contain;"
 	: circuitCover
 		? "width:70%;height:100%;object-fit:cover;object-position:center;display: block; margin: 0 auto;"
-		: undefined;
+		: project.id === "modbus-reader-writer"
+			? "width:78%;height:100%;object-fit:cover;object-position:center 24%;display:block;margin:0 auto;"
+			: undefined;
 ---
 
 <article class:list={["card", { future: !project.path }]}>

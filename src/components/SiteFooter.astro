@@ -1,6 +1,6 @@
 ---
 interface Props {
-	rightText: string;
+	rightText?: string;
 	containerClass?: string;
 	variant?: "default" | "home";
 }
@@ -15,7 +15,7 @@ const {
 <footer class:list={{ home: variant === "home" }}>
 	<div class:list={[containerClass, "site-footer"]}>
 		<span>GALERIA -2048 // akioShaolin</span>
-		<span>{rightText}</span>
+		{rightText && <span>{rightText}</span>}
 	</div>
 </footer>
 
