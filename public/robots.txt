@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.galeria-2048.com.br/sitemap-index.xml

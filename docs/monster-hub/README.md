@@ -86,6 +86,123 @@ Dentro de cada coluna, o cálculo reorganiza as linhas para reduzir primeiro os 
 
 O cálculo é determinístico: IDs resolvem empates e os componentes desconectados são distribuídos em fileiras previsíveis. Filtros, seleção, zoom e redimensionamento não recalculam o layout. As caixas ficam fixas para preservar as passagens reservadas; arrastar move o mapa. Selecionar um nó destaca sua vizinhança e atualiza o painel lateral.
 
+## Regras de orientação e roteamento visual
+
+A disposição visual do Monster Hub deve favorecer a leitura da trajetória técnica da esquerda para a direita. Essas regras pertencem à camada de apresentação e não alteram o significado histórico das relações cadastradas em `relationships.ts`.
+
+### Parentesco
+
+Relações de `parentesco` formam a estrutura principal do grafo.
+
+A orientação preferencial é:
+
+```text
+ascendente → descendente
+esquerda      direita
+```
+
+Sempre que a topologia permitir:
+
+- o descendente deve ficar à direita do ascendente;
+- uma linha de parentesco não deve atravessar uma caixa de conteúdo;
+- linhas de parentesco não devem cruzar outras linhas de parentesco;
+- trajetos entre colunas podem utilizar segmentos intermediários para contornar nós;
+- a rota deve permanecer tão simples e direta quanto possível.
+
+Quando não for possível satisfazer todas as condições simultaneamente, a prioridade visual é:
+
+```text
+1. não atravessar entidades
+2. evitar cruzamento entre parentescos
+3. preservar a direção esquerda → direita
+4. reduzir comprimento e quantidade de desvios
+```
+
+Parentesco é a espinha dorsal visual do Monster Hub. Relações secundárias não devem forçar a genealogia principal a uma disposição pior.
+
+### Influência
+
+`influencia` também é uma relação direcionada:
+
+```text
+influenciador → influenciado
+```
+
+Sempre que possível, o influenciador deve aparecer à esquerda do influenciado.
+
+Diferentemente do parentesco, linhas de influência podem:
+
+- usar curvas suaves;
+- atravessar outras linhas de influência;
+- atravessar linhas de paralelo;
+- contornar entidades por trajetos menos rígidos.
+
+Uma influência pode apontar para a esquerda quando a estrutura genealógica do grafo tornar isso necessário. Ela não deve deslocar ascendentes e descendentes apenas para preservar sua própria orientação.
+
+### Paralelo
+
+`paralelo` não possui direção hierárquica:
+
+```text
+projeto A ↔ projeto B
+```
+
+Sua rota pode ser escolhida livremente para preservar a legibilidade da composição.
+
+Linhas de paralelo podem usar curvas, desvios e cruzamentos com outras relações secundárias. Elas não devem determinar níveis ou gerações do grafo.
+
+### Ramificações
+
+Quando várias relações partirem de uma mesma região do grafo, seus trajetos podem compartilhar parcialmente um corredor visual antes de se separarem, desde que cada relação continue identificável.
+
+Esse comportamento é especialmente útil para reduzir poluição visual em grupos com muitos descendentes ou influências.
+
+Não fundir semanticamente arestas diferentes: o compartilhamento é apenas visual.
+
+### Posicionamento dos nós
+
+As entidades podem ser posicionadas livremente desde que as regras de orientação e cruzamento acima sejam respeitadas.
+
+O algoritmo deve priorizar:
+
+```text
+parentesco
+→ estrutura das colunas e gerações
+
+influência
+→ preferência secundária esquerda → direita
+
+paralelo
+→ ajuste visual sem hierarquia
+```
+
+As coordenadas não devem ser cadastradas manualmente por projeto.
+
+### Determinismo
+
+A mesma combinação de nós e relações deve produzir a mesma disposição visual, ou uma disposição efetivamente equivalente, em todas as renderizações.
+
+IDs estáveis devem ser usados para resolver empates de ordenação.
+
+Recarregar a página, filtrar relações, alterar o zoom ou redimensionar a janela não deve reorganizar aleatoriamente as entidades.
+
+Adicionar ou remover uma relação pode naturalmente modificar o layout, mas o resultado correspondente ao mesmo conjunto de dados precisa ser previsível.
+
+### Princípio geral
+
+O Monster Hub não deve buscar a disposição geometricamente mais compacta a qualquer custo.
+
+A prioridade é tornar a trajetória compreensível:
+
+```text
+primeiro preservar a genealogia
+depois reduzir cruzamentos
+depois aproximar relações secundárias
+e somente então compactar o desenho
+```
+
+A clareza histórica é mais importante que a simetria visual.
+
 ### Style
 
 São as regras visuais aplicadas a nós e arestas. Parentesco, influência e paralelo também se diferenciam por padrão de linha e seta, não apenas pela cor.

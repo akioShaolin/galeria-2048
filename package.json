@@ -12,6 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.6",
     "@google/model-viewer": "^4.4.0",
     "astro": "^7.4.13",
     "cytoscape": "^3.35.0"

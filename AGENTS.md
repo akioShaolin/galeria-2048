@@ -21,6 +21,8 @@ A orientação editorial completa está em:
 docs/AI_EDITORIAL_GUIDE.md
 ```
 
+Para implementar ou modificar artefatos 3D interativos, leia também `docs/3d-artifacts/README.md`.
+
 # 1. Sobre o projeto
 
 A **Galeria -2048** é um acervo pessoal e público mantido por **akioShaolin**.
