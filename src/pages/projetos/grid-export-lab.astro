@@ -7,11 +7,15 @@ import Tag from "../../components/Tag.astro";
 import EditorialImage from "../../components/EditorialImage.astro";
 import ImageLightbox from "../../components/ImageLightbox.astro";
 import LineageGraph from "../../components/LineageGraph.astro";
+import { articles } from "../../data/articles";
 import { getProject } from "../../data/projects";
 
 const project = getProject("grid-export-lab");
 if (!project?.page) throw new Error("Dados do Grid Export Lab não encontrados.");
 const page = project.page;
+const ubox = articles.find(({ id }) => id === "solarview-ubox");
+const gateway = getProject("gateway-modbus");
+const reader = getProject("modbus-reader-writer");
 ---
 
 <BaseLayout
@@ -87,11 +91,10 @@ const page = project.page;
 					<div>
 						<h2>Levar o barramento até a rede sem puxar outro cabo.</h2>
 						<div class="prose">
-							<p>Um datalogger Solar View reaproveitado, com ESP8266 e interface RS485, foi instalado como gateway próximo ao relé. A alternativa física seria lançar aproximadamente 300 metros de um novo caminho de comunicação.</p>
-							<p>A primeira experiência de transporte usou um enquadramento binário próprio sobre TCP. Ela carregava os bytes RTU pela rede, mas <strong>não era Modbus TCP padrão</strong>. Versões posteriores do monitor passaram a oferecer os dados do relé por uma interface de rede mais estruturada.</p>
+							<p>Reaproveitei um {ubox ? <a href={ubox.path}>SolarView uBox</a> : "SolarView uBox"} para ler o relé de perto e levar as medidas pela rede já disponível. A alternativa era abrir um caminho de aproximadamente 300 metros para um novo cabo de comunicação.</p>
+							<p>O {reader?.path ? <a href={reader.path}>Modbus Reader / Writer</a> : "Modbus Reader / Writer"} registra os primeiros ensaios de leitura e escrita no uBox. No {gateway?.path ? <a href={gateway.path}>Gateway Modbus</a> : "Gateway Modbus"}, a pergunta passou a ser como levar essa conversa pela rede. Aqui eu precisava de outra coisa: que as medidas do URP6000 estivessem disponíveis para o computador registrar e, mais adiante, usar no controle.</p>
 							<p>Dentro do painel metálico, o Wi‑Fi era fraco. A antena foi levada para fora com um suporte adaptado e ímãs de neodímio, sem perfurar o gabinete. Foi uma solução de campo para melhorar o enlace, não uma mudança no circuito de proteção.</p>
 						</div>
-						<a class="related-link" href="/artigos/solarview-ubox/"><span>O HARDWARE REAPROVEITADO — SOLAR VIEW UBOX</span><span>→</span></a>
 					</div>
 				</div>
 			</section>
@@ -102,7 +105,7 @@ const page = project.page;
 					<div>
 						<h2>Do outro lado da rede, os comandos voltavam a ser RS485.</h2>
 						<div class="prose">
-							<p>Um segundo Solar View foi colocado próximo aos inversores. Ele recebia comandos pela rede e os transformava em operações Modbus RTU no barramento de geração. A primeira geração apenas aplicava limites; a seguinte também devolvia a potência lida.</p>
+							<p>Um segundo SolarView ficava perto dos inversores. A arquitetura de comandos veio do Gateway Modbus; no Grid Export Lab, ela serviu para aplicar os limites que o computador calculava. Quando passei a ler a potência de volta, pude distinguir o limite pedido da geração que o inversor informava.</p>
 							<p>Essa separação criou duas pontas bem definidas: uma media o ponto de conexão e outra atuava sobre a geração. O SIW500H ST030 M3 chegou a fazer parte das tentativas de integração, mas não permaneceu na mesma malha de controle. A causa não foi fechada, portanto não trato o resultado como incompatibilidade fundamental do equipamento.</p>
 						</div>
 						<div class="flow" aria-label="Fluxo distribuído do controle">
@@ -118,15 +121,27 @@ const page = project.page;
 					<div>
 						<h2>Ler, calcular, comandar, repetir.</h2>
 						<div class="prose">
-							<p>A primeira malha fechada viveu em Python. O computador lia a potência do relé, registrava os valores, calculava uma correção e enviava limites ao gateway dos inversores. O controle começou proporcional e depois incorporou a parcela integral.</p>
+							<p>A primeira malha fechada rodava em Python no computador. Um SolarView lia o relé; o outro conversava com os inversores. Quem juntava as duas pontas e tomava a decisão ainda era o computador: ele recebia e registrava a medição, calculava a correção e enviava o novo limite. O controle começou proporcional e depois incorporou a parcela integral.</p>
 							<p>Os ganhos preservados dessa fase são <code>Kp = 0,25</code>, <code>Ki = 0,005</code> e <code>Kd = 0</code>. Apesar de anotações antigas usarem a palavra PID, na prática a configuração era <strong>PI</strong>: proporcional mais integral, sem parcela derivativa.</p>
-							<p>Essa etapa provou que a medição e o comando podiam atravessar a rede Wi‑Fi e fechar o ciclo remotamente. Em partes do desenvolvimento, apenas um inversor participou do teste. A ampliação para dois equipamentos veio depois.</p>
+							<p>No registro de 17 de março, dá para acompanhar a potência total e a potência do inversor ao longo do dia, com o setpoint perto de 180 kW. As curvas foram suavizadas depois, para facilitar a leitura. Em parte dos ensaios, só um inversor participou do controle; a ampliação para dois equipamentos veio depois.</p>
 						</div>
 						<div class="control-loop">
 							<div><span>ENTRADA</span><strong>POTÊNCIA NO URP</strong></div>
 							<div><span>ERRO</span><strong>SETPOINT − MEDIDA</strong></div>
 							<div><span>PI</span><strong>Kp + Ki</strong></div>
 							<div><span>SAÍDA</span><strong>LIMITES DE GERAÇÃO</strong></div>
+						</div>
+						<div id="host-control-record" class="host-record">
+							<EditorialImage
+								src="/images/grid-export-lab/controle-de-geracao-2026-03-17.webp"
+								alt="Gráfico de 17 de março de 2026 com potência total em azul, potência do inversor em laranja e setpoint em verde próximo de 180 kW"
+								caption="17/03/2026 — Registro do controle de geração ainda executado pelo computador. O gráfico foi reconstruído a partir de um log histórico, com suavização das curvas para facilitar a leitura."
+								fit="contain"
+								variant="detail"
+							/>
+						</div>
+						<div class="prose">
+							<p>Nesse momento, desligar o computador significava tirar da malha quem calculava os limites. O passo seguinte foi levar esse cálculo para o ESP8266 e deixar o computador com o histórico e a visualização.</p>
 						</div>
 					</div>
 				</div>
@@ -312,6 +327,8 @@ const page = project.page;
 	.prose p { margin: 0 0 22px; }
 	.prose strong { color: var(--text); }
 	.prose code { padding: 2px 5px; color: var(--text); background: var(--surface); font: .95em/1.5 monospace; }
+	.prose a { color: var(--programacao); text-decoration: underline; text-underline-offset: .15em; }
+	#host-control-record .editorial-image__trigger img { height: auto; aspect-ratio: 1719 / 978; }
 
 	.context-grid, .responsibility-grid, .compare, .state-grid, .control-loop { display: grid; gap: 1px; margin-top: 38px; border: 1px solid var(--line); background: var(--line); }
 	.context-grid { grid-template-columns: repeat(3, 1fr); }
@@ -328,9 +345,6 @@ const page = project.page;
 	.notice p { color: var(--muted); font: 1rem/1.7 Georgia, "Times New Roman", serif; }
 	.notice a { color: var(--automacao); font: 700 .875rem/1.5 monospace; text-decoration: none; }
 	.notice a:hover, .notice a:focus-visible { color: var(--text); outline: none; }
-
-	.related-link { display: flex; justify-content: space-between; gap: 20px; max-width: 780px; margin-top: 32px; padding: 16px 18px; border: 1px solid var(--line); color: var(--text); font: 700 .875rem/1.5 monospace; text-decoration: none; }
-	.related-link:hover, .related-link:focus-visible { border-color: var(--programacao); color: var(--programacao); outline: none; }
 
 	.flow { display: flex; align-items: stretch; max-width: 920px; margin-top: 38px; border: 1px solid var(--line); background: var(--surface); }
 	.flow div { flex: 1; padding: 20px; }

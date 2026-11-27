@@ -243,6 +243,12 @@ Um `ResizeObserver` chama `cy.resize()` quando o painel muda de tamanho. Antes d
 
 Cytoscape cuida da visualização e da interação. Ele não define a verdade histórica: essa responsabilidade continua em `relationships.ts`.
 
+### Tela cheia
+
+**TELA CHEIA** amplia a área de trabalho na janela, com o mesmo grafo, filtros, busca, controles e painel de seleção. Em desktop, o painel permanece à direita. Em telas estreitas, tocar em um nó ou relação abre os detalhes na parte inferior. **DETALHES** e **FECHAR DETALHES** alternam a gaveta sem apagar a seleção.
+
+**SAIR DA TELA CHEIA** ou **Esc** restaura a rolagem da página e devolve o foco ao botão. Enquanto o modo está ativo, o restante da página não recebe foco. O observador de tamanho conserva o ponto do mapa que estava no centro e o nível de zoom, sem recriar a instância do Cytoscape ou recalcular as posições.
+
 ## Tipos de relação
 
 ```ts
@@ -388,7 +394,9 @@ Verificações manuais:
 11. conferir a página em larguras próximas de 375, 768 e 1024 pixels e em desktop amplo;
 12. repetir a conferência com zoom de página em 100%, 90%, 80%, 75% e 67%;
 13. verificar as seções locais de linhagem nas páginas existentes;
-14. confirmar que não há erros no console nem validações quebradas.
+14. entrar e sair da tela cheia com uma seleção e um filtro ativos; conferir zoom, centro, busca e retorno de foco;
+15. em tela estreita, abrir e fechar os detalhes sem perder a seleção e conferir se os controles continuam alcançáveis;
+16. confirmar que não há erros no console nem validações quebradas.
 
 ## Evolução futura
 

@@ -42,6 +42,7 @@ const relationsByKind = {
 };
 ---
 
+<div class="hub-stage">
 <section class="hub-shell" aria-labelledby="monster-map-title">
 	<div class="hub-toolbar">
 		<div class="filter-group" aria-label="Filtrar tipos de relação">
@@ -71,6 +72,8 @@ const relationsByKind = {
 					<h2 id="monster-map-title">PROJETOS EM CONSTELAÇÃO</h2>
 				</div>
 				<div class="graph-actions">
+					<button type="button" data-fullscreen-toggle aria-pressed="false" hidden>TELA CHEIA</button>
+					<button type="button" data-details-toggle aria-controls="monster-hub-details" aria-expanded="false" hidden>DETALHES</button>
 					<button type="button" data-clear-focus>LIMPAR FOCO</button>
 				</div>
 			</div>
@@ -95,7 +98,7 @@ const relationsByKind = {
 			<p class="search-status" data-search-status aria-live="polite"></p>
 		</div>
 
-		<aside class="detail-panel" aria-label="Detalhes da seleção" aria-live="polite">
+		<aside id="monster-hub-details" class="detail-panel" aria-label="Detalhes da seleção" aria-live="polite">
 			<div class="detail-empty" data-detail-empty>
 				<p class="system-label">[ LEITURA DO MAPA ]</p>
 				<h2>ESCOLHA UM SINAL.</h2>
@@ -124,6 +127,7 @@ const relationsByKind = {
 
 	<script id="monster-hub-data" type="application/json" is:inline set:html={serializedGraph}></script>
 </section>
+</div>
 
 <section class="text-map" aria-labelledby="text-map-title">
 	<div class="text-map-heading">
@@ -197,6 +201,35 @@ const relationsByKind = {
 		const nodePanel = document.querySelector<HTMLElement>("[data-detail-node]");
 		const edgePanel = document.querySelector<HTMLElement>("[data-detail-edge]");
 		const searchStatus = document.querySelector<HTMLElement>("[data-search-status]");
+		const shell = graphElement.closest<HTMLElement>(".hub-shell");
+		const fullscreenButton = shell?.querySelector<HTMLButtonElement>("[data-fullscreen-toggle]");
+		const detailsButton = shell?.querySelector<HTMLButtonElement>("[data-details-toggle]");
+		const detailsPanel = shell?.querySelector<HTMLElement>("#monster-hub-details");
+		const compactScreen = window.matchMedia("(max-width: 800px)");
+		const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+		const inertSiblings: HTMLElement[] = [];
+		let fullscreen = false;
+		let detailsOpen = false;
+		let pageScroll = { x: 0, y: 0 };
+
+		const syncDetailsPanel = () => {
+			if (!detailsButton || !detailsPanel) return;
+			const useDrawer = fullscreen && compactScreen.matches;
+			detailsButton.hidden = !useDrawer;
+			detailsButton.textContent = useDrawer && detailsOpen ? "FECHAR DETALHES" : "DETALHES";
+			detailsButton.setAttribute("aria-expanded", String(useDrawer && detailsOpen));
+			const hidePanel = useDrawer && !detailsOpen;
+			if (hidePanel && detailsPanel.contains(document.activeElement)) {
+				detailsButton.focus({ preventScroll: true });
+			}
+			detailsPanel.hidden = hidePanel;
+		};
+
+		const revealSelection = () => {
+			if (!fullscreen || !compactScreen.matches) return;
+			detailsOpen = true;
+			syncDetailsPanel();
+		};
 
 		const setText = (selector: string, value: string) => {
 			const element = document.querySelector<HTMLElement>(selector);
@@ -263,6 +296,7 @@ const relationsByKind = {
 				link.href = data.url;
 				link.textContent = contentLinkLabel(data.type);
 			}
+			revealSelection();
 		};
 
 		const showEdge = (edge: EdgeSingular) => {
@@ -283,6 +317,7 @@ const relationsByKind = {
 			setText("[data-edge-symbol]", data.kind === "paralelo" ? "↔" : "→");
 			setText("[data-edge-description]", data.description ?? "Relação registrada no acervo.");
 			setText("[data-edge-subtype]", data.subtype ? `SUBTIPO / ${String(data.subtype).replaceAll("_", " ").toUpperCase()}` : "");
+			revealSelection();
 		};
 
 		const visibleGraph = () => {
@@ -485,14 +520,23 @@ const relationsByKind = {
 
 			const node = cy.getElementById(match.data.id) as NodeSingular;
 			markViewportAsAdjusted();
-			cy.animate({ center: { eles: node }, zoom: 1.15 }, { duration: 350 });
+			cy.stop();
+			if (reducedMotion.matches) {
+				cy.zoom(1.15);
+				cy.center(node);
+			} else {
+				cy.animate({ center: { eles: node }, zoom: 1.15 }, { duration: 350 });
+			}
 			showNode(node);
 			if (searchStatus) searchStatus.textContent = `${match.data.label} selecionado no mapa.`;
 		});
 
-		const resizeObserver = new ResizeObserver(() => {
+		const scheduleViewportResize = () => {
 			cancelAnimationFrame(resizeFrame);
 			resizeFrame = requestAnimationFrame(() => {
+				const width = graphElement.clientWidth;
+				const height = graphElement.clientHeight;
+				if (!width || !height || (width === viewportWidth && height === viewportHeight)) return;
 				const zoom = cy.zoom();
 				const pan = cy.pan();
 				const modelCenter = {
@@ -500,20 +544,92 @@ const relationsByKind = {
 					y: (viewportHeight / 2 - pan.y) / zoom,
 				};
 				cy.resize();
-				viewportWidth = graphElement.clientWidth;
-				viewportHeight = graphElement.clientHeight;
+				viewportWidth = width;
+				viewportHeight = height;
 				if (!viewportWasAdjusted) {
 					frameInitialView();
 					return;
 				}
-				cy.zoom(zoom);
-				cy.pan({
-					x: viewportWidth / 2 - modelCenter.x * zoom,
-					y: viewportHeight / 2 - modelCenter.y * zoom,
+				cy.viewport({
+					zoom,
+					pan: {
+						x: width / 2 - modelCenter.x * zoom,
+						y: height / 2 - modelCenter.y * zoom,
+					},
 				});
 			});
-		});
+		};
+		const resizeObserver = new ResizeObserver(scheduleViewportResize);
 		resizeObserver.observe(graphElement);
+
+		const stage = shell?.parentElement;
+		if (shell && stage && fullscreenButton) {
+			const setFullscreen = (enabled: boolean) => {
+				if (enabled === fullscreen) return;
+				cy.stop();
+				markViewportAsAdjusted();
+				fullscreen = enabled;
+				detailsOpen = false;
+				if (enabled) {
+					pageScroll = { x: window.scrollX, y: window.scrollY };
+					stage.style.minHeight = `${shell.offsetHeight}px`;
+					// Make only the existing workspace available to keyboard and assistive technology.
+					for (let branch: HTMLElement = shell; branch.parentElement && branch !== document.body; branch = branch.parentElement) {
+						for (const sibling of branch.parentElement.children) {
+							if (!(sibling instanceof HTMLElement) || sibling === branch || sibling.inert) continue;
+							sibling.inert = true;
+							inertSiblings.push(sibling);
+						}
+					}
+					document.documentElement.classList.add("monster-hub-immersive");
+					shell.setAttribute("role", "dialog");
+					shell.setAttribute("aria-modal", "true");
+				} else {
+					for (const sibling of inertSiblings.splice(0)) sibling.inert = false;
+					document.documentElement.classList.remove("monster-hub-immersive");
+					shell.removeAttribute("role");
+					shell.removeAttribute("aria-modal");
+					stage.style.removeProperty("min-height");
+				}
+				shell.classList.toggle("is-fullscreen", enabled);
+				fullscreenButton.textContent = enabled ? "SAIR DA TELA CHEIA" : "TELA CHEIA";
+				fullscreenButton.setAttribute("aria-pressed", String(enabled));
+				syncDetailsPanel();
+				if (!enabled) window.scrollTo({ top: pageScroll.y, left: pageScroll.x, behavior: "instant" });
+				fullscreenButton.focus({ preventScroll: true });
+				scheduleViewportResize();
+			};
+
+			fullscreenButton.hidden = false;
+			fullscreenButton.addEventListener("click", () => setFullscreen(!fullscreen));
+			detailsButton?.addEventListener("click", () => {
+				detailsOpen = !detailsOpen;
+				syncDetailsPanel();
+			});
+			compactScreen.addEventListener("change", () => {
+				const detailHadFocus = document.activeElement === detailsButton;
+				syncDetailsPanel();
+				if (detailHadFocus && detailsButton?.hidden) fullscreenButton.focus({ preventScroll: true });
+			});
+			document.addEventListener("keydown", (event) => {
+				if (!fullscreen || event.isComposing) return;
+				if (event.key === "Escape") {
+					event.preventDefault();
+					setFullscreen(false);
+				} else if (event.key === "Tab") {
+					const controls = Array.from(shell.querySelectorAll<HTMLElement>("button:enabled, input:enabled, a[href]"))
+						.filter((control) => control.getClientRects().length > 0);
+					const first = controls.at(0);
+					const last = controls.at(-1);
+					if (!first || !last) return;
+					const current = document.activeElement;
+					if (!shell.contains(current) || current === (event.shiftKey ? first : last)) {
+						event.preventDefault();
+						(event.shiftKey ? last : first).focus();
+					}
+				}
+			});
+		}
 
 		frameInitialView();
 		graphElement.querySelector(".graph-loading")?.remove();
@@ -961,6 +1077,197 @@ const relationsByKind = {
 		.relation-path {
 			grid-template-columns: 1fr;
 			text-align: center;
+		}
+	}
+
+	:global(html.monster-hub-immersive),
+	:global(html.monster-hub-immersive body) {
+		overflow: hidden;
+		overscroll-behavior: none;
+	}
+
+	.hub-shell [hidden] {
+		display: none;
+	}
+
+	.hub-shell.is-fullscreen {
+		position: fixed;
+		inset: 0;
+		z-index: 1000;
+		display: grid;
+		grid-template-rows: auto minmax(0, 1fr);
+		height: 100dvh;
+		padding: env(safe-area-inset-top) env(safe-area-inset-right)
+			env(safe-area-inset-bottom) env(safe-area-inset-left);
+		overflow: hidden;
+		background: var(--bg);
+	}
+
+	.is-fullscreen .hub-toolbar {
+		grid-template-columns: minmax(0, 1fr) minmax(230px, min(30vw, 420px));
+		gap: 12px;
+		padding: 12px 16px;
+	}
+
+	.is-fullscreen .hub-workspace {
+		position: relative;
+		grid-template-columns: minmax(0, 1fr) clamp(320px, 26vw, 380px);
+		grid-template-rows: minmax(0, 1fr);
+		min-height: 0;
+	}
+
+	.is-fullscreen .graph-column {
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+		padding: 12px 16px;
+	}
+
+	.is-fullscreen .graph-heading {
+		flex-direction: row;
+		align-items: center;
+		gap: 12px;
+		margin-bottom: 10px;
+	}
+
+	.is-fullscreen .graph-heading .system-label {
+		display: none;
+	}
+
+	.is-fullscreen .graph-heading h2 {
+		font-size: clamp(1.25rem, 2.1vw, 1.9rem);
+	}
+
+	.is-fullscreen .graph-frame {
+		flex: 1 1 0;
+		height: auto;
+		min-height: 0;
+		max-height: none;
+	}
+
+	.is-fullscreen #monster-hub-graph {
+		touch-action: none;
+	}
+
+	.is-fullscreen .zoom-controls {
+		top: 8px;
+		right: 8px;
+	}
+
+	.is-fullscreen .node-legend,
+	.is-fullscreen .graph-help,
+	.is-fullscreen .search-status {
+		margin-top: 6px;
+	}
+
+	.is-fullscreen .search-status {
+		min-height: 0;
+	}
+
+	.is-fullscreen .search-status:empty {
+		margin: 0;
+	}
+
+	.is-fullscreen .detail-panel {
+		min-height: 0;
+		padding: 20px;
+		border-top: 0;
+		border-left: 1px solid var(--line);
+		overflow: auto;
+		overflow-wrap: anywhere;
+		overscroll-behavior: contain;
+	}
+
+	@media (max-width: 800px) {
+		.is-fullscreen .hub-workspace {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.is-fullscreen .hub-toolbar,
+		.is-fullscreen .graph-column {
+			gap: 6px;
+			padding: 8px 10px;
+		}
+
+		.is-fullscreen .hub-toolbar {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.is-fullscreen .filter-group {
+			display: grid;
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: 6px;
+			padding: 0;
+			overflow: visible;
+		}
+
+		.is-fullscreen .hub-search > div {
+			grid-template-columns: minmax(0, 1fr) auto;
+			gap: 0;
+		}
+
+		.is-fullscreen .hub-search input {
+			border-right: 0;
+		}
+
+		.is-fullscreen .graph-heading {
+			display: block;
+			margin-bottom: 0;
+		}
+
+		.is-fullscreen .graph-actions {
+			display: grid;
+			grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr));
+			gap: 6px;
+		}
+
+		.is-fullscreen .graph-actions button,
+		.is-fullscreen .filter-button {
+			padding: 6px;
+			letter-spacing: 0;
+		}
+
+		.is-fullscreen .detail-panel {
+			position: absolute;
+			inset: auto 0 0;
+			z-index: 6;
+			max-height: 57%;
+			border-top: 2px solid var(--programacao);
+			border-left: 0;
+		}
+	}
+
+	@media (max-width: 450px) {
+		.is-fullscreen .filter-group {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 800px), (max-height: 540px) {
+		.is-fullscreen .graph-heading h2,
+		.is-fullscreen .hub-search label {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			margin: 0;
+			overflow: hidden;
+			clip-path: inset(50%);
+			white-space: nowrap;
+		}
+	}
+
+	@media (max-height: 540px) {
+		.is-fullscreen .hub-toolbar {
+			align-items: center;
+		}
+
+		.is-fullscreen .graph-heading {
+			display: block;
+		}
+
+		.is-fullscreen .graph-help,
+		.is-fullscreen .node-legend {
+			display: none;
 		}
 	}
 

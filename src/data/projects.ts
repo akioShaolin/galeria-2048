@@ -41,6 +41,64 @@ export type Project = {
 
 export const projects: Project[] = ([
 	{
+		id: "gateway-modbus",
+		type: "PROJETO",
+		number: "024",
+		title: "GATEWAY MODBUS",
+		description: "Dois SolarView reaproveitados levaram quadros Modbus RTU por uma rede. O túnel não ficou confiável, mas abriu caminho para ler medidores de longe e criar um gateway de comandos.",
+		image: "/images/modbus-gateway/capa.webp",
+		path: "/projetos/modbus-gateway/",
+		categories: [
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "AUTOMAÇÃO", tone: "automacao" },
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "EXPERIMENTAÇÃO", tone: "experimentacao" },
+		],
+		keywords: ["gateway modbus", "túnel RTU/TCP", "Modbus RTU", "Modbus TCP", "RS485", "SolarView uBox", "ESP8266", "WEG SIW500H", "ED100", "CHINT DTSU666", "WEG MMW03"],
+		page: {
+			code: "GATEWAY MODBUS",
+			subtitle: "Eu queria poupar um cabo comprido de RS485. No fim, transportar a conversa foi só a primeira parte: a mais interessante foi descobrir o que o dispositivo podia fazer com ela.",
+			status: [
+				{ label: "ESTADO", value: "REGISTRO EXPERIMENTAL", tone: "experimentacao" },
+				{ label: "PLATAFORMA", value: "SOLARVIEW UBOX / ESP8266" },
+				{ label: "TRANSPORTE DO TÚNEL", value: "MODBUS RTU SOBRE TCP PRÓPRIO" },
+			],
+			timeline: [],
+			specifications: [],
+		},
+	},
+	{
+		id: "scanner-modbus",
+		type: "PROJETO",
+		number: "023",
+		title: "SCANNER MODBUS",
+		description: "Um SolarView uBox reaproveitado virou ferramenta de diagnóstico Modbus: do WEG MMW03 na bancada ao medidor que ficou em silêncio.",
+		image: "/images/scanner-modbus/capa-solarview.webp",
+		path: "/projetos/scanner-modbus/",
+		categories: [
+			{ label: "PROGRAMAÇÃO", tone: "programacao" },
+			{ label: "ELETRÔNICA", tone: "eletronica" },
+			{ label: "AUTOMAÇÃO", tone: "automacao" },
+			{ label: "DIAGNÓSTICO", tone: "diagnostico" },
+		],
+		keywords: ["scanner modbus", "Modbus RTU", "RS485", "ESP8266", "SolarView uBox", "WEG MMW03", "DOW1310L", "registradores", "WebSocket", "EEPROM", "CSV"],
+		page: {
+			code: "SCANNER MODBUS",
+			subtitle: "Reaproveitei um datalogger SolarView uBox para investigar por que uma aplicação Modbus não respondia. O que começou com o MMW03 na bancada acabou tomando vários caminhos.",
+			status: [
+				{ label: "ESTADO", value: "REGISTRO EXPERIMENTAL", tone: "diagnostico" },
+				{ label: "PLATAFORMA", value: "ESP8266 / SOLARVIEW UBOX" },
+				{ label: "COMUNICAÇÃO", value: "MODBUS RTU / RS485" },
+			],
+			timeline: [
+				{ year: "JAN. 2026", title: "A primeira interface", text: "O scanner já tinha um console no navegador e a opção de salvar as leituras em CSV." },
+				{ year: "JAN. 2026", title: "A busca que voltou vazia", text: "O teste com a v2.0 no DOW1310L terminou sem resposta dos IDs consultados." },
+				{ year: "MAR. 2026", title: "O MMW03, palavra por palavra", text: "As capturas da bancada mostram ensaios com resultados diferentes, entre eles uma série de leituras em pares que retornou dados." },
+			],
+			specifications: [],
+		},
+	},
+	{
 		id: "modbus-reader-writer",
 		type: "PROJETO",
 		number: "022",

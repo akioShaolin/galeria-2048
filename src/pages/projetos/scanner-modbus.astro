@@ -1,0 +1,242 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import StatusGrid from "../../components/StatusGrid.astro";
+import Tag from "../../components/Tag.astro";
+import EditorialImage from "../../components/EditorialImage.astro";
+import ImageLightbox from "../../components/ImageLightbox.astro";
+import LineageGraph from "../../components/LineageGraph.astro";
+import { articles } from "../../data/articles";
+import { getProject } from "../../data/projects";
+
+const project = getProject("scanner-modbus");
+if (!project?.page) throw new Error("Dados do projeto Scanner Modbus não encontrados.");
+const page = project.page;
+const media = "/images/scanner-modbus";
+const repository = "https://github.com/akioShaolin/scanner-modbus";
+const sketchLink = (name: string) => `${repository}/blob/main/sketches/${name}/${name}.ino`;
+const ubox = articles.find(({ id }) => id === "solarview-ubox");
+const reader = getProject("modbus-reader-writer");
+const exportLab = getProject("grid-export-lab");
+---
+
+<BaseLayout
+	title={`${project.title} — Galeria -2048`}
+	description={project.description}
+	image={project.image}
+	keywords={project.keywords}
+	type="article"
+>
+	<SiteHeader accent="var(--programacao)" />
+	<main class="scanner-page">
+		<section class="hero">
+			<div class="hero-copy">
+				<p class="section-code">[ {project.type} / {project.number} / DIAGNÓSTICO DE BANCADA ]</p>
+				<h1>{project.title}</h1>
+				<p class="intro">{page.subtitle}</p>
+				<div class="tags">
+					{project.categories.map((category) => <Tag label={category.label} tone={category.tone} />)}
+				</div>
+				<StatusGrid items={page.status} />
+			</div>
+			<div class="hero-media">
+				<EditorialImage
+					src={`${media}/solarview-dow1310l.webp`}
+					alt="Datalogger SolarView em primeiro plano, diante do visor do medidor Wasion DOW1310L"
+					caption="O SolarView reaproveitado diante de um medidor Wasion DOW1310L. Nem toda tentativa de comunicação terminou em resposta, mas cada teste ajudou a desenvolver o Scanner Modbus."
+					fit="contain"
+					eager
+				/>
+			</div>
+		</section>
+
+		<section class="chapter" aria-labelledby="mmw03">
+			<p class="section-code">01 / MMW03 NA BANCADA</p>
+			<div class="chapter-body">
+				<h2 id="mmw03">A pergunta não era só “qual registrador?”.</h2>
+				<div class="prose">
+					<p>Eu tinha uma aplicação com parâmetros Modbus bem específicos e ela não funcionou. Em vez de continuar mudando aquele programa a cada hipótese, reaproveitei um datalogger {ubox ? <a href={ubox.path}>SolarView uBox</a> : "SolarView uBox"} para investigar o medidor <strong>WEG MMW03</strong> à parte. O ESP8266 e a interface RS485 do uBox viraram a base física do scanner. Com ele, eu podia comparar velocidades de comunicação, conferir se os registradores do manual respondiam e ver o que acontecia quando eu consultava outros endereços.</p>
+					<p>A primeira dúvida já começava no jeito de contar. Um manual pode chamar o primeiro registrador de <strong>1</strong> mesmo quando o endereço enviado na consulta é <strong>0</strong>. Outros mapas já mostram o endereço que vai no quadro. Esse é o sentido de <em>1-based</em> e <em>0-based</em> aqui: muda a forma de numerar, não uma opção que se liga no medidor. E receber um valor ainda não quer dizer que eu já sei o que ele representa.</p>
+					<p><a href="https://static.weg.net/medias/downloadcenter/hba/h6c/WEG-multimedidor-MMW03-CH-manual-do-usuario-10006647116-pt.pdf" target="_blank" rel="noopener noreferrer">Manual do usuário do MMW03-CH — WEG (PDF) <span aria-hidden="true">↗</span></a></p>
+				</div>
+				<div class="single-media">
+					<EditorialImage
+						src={`${media}/mmw03-bancada.webp`}
+						alt="Parte traseira do medidor WEG MMW03 sobre a bancada, com bornes verdes e cabos"
+						caption="O WEG MMW03 na bancada. Foi com ele que comecei a perguntar o que de fato respondia no barramento."
+						fit="contain"
+					/>
+				</div>
+			</div>
+		</section>
+
+		<section class="chapter" aria-labelledby="primeiro-scanner">
+			<p class="section-code">02 / PRIMEIRA INTERFACE</p>
+			<div class="chapter-body">
+				<h2 id="primeiro-scanner">Do barramento para o navegador.</h2>
+				<div class="prose">
+					<p>No <a href={sketchLink("scanner_modbus_v1")}>primeiro sketch que guardei</a>, eu já sabia o ID do medidor e só precisava escolher a faixa de registradores. A página rodava no próprio uBox; o WebSocket levava as leituras direto ao console do navegador enquanto o teste corria.</p>
+					<p>O visual era simples: campos, botões e um console. Mas eu já podia salvar o que tinha aparecido ali em CSV e voltar aos resultados sem ficar copiando números à mão. Só que havia uma pergunta que aquela tela não ajudava a responder: e se eu não soubesse nem o ID?</p>
+				</div>
+				<div class="single-media">
+					<EditorialImage
+						src={`${media}/primeira-interface.webp`}
+						alt="Primeira interface do Scanner Modbus, com campos de ID e faixa de registradores, opção de CSV e console ainda vazio"
+						caption="A primeira interface: o ID já era conhecido. A busca era pelos registradores, e o CSV saía do texto do console."
+						fit="contain"
+					/>
+				</div>
+			</div>
+		</section>
+
+		<section class="chapter" aria-labelledby="dow1310l">
+			<p class="section-code">03 / BUSCA POR ID</p>
+			<div class="chapter-body">
+				<h2 id="dow1310l">O medidor que não respondeu.</h2>
+				<div class="prose">
+					<p>Na <a href={sketchLink("scanner_modbus_v2")}>v2.0</a>, a busca ganhou outro alvo: em vez de percorrer registradores de um único dispositivo, eu podia procurar dispositivos que respondessem em IDs diferentes. A interface deixava escolher o tipo de leitura usado como teste. Uma resposta de exceção é diferente de silêncio: nela, o equipamento responde, mas informa que não pôde atender ao pedido.</p>
+					<p>Usei essa versão no <strong>DOW1310L</strong>, um medidor que instalei para acompanhar os kWh injetados na rede. Ele media a energia no ponto da geração, não o consumo da instalação. O manual mencionava RS485, mas isso só dizia como era a interface elétrica, não qual protocolo passava por ela. Percorri todos os IDs que o scanner aceitava, sem obter resposta, e não encontrei um mapa de registradores. O teste terminou ali: aquele silêncio não dizia se o protocolo era Modbus ou outro.</p>
+				</div>
+				<div class="evidence-pair">
+					<EditorialImage
+						src={`${media}/dow1310l-detalhe.webp`}
+						alt="Frente do medidor DOW1310L, com visor, indicadores e bornes"
+						caption="O DOW1310L no ponto de medição. Ele registrava a energia; a tentativa de leitura pela interface serial não retornou dados."
+						fit="contain"
+						variant="detail"
+					/>
+					<EditorialImage
+						src={`${media}/interface-teste-dow.webp`}
+						alt="Interface da v2.0 no ensaio com o DOW1310L, com a aba de busca por ID e o indicador de WebSocket desconectado"
+						caption="A interface usada no ensaio com o DOW1310L. O endereço no navegador é do ESP8266, não do medidor, e o indicador mostra o WebSocket desconectado nesse instante."
+						fit="contain"
+						variant="detail"
+					/>
+				</div>
+			</div>
+		</section>
+
+		<section class="chapter" aria-labelledby="da-mesa">
+			<p class="section-code">04 / DA BANCADA ATÉ A MESA</p>
+			<div class="chapter-body">
+				<h2 id="da-mesa">O scanner ficava lá. Eu voltava para a mesa.</h2>
+				<div class="prose">
+					<p>As primeiras interfaces já funcionavam pelo Wi-Fi do próprio scanner. Na v2.0, o gerenciador de Wi-Fi trouxe outra opção: guardar a configuração da rede em EEPROM emulada e tentar conectar à rede local. Se não conseguisse entrar nela, o ponto de acesso do scanner continuava disponível para configurar a conexão.</p>
+					<p>Na prática, eu precisava ir até o equipamento para instalar ou recolher o scanner. Entre uma coisa e outra, podia mudar a consulta e olhar o resultado da minha mesa. Essa ideia de manter um caminho de volta para a configuração apareceu depois em outros trabalhos{exportLab?.path ? <>, como o <a href={exportLab.path}>Grid Export Lab</a></> : null}.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="chapter" aria-labelledby="ramificacoes">
+			<p class="section-code">05 / OS SKETCHES SE SEPARAM</p>
+			<div class="chapter-body">
+				<h2 id="ramificacoes">Um scanner geral e uma pergunta bem específica.</h2>
+				<div class="prose">
+					<p>Na <a href={sketchLink("scanner_modbus_v3")}>v3.0</a>, a busca por IDs, a leitura avulsa, a interface e as mensagens do WebSocket passaram para arquivos separados. Isso deixava mais claro onde mexer. Também não era uma versão que juntava tudo o que veio antes: o caminho para ler um endereço por vez não era a varredura de uma faixa do primeiro sketch, e a aba de escrita ainda era só um espaço reservado.</p>
+					<p>Em outro ramo mantive o foco no MMW03. O <a href={sketchLink("scanner_registradores_modbus")}>Scanner de Registradores Modbus</a> trabalhava a <strong>38.400 bit/s</strong> naquele ensaio e podia consultar duas palavras de 16 bits de uma vez. A tabela mostrava as palavras separadas e também as duas ordens possíveis de juntá-las como ponto flutuante de 32 bits. Um número na coluna <em>Float</em> era uma interpretação do programa. Para dizer que aquilo media alguma coisa, eu ainda precisava saber como o medidor representava o dado.</p>
+					<p>Num dos registros, o scanner contou dez consultas em pares bem-sucedidas e mostrou palavras com valor zero. Em outra tentativa, com uma palavra por consulta, a tabela ficou vazia. Eram ensaios distintos. O contraste foi útil: <strong>ler zero não é o mesmo que não conseguir ler.</strong></p>
+				</div>
+				<div class="evidence-pair">
+					<EditorialImage
+						src={`${media}/mmw03-leituras-pares.webp`}
+						alt="Captura do MMW03 com dez consultas em pares bem-sucedidas e valores zero nas duas colunas de palavras"
+						caption="Leitura em pares no MMW03: o scanner recebeu dados, ainda que as palavras mostradas fossem zero."
+						fit="contain"
+					/>
+					<EditorialImage
+						src={`${media}/mmw03-leituras-sem-sucesso.webp`}
+						alt="Contadores de um ensaio do MMW03 encerrado sem leituras bem-sucedidas, com tabela vazia"
+						caption="Em outro ensaio, com uma palavra por consulta, nenhuma leitura entrou na tabela."
+						fit="contain"
+					/>
+				</div>
+			</div>
+		</section>
+
+		<section class="chapter" aria-labelledby="mais-configuravel">
+			<p class="section-code">06 / OUTRO RAMO</p>
+			<div class="chapter-body">
+				<h2 id="mais-configuravel">Mais ajustes, outras limitações.</h2>
+				<div class="prose">
+					<p>No <a href={sketchLink("scanner_modbus_configuravel")}>scanner configurável</a>, voltei a uma interface mais geral: velocidade, paridade e bits de parada configuráveis, busca por ID e por registradores, leitura avulsa e tabelas de resultados com log. O código contempla quatro tipos de leitura: bobinas, entradas discretas, registradores de retenção e registradores de entrada. Já o Wi-Fi voltou a ser só o ponto de acesso do scanner, sem o gerenciador das versões anteriores.</p>
+					<p>Os logs também precisavam ser lidos com cuidado. Nesse sketch, a busca por IDs tratava a chamada de retorno da biblioteca como sinal de presença. Mas a biblioteca também pode chamar essa função quando o prazo se esgota sem resposta. O aviso de fim da consulta e uma resposta vinda pelo fio não são a mesma coisa.</p>
+					<p>Em outra etapa, saí da Arduino IDE e passei a usar VS Code com PlatformIO. A IA entrou mais na rotina nessa fase: no começo eu recorria pouco a ela e revisava cada detalhe; mais adiante, passei a usá-la com mais frequência durante o desenvolvimento.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="chapter" aria-labelledby="o-que-ficou">
+			<p class="section-code">07 / O QUE FICOU</p>
+			<div class="chapter-body">
+				<h2 id="o-que-ficou">Às vezes a melhor pista é saber o que não respondeu.</h2>
+				<div class="prose">
+					<p>O scanner nasceu para tirar uma dúvida que a aplicação original não me deixava isolar. No MMW03, eu podia comparar leituras. No DOW1310L, a busca não deu a resposta que eu queria. Guardar os dois resultados vale mais do que deixar o silêncio sumir da história.</p>
+					{reader?.path && <p>Para voltar ao momento em que uma chamada no código virou uma conversa legível no fio, veja o <a href={reader.path}>Modbus Reader / Writer</a>.</p>}
+					<p>Reuni os sketches no <a href={repository}>repositório do Scanner Modbus no GitHub</a>. As <a href={`${repository}/blob/main/docs/proveniencia.md`}>notas do acervo</a> mostram de onde veio cada versão, as dependências e o que ficou de fora.</p>
+				</div>
+				<ol class="timeline" aria-label="Marcos registrados">
+					{page.timeline.map((event) => (
+						<li>
+							<p class="section-code">{event.year}</p>
+							<h3>{event.title}</h3>
+							<p>{event.text}</p>
+						</li>
+					))}
+				</ol>
+			</div>
+		</section>
+		<LineageGraph currentId={project.id} />
+	</main>
+	<SiteFooter rightText={`${project.type} / ${project.number}`} />
+	<ImageLightbox />
+</BaseLayout>
+
+<style>
+	:global(body) {
+		background:
+			radial-gradient(circle at 82% 7%, rgba(0, 217, 255, .055), transparent 520px),
+			linear-gradient(rgba(255, 255, 255, .014) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255, 255, 255, .014) 1px, transparent 1px),
+			var(--bg);
+		background-size: auto, 42px 42px, 42px 42px, auto;
+	}
+
+	.scanner-page { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+	.hero, .chapter { display: grid; border-bottom: 1px solid var(--line); }
+	.hero { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: center; gap: 48px; padding: 88px 0 70px; }
+	.hero-media { min-width: 0; }
+	.hero-media :global(figure), .single-media :global(figure), .evidence-pair :global(figure) { margin: 0; }
+	.hero-media :global(img) { height: clamp(330px, 38vw, 500px); }
+	.section-code { margin: 0; color: var(--programacao); font: .875rem/1.55 monospace; letter-spacing: .065em; }
+	h1, h2, h3 { font-family: Arial, Helvetica, sans-serif; }
+	h1 { margin: 15px 0 24px; font-size: clamp(3rem, 8vw, 7.4rem); line-height: .88; letter-spacing: -.066em; }
+	h2 { max-width: 820px; margin: 0 0 30px; font-size: clamp(2.3rem, 5.5vw, 4.5rem); line-height: .98; letter-spacing: -.055em; }
+	.intro { max-width: 590px; margin: 0; color: var(--muted); font: clamp(1.18rem, 2.2vw, 1.5rem)/1.6 Georgia, "Times New Roman", serif; }
+	.tags { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 30px; }
+	.chapter { grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); gap: 44px; padding: 75px 0; }
+	.chapter-body { min-width: 0; }
+	.prose { max-width: 750px; }
+	.prose p { margin: 0 0 20px; color: var(--muted); font: 1.125rem/1.8 Georgia, "Times New Roman", serif; }
+	.prose p:last-child { margin-bottom: 0; }
+	.prose strong, .prose code { color: var(--text); }
+	.prose code { font-size: .92em; overflow-wrap: anywhere; }
+	.prose a { color: var(--programacao); text-decoration: underline; text-underline-offset: .15em; }
+	.prose a:hover, .prose a:focus-visible { color: var(--text); }
+	.single-media { max-width: 390px; margin-top: 35px; }
+	.evidence-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 24px; margin-top: 35px; }
+	.single-media :global(img), .evidence-pair :global(img) { height: auto; max-height: 560px; }
+	.timeline { display: grid; gap: 1px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 35px 0 0; padding: 0; list-style: none; background: var(--line); border: 1px solid var(--line); }
+	.timeline li { padding: 22px; background: var(--surface); }
+	.timeline h3 { margin: 8px 0; font-size: 1.15rem; }
+	.timeline p:not(.section-code) { margin: 0; color: var(--muted); font: 1.02rem/1.65 Georgia, "Times New Roman", serif; }
+
+	@media (max-width: 800px) {
+		.hero, .chapter { grid-template-columns: minmax(0, 1fr); gap: 26px; padding: 58px 0; }
+	}
+
+	@media (max-width: 600px) {
+		.evidence-pair, .timeline { grid-template-columns: minmax(0, 1fr); }
+		.hero-media :global(img) { height: min(440px, 110vw); }
+	}
+</style>
